@@ -1,4 +1,4 @@
-# pancake - :pancakes: Panorama Camerca Car Tracking
+# pancake - :pancakes: Panorama Camera Car Tracking
 
 ## Contributers
 * [Äas]()
