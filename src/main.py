@@ -3,13 +3,13 @@ import cv2
 cap = cv2.VideoCapture("../samples/Highway - 20090.mp4")
 
 object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=50)
-object_detector = cv2.createBackgroundSubtractorMOG2(128,cv2.THRESH_BINARY,1)
+object_detector = cv2.createBackgroundSubtractorMOG2(128, cv2.THRESH_BINARY, 1)
 # object_detector = cv2.createBackgroundSubtractorKNN(history=10, detectShadows=False)
 
 while True:
     # Read one frame
     ret, frame = cap.read()
-    roi = frame[400: 720, 300: 700]
+    roi = frame[400:720, 300:700]
 
     mask = object_detector.apply(roi)
     _, mask = cv2.threshold(mask, 254, 255, cv2.THRESH_BINARY)
