@@ -1,3 +1,5 @@
+import argparse
+
 import cv2
 import numpy as np
 
@@ -9,22 +11,22 @@ BORDER_BTTM_LEFT = 2.376
 BORDER_BTTM_RIGHT = 2.483
 
 # ROI (Region of Interest)
-# TODO: Make pts relative
+# These points are relative, so any image resolution will work
 PTS_LEFT = [
-    [656, 288],
-    [1279, 208],
-    [1279, 432],
-    [537, 397],
+    [656 / 1280, 288 / 720],
+    [1279 / 1280, 208 / 720],
+    [1279 / 1280, 432 / 720],
+    [537 / 1280, 397 / 720],
 ]
 PTS_RIGHT = [
-    [1, 215],
-    [925, 331],
-    [1006, 388],
-    [1, 449],
+    [1 / 1280, 215 / 720],
+    [925 / 1280, 331 / 720],
+    [1006 / 1280, 388 / 720],
+    [1 / 1280, 449 / 720],
 ]
 
 
-def process_side(img, pts1, border=True, write=True, left=True):
+def process_side(img, pts1, path: str, border=True, write=True, left=True):
     """Process one side.
 
     img: input image
@@ -34,11 +36,16 @@ def process_side(img, pts1, border=True, write=True, left=True):
     left: Left side of image
     """
     final_y, final_x, _ = img.shape
+    # Right side covers a lot more space
+    if not left:
+        final_x = int(3 * final_x)
     # Max distance of width, height
     # In other words, how large is the smallest rectangle that fits around all 4 points of pts1
     xs = [x[0] for x in pts1]
     ys = [x[1] for x in pts1]
-    mw = int(max(xs) - min(xs))
+    # mw = int(max(xs) - min(xs))
+    # We don't really need a border on the outer side
+    mw = final_x
     mh = int(max(ys) - min(ys))
     pts2 = [
         [0, 0],
@@ -68,15 +75,17 @@ def process_side(img, pts1, border=True, write=True, left=True):
 
     if write:
         suffix = "l" if left else "r"
-        cv2.imwrite(f"../samples/images/random1/destreched_{suffix}.jpg", img)
+        cv2.imwrite(f"{path}destreched_{suffix}.jpg", img)
     return img
 
 
-def main():
+def main(path: str):
     """Destrech and stitch panorama image."""
-    left = cv2.imread("../samples/images/random1/1l.jpg")
-    center = cv2.imread("../samples/images/random1/1c.jpg")
-    right = cv2.imread("../samples/images/random1/1r.jpg")
+    if not path.endswith("/"):
+        path += "/"
+    left = cv2.imread(f"{path}1l.jpg")
+    center = cv2.imread(f"{path}1c.jpg")
+    right = cv2.imread(f"{path}1r.jpg")
 
     target_y, target_x, _ = center.shape
 
@@ -92,16 +101,29 @@ def main():
     destr_r = cv2.resize(crop_r, (target_x, target_y))
 
     # LEFT
-    pts_left = np.float32(PTS_LEFT)
-    left_image = process_side(destr_l, pts_left)
+    pts_left = PTS_LEFT
+    for x in pts_left:
+        x[0] *= target_x
+        x[1] *= target_y
+    pts_left = np.float32(pts_left)
+    left_image = process_side(destr_l, pts_left, path=path)
     # RIGHT
-    pts_right = np.float32(PTS_RIGHT)
-    right_image = process_side(destr_r, pts_right, left=False)
+    pts_right = PTS_RIGHT
+    for x in pts_right:
+        x[0] *= target_x
+        x[1] *= target_y
+    pts_right = np.float32(pts_right)
+    right_image = process_side(destr_r, pts_right, left=False, path=path)
 
     # Finally, stitch together
     stitched = cv2.hconcat([left_image, center, right_image])
-    cv2.imwrite("../samples/images/random1/stitched.jpg", stitched)
+    cv2.imwrite(f"{path}stitched.jpg", stitched)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "path", type=str, nargs="?", default="../samples/images/random1/"
+    )
+    args = parser.parse_args()
+    main(args.path)
