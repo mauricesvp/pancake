@@ -2,7 +2,7 @@ weights: yolov5s6.pt
 cfg: ''
 data: ../data.yaml
 hyp: data/hyp.scratch.yaml
-epochs: 1000
+epochs: 100
 batch_size: 16
 img_size:
 - 416
@@ -36,5 +36,5 @@ save_period: -1
 artifact_alias: latest
 world_size: 1
 global_rank: -1
-save_dir: runs/train/exp3
+save_dir: runs/train/exp4
 total_batch_size: 16
