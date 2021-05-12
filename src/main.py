@@ -5,7 +5,7 @@ import torch
 import torch.backends.cudnn as cudnn
 
 from models.yolov5_class import Yolov5_Model
-from utils.datasets import LoadStreams, LoadImages
+from utils.datasets import LoadStreams, LoadImages, LoadWebcam
 from utils.general import check_img_size
 
 # cap = cv2.VideoCapture("samples/Highway - 20090.mp4")
@@ -31,12 +31,12 @@ def load_data(source: str, img_size: int):
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     :param img_size (int): inference size (pixels)
     """
-    is_stream = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
+    is_webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
         ('rtsp://', 'rtmp://', 'http://', 'https://'))
     if is_stream:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        return LoadStreams(source, img_size=img_size, stride=YOLO._stride)
+        return LoadWebcam(source, img_size=img_size, stride=YOLO._stride)
     else:
         return LoadImages(source, img_size=img_size, stride=YOLO._stride)
 
@@ -47,11 +47,10 @@ if __name__ == '__main__':
     """
     # MODEL SETUP
     YOLO = Yolov5_Model(device, weights, conf_thres, iou_thres, classes, agnostic_nms)
-    img_size = check_img_size(img_size, s=YOLO._stride)
-    YOLO._init_infer(img_size) 
+    YOLO._init_infer(check_img_size(img_size, s=YOLO._stride)) 
 
     # INPUT DATA SETUP
-    DATA = load_data(source, img_size)
+    DATA = load_data(source)
 
     """
     TRACKING PROCEDURE
