@@ -33,7 +33,7 @@ def load_data(source: str, img_size: int):
     """
     is_webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
         ('rtsp://', 'rtmp://', 'http://', 'https://'))
-    if is_stream:
+    if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
         return LoadWebcam(source, img_size=img_size, stride=YOLO._stride)
