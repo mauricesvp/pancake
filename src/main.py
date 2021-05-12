@@ -16,7 +16,7 @@ from utils.general import check_img_size
 # object_detector = cv2.createBackgroundSubtractorMOG2(128, cv2.THRESH_BINARY, 1)
 # object_detector = cv2.createBackgroundSubtractorKNN(history=10, detectShadows=False)
 
-""" prog args """
+""" CONFIGS """
 device = 'cpu'
 
 source = 'samples/images/random2_4k/1c.jpg'
@@ -30,6 +30,10 @@ classes = None
 agnostic_nms = False
 
 def load_data(source: str, img_size: int):
+    """
+    :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
+    :param img_size (int): inference size (pixels)
+    """
     is_stream = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
         ('rtsp://', 'rtmp://', 'http://', 'https://'))
     if is_stream:
@@ -53,7 +57,7 @@ if __name__ == '__main__':
     DATA = load_data(source, img_size)
 
     """
-    tracking procedure
+    TRACKING PROCEDURE
     """
     for path, img, im0s, vid_cap in DATA:
         pred = YOLO.infer(img)
