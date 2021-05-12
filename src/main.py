@@ -29,32 +29,33 @@ iou_thres = 0.5
 classes = None
 agnostic_nms = False
 
-if __name__ == '__main__':
-    """ 
-    LOADING PROCEDURE
-    """
-    # MODEL SETUP
-    YOLO = Yolov5_Model(
-        device, weights, conf_thres, iou_thres, classes, agnostic_nms)
-
-    # INPUT DATA SETUP
-    img_size = check_img_size(img_size, s=YOLO._stride)
-    YOLO._init_infer(img_size) 
-
+def load_data(source: str, img_size: int):
     is_stream = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
         ('rtsp://', 'rtmp://', 'http://', 'https://'))
     if is_stream:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        dataset = LoadStreams(source, img_size=img_size, stride=YOLO._stride)
+        return LoadStreams(source, img_size=img_size, stride=YOLO._stride)
     else:
-        dataset = LoadImages(source, img_size=img_size, stride=YOLO._stride)
+        return LoadImages(source, img_size=img_size, stride=YOLO._stride)
+
+
+if __name__ == '__main__':
+    """ 
+    LOADING PROCEDURE
+    """
+    # MODEL SETUP
+    YOLO = Yolov5_Model(device, weights, conf_thres, iou_thres, classes, agnostic_nms)
+    img_size = check_img_size(img_size, s=YOLO._stride)
+    YOLO._init_infer(img_size) 
+
+    # INPUT DATA SETUP
+    DATA = load_data(source, img_size)
 
     """
     tracking procedure
     """
-
-    for path, img, im0s, vid_cap in dataset:
+    for path, img, im0s, vid_cap in DATA:
         pred = YOLO.infer(img)
         print(pred)
 
