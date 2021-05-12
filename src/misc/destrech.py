@@ -75,17 +75,18 @@ def process_side(img, pts1, path: str, border=True, write=True, left=True):
 
     if write:
         suffix = "l" if left else "r"
-        cv2.imwrite(f"{path}destreched_{suffix}.jpg", img)
+        print(path)
+        cv2.imwrite(f"{path}/destreched_{suffix}.jpg", img)
     return img
 
 
 def main(path: str):
     """Destrech and stitch panorama image."""
-    if not path.endswith("/"):
-        path += "/"
-    left = cv2.imread(f"{path}1l.jpg")
-    center = cv2.imread(f"{path}1c.jpg")
-    right = cv2.imread(f"{path}1r.jpg")
+    if path.endswith("/"):
+        path = path[:-1]
+    left = cv2.imread(f"{path}/1l.jpg")
+    center = cv2.imread(f"{path}/1c.jpg")
+    right = cv2.imread(f"{path}/1r.jpg")
 
     target_y, target_x, _ = center.shape
 
@@ -106,7 +107,7 @@ def main(path: str):
         x[0] *= target_x
         x[1] *= target_y
     pts_left = np.float32(pts_left)
-    left_image = process_side(destr_l, pts_left, path=path)
+    left_image = process_side(destr_l, pts_left, path=path, border=False, write=True)
     # RIGHT
     pts_right = PTS_RIGHT
     for x in pts_right:
@@ -117,13 +118,13 @@ def main(path: str):
 
     # Finally, stitch together
     stitched = cv2.hconcat([left_image, center, right_image])
-    cv2.imwrite(f"{path}stitched.jpg", stitched)
+    cv2.imwrite(f"{path}/stitched.jpg", stitched)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "path", type=str, nargs="?", default="../samples/images/random1/"
+        "path", type=str, nargs="?", default="../samples/images/random1"
     )
     args = parser.parse_args()
     main(args.path)
