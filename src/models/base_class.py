@@ -13,6 +13,8 @@ class BaseModel(ABC):
                  iou_thres: float,
                  classes: int):
         """
+        This class acts as a base class for different models.
+
         :param device (torch.device): device to calculate on (cpu, gpu)
         :param weights (str): path to custom trained weights or name of the official pretrained yolo
         :param conf_thres (float): confidence threshold
@@ -49,8 +51,10 @@ class BaseModel(ABC):
     @abstractmethod
     def prep_image_infer(self, img):
         """
+        Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
+
         :param img: padded and resized image
-        :return prep_img: preprocessed image (on device, expanded dim (,4), half precision (fp16))
+        :return prep_img: preprocessed image
         """
         prep_img = torch.from_numpy(img).to(self._device) # outsource on device
         prep_img = prep_img.half() if self._half else prep_img.float()  # uint8 to fp16/32
@@ -62,8 +66,10 @@ class BaseModel(ABC):
         return prep_img
     
     @abstractmethod
-    def infer(self, img):
+    def infer(self, img: Type[torch.Tensor]):
         """
+        Infers on the given image.
+
         :param img (tensor): resized and padded image preprocessed for inference (meeting stride-multiple constraints), 
                              4d tensor [x, R, G, B]
         :return list of detections, on (,6) tensor [xyxy, conf, cls] 

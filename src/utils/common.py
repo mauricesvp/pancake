@@ -1,14 +1,18 @@
 import cv2
+import sys
 import torch
 import torch.backends.cudnn as cudnn
+from typing import Type
 
+sys.path.append('../models')
+from models.base_class import BaseModel
 from utils.datasets import LoadStreams, LoadImages, LoadWebcam
 from utils.general import check_img_size, scale_coords, check_imshow
 from utils.plots import colors, plot_one_box
 from utils.torch_utils import time_synchronized
 
 def load_data(source: str, 
-              model,
+              model: Type[BaseModel],
               img_size: int, 
               is_webcam: bool):
     """
