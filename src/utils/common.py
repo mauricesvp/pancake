@@ -3,7 +3,7 @@ import torch
 import torch.backends.cudnn as cudnn
 
 from utils.datasets import LoadStreams, LoadImages, LoadWebcam
-from utils.general import check_img_size, scale_coords
+from utils.general import check_img_size, scale_coords, check_imshow
 from utils.plots import colors, plot_one_box
 from utils.torch_utils import time_synchronized
 
@@ -20,7 +20,7 @@ def load_data(source: str,
     if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        return LoadWebcam(source, img_size=img_size, stride=model._stride)
+        return LoadStreams(source, img_size=img_size, stride=model._stride)
     else:
         return LoadImages(source, img_size=img_size, stride=model._stride)
 

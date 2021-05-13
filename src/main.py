@@ -7,19 +7,21 @@ from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
 
 """ CONFIGS """
-device = 'cpu'
+device = '0'
 
-source = 'samples/c1_sample.avi'
+source = 'https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan'
+#source = 'samples/c1_sample.avi'
 weights = 'train_results_yolov5s6/weights/last.pt'
-img_size = 648
+img_size = 416
+verbose = 2
 
 view_img = True
 hide_labels = False
 hide_conf = False
 line_thickness = 2
 
-conf_thres = 0.3
-iou_thres = 0.5
+conf_thres = 0.65
+iou_thres = 0.7
 classes = None
 agnostic_nms = False
 
@@ -49,7 +51,8 @@ if __name__ == '__main__':
         pred = YOLO.infer(prep_img) # pred (tensor): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         t2 = time_synchronized()
 
-        print(f'(Inference time: {t2 - t1:.3f}s)')
+        if verbose > 1:
+            print(f'(Inference time: {t2 - t1:.3f}s)')
 
         # process detections 
         for i, det in enumerate(pred): # iterate over all inferenced images
@@ -58,20 +61,23 @@ if __name__ == '__main__':
             else:
                 p, s, im0 = path, '', im0s.copy()
 
-            s += f'{prep_img.shape[2:]}%{prep_img.shape[2:]}'  # print string
+            s += f'{prep_img.shape[2:]}'  # print preprocessed image shape
 
             # IMPORTANT
             if len(det):
                 # Rescale boxes from img_size (padded according to stride) to im0 (original) size
                 det[:, :4] = scale_coords(prep_img.shape[2:], det[:, :4], im0.shape).round()
 
-            # Print results (detections per class)
+            # detections per class
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
                 s += f"{n} {YOLO._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
-        
-            print(f'{s} Done.')
+
+            # print results for current frame
+            if verbose > 0:
+                print(f'{s} Done.')
 
             # visualize detections
-            visualize(det, p, im0, YOLO._classlabels, hide_labels, hide_conf, line_thickness)
+            if view_img:
+                visualize(det, p, im0, YOLO._classlabels, hide_labels, hide_conf, line_thickness)
         
