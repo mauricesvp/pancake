@@ -39,35 +39,39 @@ class Yolov5_Model():
             self.model.half()  # to FP16
         
         self._stride = int(self.model.stride.max())  # model stride
-        self._names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
+        self._classlabels = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
 
-        print(f'Class names: {self._names}')
-
-    def infer(self, img):
-        """
-        :param img: image
-        :return list of detections, on (,6) tensor [xyxy, conf, cls], 
-                image (on device, expanded dim (,4), half precision (fp16))
-        """
-        img = torch.from_numpy(img).to(self._device)
-        img = img.half() if self._half else img.float()  # uint8 to fp16/32
-        img /= 255.0  # 0 - 255 to 0.0 - 1.0
-        if img.ndimension() == 3:
-            img = img.unsqueeze(0)
-
-        # Inference
-        #t1 = time_synchronized()
-        pred = self.model(img, augment=False)[0]
-
-        # Apply NMS
-        pred = non_max_suppression(pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms)
-        #t2 = time_synchronized()
-
-        return pred, img
+        print(f'Class names: {self._classlabels}')
 
     def _init_infer(self, img_size):
         if self._device.type != 'cpu':
             self.model(torch.zeros(1, 3, img_size, img_size).to(self._device).type_as(next(self.model.parameters())))  # run once
-    
 
-        
+    def prep_image_infer(self, img):
+        """
+        :param img: 
+        :return prep_img: preprocessed image (on device, expanded dim (,4), half precision (fp16))
+        """
+        prep_img = torch.from_numpy(img).to(self._device) # outsource on device
+        prep_img = prep_img.half() if self._half else prep_img.float()  # uint8 to fp16/32
+        prep_img /= 255.0  # 0 - 255 to 0.0 - 1.0 (normalize)
+
+        if prep_img.ndimension() == 3:  # unsqueeze to conform model input format
+            prep_img = prep_img.unsqueeze(0)
+
+        return prep_img
+
+    def infer(self, img):
+        """
+        :param img (tensor): resized and padded image preprocessed for inference (meeting stride-multiple constraints), 
+                            4d tensor [x, R, G, B]
+        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls] 
+        """
+        assert img.ndimension() == 4, "Dimension of image array didn't match the required dimension (4)!"
+        # Inference
+        pred = self.model(img, augment=False)[0]
+
+        # Apply NMS
+        pred = non_max_suppression(pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms)
+        return pred
+
