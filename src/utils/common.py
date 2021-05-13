@@ -2,9 +2,8 @@ import cv2
 import sys
 import torch
 import torch.backends.cudnn as cudnn
-from typing import Type
+from typing import Type, List
 
-sys.path.append('../models')
 from models.base_class import BaseModel
 from utils.datasets import LoadStreams, LoadImages, LoadWebcam
 from utils.general import check_img_size, scale_coords, check_imshow
@@ -28,10 +27,10 @@ def load_data(source: str,
     else:
         return LoadImages(source, img_size=img_size, stride=model._stride)
 
-def visualize(det: torch.Tensor,
+def visualize(det: Type[torch.Tensor],
               p: str,
               im0, 
-              labels: list,
+              labels: List,
               hide_labels: bool,
               hide_conf: bool,
               line_thickness: int):
@@ -40,6 +39,9 @@ def visualize(det: torch.Tensor,
     :param p (str): path of image
     :param im0s (array): original image
     :param labels (list): list of model specific class labels
+    :param hide_labels (bool): if labels should be visualized
+    :param hide_conf (bool): if confidences should be visualized
+    :param line_thickness (int): line thickness 
     """
     # Draw boxes
     for *xyxy, conf, cls in reversed(det):

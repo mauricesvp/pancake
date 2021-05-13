@@ -55,7 +55,7 @@ if __name__ == '__main__':
             print(f'(Inference time: {t2 - t1:.3f}s)')
 
         # process detections 
-        for i, det in enumerate(pred): # iterate over all inferenced images
+        for i, det in enumerate(pred): # iterate over image batch
             if is_webcam:  # batch_size >= 1
                 p, s, im0 = path[i], '%g: ' % i, im0s[i].copy()
             else:
