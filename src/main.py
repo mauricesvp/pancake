@@ -1,7 +1,7 @@
 import argparse
 import cv2
 
-from models.yolov5_class import Yolov5_Model
+from models.yolov5_class import Yolov5Model
 from utils.common import load_data, visualize
 from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     LOADING PROCEDURE
     """
     # MODEL SETUP
-    YOLO = Yolov5_Model(device, weights, conf_thres, iou_thres, classes, agnostic_nms)
+    YOLO = Yolov5Model(device, weights, conf_thres, iou_thres, classes, agnostic_nms)
     padded_img_size = check_img_size(img_size, s=YOLO._stride)
     YOLO._init_infer(padded_img_size) 
     
