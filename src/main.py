@@ -6,7 +6,8 @@ import torch.backends.cudnn as cudnn
 
 from models.yolov5_class import Yolov5_Model
 from utils.datasets import LoadStreams, LoadImages, LoadWebcam
-from utils.general import check_img_size
+from utils.general import check_img_size, scale_coords
+from utils.plots import colors, plot_one_box
 
 # cap = cv2.VideoCapture("samples/Highway - 20090.mp4")
 # object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=50)
@@ -16,23 +17,25 @@ from utils.general import check_img_size
 """ CONFIGS """
 device = 'cpu'
 
-source = 'samples/images/random2_4k/1c.jpg'
+source = 'samples/c1_sample.avi'
 weights = 'train_results_yolov5s6/weights/last.pt'
+img_size = 3840
+
 view_img = True
-img_size = 416
+hide_labels = False
+hide_conf = False
+line_thickness = 3
 
 conf_thres = 0.3
 iou_thres = 0.5
 classes = None
 agnostic_nms = False
 
-def load_data(source: str, img_size: int):
+def load_data(source: str, img_size: int, is_webcam: bool):
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     :param img_size (int): inference size (pixels)
     """
-    is_webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
-        ('rtsp://', 'rtmp://', 'http://', 'https://'))
     if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
@@ -47,21 +50,51 @@ if __name__ == '__main__':
     """
     # MODEL SETUP
     YOLO = Yolov5_Model(device, weights, conf_thres, iou_thres, classes, agnostic_nms)
-    YOLO._init_infer(check_img_size(img_size, s=YOLO._stride)) 
+    padded_img_size = check_img_size(img_size, s=YOLO._stride)
+    YOLO._init_infer(padded_img_size) 
 
     # INPUT DATA SETUP
-    DATA = load_data(source)
+    is_webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
+        ('rtsp://', 'rtmp://', 'http://', 'https://'))
+    DATA = load_data(source, padded_img_size, is_webcam)
 
     """
     TRACKING PROCEDURE
     """
     for path, img, im0s, vid_cap in DATA:
-        pred = YOLO.infer(img)
-        print(pred)
+        pred, img = YOLO.infer(img)
+        
+        for i, det in enumerate(pred):
+            if is_webcam:  # batch_size >= 1
+                p, s, im0, frame = path[i], '%g: ' % i, im0s[i].copy(), DATA.count
+            else:
+                p, s, im0, frame = path, '', im0s.copy(), getattr(DATA, 'frame', 0)
 
+            s += f'{img.shape[2:]}%{img.shape[2:]}'  # print string
+            gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 
+            if len(det):
+                # Rescale boxes from img_size (padded according to stride) to im0 (original) size
+                det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
+            # Print results
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()  # detections per class
+                s += f"{n} {YOLO._names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
+            # Write results
+            for *xyxy, conf, cls in reversed(det):
+                if view_img:  # Add bbox to image
+                    c = int(cls)  # integer class
+                    label = None if hide_labels else (YOLO._names[c] if hide_conf else f'{YOLO._names[c]} {conf:.2f}')
+
+                    plot_one_box(xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness)
+
+            print(f'{s}Done')
+            
+            if view_img:
+                cv2.imshow(str(p), im0)
+                cv2.waitKey(1)  # 1 millisecond
 
 
     # while True:

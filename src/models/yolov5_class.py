@@ -23,7 +23,7 @@ class Yolov5_Model():
         :param conf_thres (float): confidence threshold
         :param iou_thres (float): intersection over union threshold
         :param classes (int): filter by class 0, or 0 2 3
-        :param agnostic_nms(bool): class-agnostic NMS
+        agnostic_nms(bool): class-agnostic NMS
         """
         self._device = select_device(device)
         self._half = self._device.type != 'cpu'  # half precision only supported on CUDA
@@ -39,14 +39,15 @@ class Yolov5_Model():
             self.model.half()  # to FP16
         
         self._stride = int(self.model.stride.max())  # model stride
-        names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
+        self._names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
 
-        print(f'Class names: {names}')
+        print(f'Class names: {self._names}')
 
     def infer(self, img):
         """
         :param img: image
-        :return list of detections, on (,6) tensor [xyxy, conf, cls]
+        :return list of detections, on (,6) tensor [xyxy, conf, cls], 
+                image (on device, expanded dim (,4), half precision (fp16))
         """
         img = torch.from_numpy(img).to(self._device)
         img = img.half() if self._half else img.float()  # uint8 to fp16/32
@@ -62,7 +63,7 @@ class Yolov5_Model():
         pred = non_max_suppression(pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms)
         #t2 = time_synchronized()
 
-        return pred
+        return pred, img
 
     def _init_infer(self, img_size):
         if self._device.type != 'cpu':
