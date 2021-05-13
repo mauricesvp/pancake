@@ -6,12 +6,6 @@ from utils.common import load_data, visualize
 from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
 
-
-# cap = cv2.VideoCapture("samples/Highway - 20090.mp4")
-# object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=50)
-# object_detector = cv2.createBackgroundSubtractorMOG2(128, cv2.THRESH_BINARY, 1)
-# object_detector = cv2.createBackgroundSubtractorKNN(history=10, detectShadows=False)
-
 """ CONFIGS """
 device = 'cpu'
 
