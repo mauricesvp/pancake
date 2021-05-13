@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
             # IMPORTANT
             if len(det):
-                # Rescale boxes from img_size (padded according to stride) to im0 (original) size
+                # Rescale boxes from padded_img_size (padded according to stride) to im0 (original) size
                 det[:, :4] = scale_coords(prep_img.shape[2:], det[:, :4], im0.shape).round()
 
             # detections per class
