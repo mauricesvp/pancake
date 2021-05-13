@@ -5,7 +5,7 @@ import torch
 import sys
 sys.path.append('src/models')
 
-from base_class import BaseModel
+from .base_class import BaseModel
 from utils.general import non_max_suppression
 
 class Yolov5Model(BaseModel):
