@@ -8,11 +8,13 @@ from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
 
 """ CONFIGS """
-device = "0"
+device = "CPU"
 
-source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
-# source = 'samples/c1_sample.avi'
-weights = "train_results_yolov5s6/weights/last.pt"
+# source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
+source = "../samples/images/random2_4k/1l-cropped-rotated.jpg"
+# weights = "train_results_yolov5s6/weights/last.pt"
+# weights = "yolov5s6.pt"
+weights = "../weights/yolov5s6_100epochs.pt"
 img_size = 416
 verbose = 2
 
@@ -100,6 +102,7 @@ def main(argv=None):
                     hide_conf,
                     line_thickness,
                 )
+            input()
 
 
 if __name__ == "__main__":
