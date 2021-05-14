@@ -1,15 +1,7 @@
-# numpy
-# opencv-python
-# pandas
-# Pillow
+Shapely
 requests
-# torch
-# torchvision
-# tqdm
 
-#
 # YOLOv5
-#
 
 # base ----------------------------------------
 matplotlib>=3.2.2

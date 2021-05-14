@@ -4,7 +4,32 @@ import cv2
 import imutils
 import numpy as np
 
+from shapely.geometry import Polygon
+
 from ..detector.detector_yolo import YOLODetector
+
+
+# Helper functions
+
+
+def locate(subframes, x0, y0, x1, y1) -> list:
+    """Return all subframe ids the obj is present in.
+
+    This function assumes the coordinates are laid out like this:
+    x0, y0 ------------
+       |               |
+       |               |
+       |               |
+        ------------ x1, y1
+    """
+    if not (x0 > 0 and y0 > 0):
+        return []
+    locations = []
+    for i, subframe in enumerate(subframes):
+        tlx, tly, brx, bry = subframe[:4]
+        if x0 >= tlx and y0 >= tly and x1 <= brx and y1 <= bry:
+            locations.append(i)
+    return locations
 
 
 # Constants
@@ -58,10 +83,19 @@ def partial(
 
     :return objs: list of tuples with objects and their coordinates
 
+    The tuples of the return list have 6 values:
+    x0: x-value top left corner
+    y0: y-value top left corner
+    x1: x-value bottom right corner
+    y1: y-value bottom right corner
+    conf: Confidence of detection, values between 0 and 1
+    class id: Integer indicating the detected object type
+
     Modus operandi:
     * Rotate image (without cropping)
-    * Select subframes
+    * Divide image into subframes
     * Detect objects on each subframe, saving classes and coordinates
+    * Dedup objects
     * Calculate coordinates on original frame
     """
     if type(source) is str:
@@ -79,8 +113,12 @@ def partial(
     else:
         CONST = R_CONST
 
+    detector = YOLODetector()
+
     img = imutils.rotate_bound(img, CONST["ANGLE"])
 
+    # Divide image into subframes
+    objs = []
     subframes = []
     for x in range(
         CONST["START_X"],
@@ -92,20 +130,82 @@ def partial(
         subframe = img[
             y - CONST["SIDE"] : y + CONST["SIDE"], x - CONST["SIDE"] : x + CONST["SIDE"]
         ]
-        subframes.append(subframe)
+        # top left
+        tlx, tly = x - CONST["SIDE"], y - CONST["SIDE"]
+        # bottom right
+        brx, bry = x + CONST["SIDE"], y + CONST["SIDE"]
+        subframes.append((tlx, tly, brx, bry))
         cv2.rectangle(
             img,
-            (x - CONST["SIDE"], y - CONST["SIDE"]),
-            (x + CONST["SIDE"], y + CONST["SIDE"]),
+            (tlx, tly),
+            (brx, bry),
             (0, 0, 255),
             5,
         )
 
-    detector = YOLODetector()
-    for subframe in subframes:
-        res = detector.detect(subframe)
-        print(res)
-        # TODO: stuff
+        res = detector.detect(subframe)[0]
+        for obj in res:
+            x0, y0 = obj[:2]
+            x1, y1 = obj[2:4]
+            x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+            # real points
+            # top left
+            rtlx, rtly = tlx + x0, tly + y0
+            # bottom right
+            rbrx, rbry = tlx + x1, tly + y1
+            # save coords, conf, class
+            objs.append((rtlx, rtly, rbrx, rbry, obj[4], obj[5]))
+
+    results = []
+    while objs:
+        obj = objs.pop(0)
+        # First, check if obj is present in multiple subframes
+        # If not, we can add it directly
+        locations = locate(subframes, *obj[:4])
+        if len(locations) == 0:
+            continue  # This should _never_ happen
+        if len(locations) == 1:
+            results.append(obj)
+            continue
+        # If yes, we need to do some filtering
+        # We can go about this more or less sophisticated.
+        # Naturally, we'll go with the easy way first.
+
+        # Check if object is embedded in other object (with >80% of its area)
+        emb = 0.80
+        x0, y0, x1, y1 = obj[:4]
+        rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+        skip = False
+        for objtemp in objs + results:
+            xt0, yt0, xt1, yt1 = objtemp[:4]
+            rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
+            intersection = rect1.intersection(rect2)
+            if intersection.area >= (emb * rect1.area):
+                # Our current obj is embedded, skip
+                skip = True
+                break
+
+        if not skip:
+            results.append(obj)
+
+        # TODO: This simple heuristic is by no means perfect yet
+        # Especially when an object is right at the border of a subframe,
+        # the results can get inaccurate
+        # Further filtering has to be done here
+
+    # TODO: Reverse rotation
+
+    # Draw results on image
+    if imshow or imwrite:
+        for obj in results:
+            tlx, tly, brx, bry = obj[:4]
+            cv2.rectangle(
+                img,
+                (tlx, tly),
+                (brx, bry),
+                (255, 0, 0),
+                1,
+            )
 
     if imshow:
         cv2.namedWindow("results", cv2.WINDOW_NORMAL)
@@ -115,55 +215,7 @@ def partial(
     if imwrite:
         cv2.imwrite(imwrite_filename, img)
 
-    return subframes
-
-
-def right():
-    raise DeprecationWarning
-    global img
-    filename = "../../samples/images/random2_4k/1r.jpg"
-    img = cv2.imread(filename)
-    img = imutils.rotate_bound(img, 360 - 38)
-    # Crops
-
-    side = 416 // 2
-    start_x = 2900
-    end_x = 600
-    steps = 7
-    for x in range(start_x, end_x, -((start_x - end_x) // steps)):
-        y = f(x)
-        side = int(1.1 * side)
-        cv2.rectangle(img, (x - side, y - side), (x + side, y + side), (0, 0, 255), 5)
-
-    cv2.namedWindow("image", cv2.WINDOW_NORMAL)
-    cv2.imshow("image", img)
-    cv2.imwrite("FOOO.jpg", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
-def left():
-    raise DeprecationWarning
-    global img
-    filename = "../../samples/images/random2_4k/1l.jpg"
-    img = cv2.imread(filename)
-    img = imutils.rotate_bound(img, 38)
-    # Crops
-
-    side = 450 // 2
-    start_x = 1925
-    end_x = 4000
-    steps = 6
-    for x in range(start_x, end_x, -((start_x - end_x) // steps)):
-        y = f(x)
-        side = int(1.1 * side)
-        cv2.rectangle(img, (x - side, y - side), (x + side, y + side), (0, 0, 255), 5)
-
-    cv2.namedWindow("image", cv2.WINDOW_NORMAL)
-    cv2.imshow("image", img)
-    cv2.imwrite("FOOO.jpg", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return results
 
 
 if __name__ == "__main__":
