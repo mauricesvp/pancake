@@ -66,6 +66,8 @@ def partial(
     """
     if type(source) is str:
         img = cv2.imread(source)
+        if img is None:
+            raise ValueError("File does not seem to exist")
     elif type(source) is not np.ndarray:
         raise ValueError("Source needs to be str or np.ndarray")
 
