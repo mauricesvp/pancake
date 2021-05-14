@@ -39,7 +39,8 @@ class BaseModel(ABC):
         print(f'Class names: {self._classlabels}')
     
     @abstractmethod
-    def _init_infer(self, img_size):
+    def _init_infer(self, 
+                    img_size):
         """
         Does one forward pass on the network for initialization on gpu
 
@@ -49,7 +50,8 @@ class BaseModel(ABC):
             self.model(torch.zeros(1, 3, img_size, img_size).to(self._device).type_as(next(self.model.parameters())))  # run once
 
     @abstractmethod
-    def prep_image_infer(self, img):
+    def prep_image_infer(self, 
+                         img):
         """
         Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
 
@@ -66,7 +68,9 @@ class BaseModel(ABC):
         return prep_img
     
     @abstractmethod
-    def infer(self, img: Type[torch.Tensor]):
+    def infer(self, 
+              img: Type[torch.Tensor]
+              ) -> Type[torch.Tensor]:
         """
         Infers on the given image.
 

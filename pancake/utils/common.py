@@ -2,7 +2,7 @@ import cv2
 import sys
 import torch
 import torch.backends.cudnn as cudnn
-from typing import Type, List
+from typing import Type, List, Union
 
 from models.base_class import BaseModel
 from utils.datasets import LoadStreams, LoadImages, LoadWebcam
@@ -12,20 +12,24 @@ from utils.torch_utils import time_synchronized
 
 def load_data(source: str, 
               model: Type[BaseModel],
-              img_size: int, 
-              is_webcam: bool):
+              img_size: int
+              ) -> Union[LoadStreams, LoadImages]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
-    :param model (Model Wrapper): model wrapper
+    :param model (BaseModel): model wrapper
     :param img_size (int): inference size (pixels)
-    :param is_webcam (bool): if data is sourced from webcam
     """
+    is_webcam = (
+        source.isnumeric()
+        or source.endswith(".txt")
+        or source.lower().startswith(("rtsp://", "rtmp://", "http://", "https://"))
+    )
     if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        return LoadStreams(source, img_size=img_size, stride=model._stride)
+        return LoadStreams(source, img_size=img_size, stride=model._stride), True
     else:
-        return LoadImages(source, img_size=img_size, stride=model._stride)
+        return LoadImages(source, img_size=img_size, stride=model._stride), False
 
 def visualize(det: Type[torch.Tensor],
               p: str,
@@ -33,7 +37,8 @@ def visualize(det: Type[torch.Tensor],
               labels: List,
               hide_labels: bool,
               hide_conf: bool,
-              line_thickness: int):
+              line_thickness: int
+              ) -> None:
     """
     :param det (tensor): detections on (,6) tensor [xyxy, conf, cls] 
     :param p (str): path of image

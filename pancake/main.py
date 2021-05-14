@@ -8,10 +8,10 @@ from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
 
 """ CONFIGS """
-device = "CPU"
+device = "0"
 
 # source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
-source = "../samples/images/random2_4k/1l-cropped-rotated.jpg"
+source = "../samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
 weights = "../weights/yolov5s6_100epochs.pt"
@@ -39,12 +39,7 @@ def main(argv=None):
     YOLO._init_infer(padded_img_size)
 
     # INPUT DATA SETUP
-    is_webcam = (
-        source.isnumeric()
-        or source.endswith(".txt")
-        or source.lower().startswith(("rtsp://", "rtmp://", "http://", "https://"))
-    )
-    DATA = load_data(source, YOLO, padded_img_size, is_webcam)
+    DATA, is_webcam = load_data(source, YOLO, padded_img_size)
 
     """
     TRACKING PROCEDURE

@@ -5,6 +5,7 @@ import torch
 import sys
 sys.path.append('src/models')
 
+from typing import Type
 from .base_class import BaseModel
 from utils.general import non_max_suppression
 
@@ -16,7 +17,7 @@ class Yolov5Model(BaseModel):
                  iou_thres: float,
                  classes: int,
                  agnostic_nms: bool,
-                *args, **kwargs):
+                 *args, **kwargs):
         """
         :param device (torch.device): device to calculate on (cpu, gpu)
         :param weights (str): path to custom trained weights or name of the official pretrained yolo
@@ -28,7 +29,8 @@ class Yolov5Model(BaseModel):
         super(Yolov5Model, self).__init__(device, weights, conf_thres, iou_thres, classes)
         self._agnostic_nms = agnostic_nms
 
-    def _init_infer(self, img_size):
+    def _init_infer(self, 
+                    img_size):
         """
         Does one forward pass on the network for initialization on gpu
 
@@ -36,14 +38,17 @@ class Yolov5Model(BaseModel):
         """
         super(Yolov5Model, self)._init_infer(img_size)
 
-    def prep_image_infer(self, img):
+    def prep_image_infer(self, 
+                         img):
         """
         :param img: padded and resized image
         :return prep_img: preprocessed image (on device, expanded dim (,4), half precision (fp16))
         """
         return super(Yolov5Model, self).prep_image_infer(img)
 
-    def infer(self, img):
+    def infer(self, 
+              img: Type[torch.Tensor]
+              ) -> Type[torch.Tensor]:
         """
         :param img (tensor): resized and padded image preprocessed for inference (meeting stride-multiple constraints), 
                             4d tensor [x, R, G, B]
