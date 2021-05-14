@@ -20,10 +20,12 @@ if __name__ == "__main__":
     filename = ""
     if not args.file:
         dirname = os.path.dirname(__file__)
-        filename = os.path.join(dirname, "../samples/images/random1/1r.jpg")
+        filename = os.path.join(dirname, "../../samples/images/random2_4k/1r.jpg")
     else:
         filename = args.file
+    print("Using file", filename)
     img = cv2.imread(filename)
+    cv2.namedWindow("image", cv2.WINDOW_NORMAL)
     cv2.imshow("image", img)
     cv2.setMouseCallback("image", click_event)
     print("Draw points using left mouse click.")
