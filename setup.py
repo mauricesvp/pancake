@@ -8,5 +8,5 @@ setup(
     description='Panorama Camera Car Tracking',
     author='mauricesvp, a-kest, tuananhroman',
     url='https://github.com/mauricesvp/pancake',
-    packages=find_packages()
+    packages=find_packages(),
 )
