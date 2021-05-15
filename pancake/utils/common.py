@@ -11,14 +11,17 @@ from utils.plots import colors, plot_one_box
 from utils.torch_utils import time_synchronized
 
 def load_data(source: str, 
-              model: Type[BaseModel],
-              img_size: int
+              model: Type[BaseModel]
               ) -> Union[LoadStreams, LoadImages]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     :param model (BaseModel): model wrapper
     :param img_size (int): inference size (pixels)
     """
+    assert (model._required_img_size
+    ), "Your model needs to specify a model specific image size " 
+    "in class attribute '._required_img_size'"
+
     is_webcam = (
         source.isnumeric()
         or source.endswith(".txt")
@@ -27,9 +30,9 @@ def load_data(source: str,
     if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        return LoadStreams(source, img_size=img_size, stride=model._stride), True
+        return LoadStreams(source, img_size=model._required_img_size, stride=model._stride), True
     else:
-        return LoadImages(source, img_size=img_size, stride=model._stride), False
+        return LoadImages(source, img_size=model._required_img_size, stride=model._stride), False
 
 def visualize(det: Type[torch.Tensor],
               p: str,

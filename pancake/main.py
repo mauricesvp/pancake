@@ -8,14 +8,14 @@ from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
 
 """ CONFIGS """
-device = "cpu"
+device = "0"
 
 source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
 model = "yolov5"
-weights = "../weights/yolov5s6_100epochs.pt"
+weights = "weights/yolov5s6_100epochs.pt"
 img_size = 448
 verbose = 2
 
@@ -44,12 +44,9 @@ def main(argv=None):
         agnostic_nms,
         img_size
         )
-    assert (MODEL._required_img_size
-    ), "Your model needs to specify a model specific image size " 
-    "in class attribute '._required_img_size'"
 
     # INPUT DATA SETUP
-    DATA, is_webcam = load_data(source, MODEL, MODEL._required_img_size)
+    DATA, is_webcam = load_data(source, MODEL)
 
     """
     TRACKING PROCEDURE
@@ -76,7 +73,7 @@ def main(argv=None):
             else:
                 p, s, im0 = path, "", im0s.copy()
 
-            s += f"{prep_img.shape[2:]}"  # print preprocessed image shape
+            s += f"{prep_img.shape[2:]} || "  # print preprocessed image shape
 
             # IMPORTANT
             if len(det):
