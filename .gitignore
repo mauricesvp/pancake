@@ -136,4 +136,7 @@ dmypy.json
 
 # vim
 *.swp
+
+# tests
 tests/*.jpg
+tests/*.pt
