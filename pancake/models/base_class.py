@@ -3,30 +3,24 @@ from abc import ABC, abstractmethod
 from typing import Type
 
 from models.experimental import attempt_load
+from utils.general import check_img_size
 from utils.torch_utils import select_device
 
+
 class BaseModel(ABC):
+    _subclasses = {}
+
     def __init__(self, 
                  device: str, 
-                 weights: str, 
-                 conf_thres: float,
-                 iou_thres: float,
-                 classes: int):
+                 weights: str):
         """
         This class acts as a base class for different models.
 
         :param device (torch.device): device to calculate on (cpu, gpu)
         :param weights (str): path to custom trained weights or name of the official pretrained yolo
-        :param conf_thres (float): confidence threshold
-        :param iou_thres (float): intersection over union threshold
-        :param classes (int): filter by class 0, or 0 2 3
         """
         self._device = select_device(device)
         self._half = self._device.type != 'cpu'  # half precision only supported on CUDA
-
-        self._conf_thres = conf_thres
-        self._iou_thres = iou_thres
-        self._classes = classes
 
         # load model
         self.model = attempt_load(weights, map_location=self._device)
@@ -37,21 +31,32 @@ class BaseModel(ABC):
         self._classlabels = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
 
         print(f'Class names: {self._classlabels}')
-    
+
+    @classmethod
+    def get_subclasses(cls):
+        return dict(cls._subclasses)
+
+    def __init_subclass__(cls):
+        module_name = cls.__module__.split('.')[1]
+        class_name = module_name if not module_name.endswith('class') else module_name[:6]
+        BaseModel._subclasses[class_name] = cls
+
     @abstractmethod
     def _init_infer(self, 
                     img_size):
         """
         Does one forward pass on the network for initialization on gpu
-
         :param img_size: padded, resized image size
         """
+        assert (img_size
+        ), "Your model needs to specify a specific image size " 
+        "for inference in class attribute '._required_img_size'"
         if self._device.type != 'cpu':
             self.model(torch.zeros(1, 3, img_size, img_size).to(self._device).type_as(next(self.model.parameters())))  # run once
 
     @abstractmethod
     def prep_image_infer(self, 
-                         img):
+                         img) -> Type[torch.Tensor]:
         """
         Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
 

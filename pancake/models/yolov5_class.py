@@ -7,7 +7,8 @@ sys.path.append('src/models')
 
 from typing import Type
 from .base_class import BaseModel
-from utils.general import non_max_suppression
+from utils.general import check_img_size, non_max_suppression
+
 
 class Yolov5Model(BaseModel):
     def __init__(self, 
@@ -17,6 +18,7 @@ class Yolov5Model(BaseModel):
                  iou_thres: float,
                  classes: int,
                  agnostic_nms: bool,
+                 img_size: int,
                  *args, **kwargs):
         """
         :param device (torch.device): device to calculate on (cpu, gpu)
@@ -25,9 +27,16 @@ class Yolov5Model(BaseModel):
         :param iou_thres (float): intersection over union threshold
         :param classes (int): filter by class 0, or 0 2 3
         :param agnostic_nms(bool): class-agnostic NMS
+        :param img_size (int): specified image size
         """
-        super(Yolov5Model, self).__init__(device, weights, conf_thres, iou_thres, classes)
+        super(Yolov5Model, self).__init__(device, weights)
+        self._conf_thres = conf_thres
+        self._iou_thres = iou_thres
+        self._classes = classes
         self._agnostic_nms = agnostic_nms
+
+        self._required_img_size = check_img_size(img_size, self._stride)
+        self._init_infer(self._required_img_size)
 
     def _init_infer(self, 
                     img_size):
