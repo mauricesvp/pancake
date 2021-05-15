@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import Type
 
 from models.experimental import attempt_load
-from utils.general import check_img_size
 from utils.torch_utils import select_device
 
 
