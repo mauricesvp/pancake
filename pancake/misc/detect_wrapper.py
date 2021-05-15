@@ -1,3 +1,11 @@
+"""
+Detect Wrapper
+----------------
+TODOs:
+    * Apply ROIs
+    * Filter by object class id
+
+"""
 import math
 
 import cv2
@@ -94,6 +102,7 @@ class DetectWrapper:
         imgc = self.get_img(imgc)
         imgr = self.get_img(imgr)
         assert imgl.shape == imgc.shape == imgr.shape
+        self.shape = imgl.shape
         objs = []
         # Note that reversing of rotation is not done yet
         objs += self.partial(imgl, side="l")
@@ -199,7 +208,7 @@ class DetectWrapper:
                     int(y0),
                     int(x1),
                     int(y1),
-                    int(conf),
+                    float(conf),
                     int(classid),
                 )
                 # real points
@@ -210,44 +219,8 @@ class DetectWrapper:
                 # save coords, conf, class
                 objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
 
-        results = []
-        while objs:
-            obj = objs.pop(0)
-            # First, check if obj is present in multiple subframes
-            # If not, we can add it directly
-            locations = locate(subframes, *obj[:4])
-            if len(locations) == 0:
-                continue  # This should _never_ happen
-            if len(locations) == 1:
-                results.append(obj)
-                continue
-            # If yes, we need to do some filtering
-            # We can go about this more or less sophisticated.
-            # Naturally, we'll go with the easy way first.
-
-            # Check if object is embedded in other object (with >80% of its area)
-            emb = 0.80
-            x0, y0, x1, y1 = obj[:4]
-            rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
-            skip = False
-            for objtemp in objs + results:
-                xt0, yt0, xt1, yt1 = objtemp[:4]
-                rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
-                intersection = rect1.intersection(rect2)
-                if intersection.area >= (emb * rect1.area):
-                    # Our current obj is embedded, skip
-                    skip = True
-                    break
-
-            if not skip:
-                results.append(obj)
-
-            # TODO: This simple heuristic is by no means perfect yet.
-            # Especially when an object is right at the border of a subframe,
-            # the results can get inaccurate.
-            # Further filtering has to be done here
-
-        # TODO: Reverse rotation
+        # Filter embedded objects
+        results = self.rm_embedded(objs, subframes, ratio=0.85)
 
         # Draw results on image
         if imshow or imwrite:
@@ -261,6 +234,47 @@ class DetectWrapper:
                     1,
                 )
 
+        # Reverse rotation
+        h, w, _ = img.shape
+        center = (w // 2, h // 2)
+        M = cv2.getRotationMatrix2D(center, CONST["ANGLE"], 1.0)
+        tmpimg = imutils.rotate(img, CONST["ANGLE"])
+        htmp, wtmp, _ = tmpimg.shape
+        # original image(s) shape
+        h, w, _ = self.shape
+        xdiff = (wtmp - w) // 2
+        ydiff = (htmp - h) // 2
+
+        for i, obj in enumerate(results):
+            x0, y0, x1, y1, cf, cl = obj
+            # Get center of obj
+            # center = [np.mean(x0, x1), np.mean(y0, y1)]
+            # Reverse rotation using rotation matrix
+            ntl = M.dot([x0, y0, 1])
+            nbr = M.dot([x1, y1, 1])
+            # Actually do all four corners
+            ntr = M.dot([x1, y0, 1])
+            nbl = M.dot([x0, y1, 1])
+
+            allcords = [ntl] + [nbr] + [ntr] + [nbl]
+            allx = [x[0] for x in allcords]
+            ally = [x[1] for x in allcords]
+            tlx = min(allx)
+            tly = min(ally)
+            brx = max(allx)
+            bry = max(ally)
+
+            # tlx, tly = ntl
+            # brx, bry = nbr
+            tlx -= xdiff
+            brx -= xdiff
+            tly -= ydiff
+            bry -= ydiff
+            results[i] = (int(tlx), int(tly), int(brx), int(bry), cf, cl)
+
+        # Filter again!
+        results = self.rm_embedded(results)
+
         if imshow:
             cv2.namedWindow("results", cv2.WINDOW_NORMAL)
             cv2.imshow("results", img)
@@ -269,6 +283,45 @@ class DetectWrapper:
         if imwrite:
             cv2.imwrite(imwrite_filename, img)
 
+        return results
+
+    def rm_embedded(self, objs: list, subframes: list = None, ratio=0.9) -> list:
+        results = []
+        while objs:
+            obj = objs.pop(0)
+            # First, check if obj is present in multiple subframes
+            # If not, we can add it directly
+            if subframes:
+                locations = locate(subframes, *obj[:4])
+                if len(locations) == 0:
+                    continue  # This should _never_ happen
+                if len(locations) == 1:
+                    results.append(obj)
+                    continue
+            # If yes, we need to do some filtering
+            # We can go about this more or less sophisticated.
+            # Naturally, we'll go with the easy way first.
+
+            # Check if object is embedded in other object (with >80% of its area)
+            x0, y0, x1, y1 = obj[:4]
+            rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+            skip = False
+            for objtemp in objs + results:
+                xt0, yt0, xt1, yt1 = objtemp[:4]
+                rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
+                intersection = rect1.intersection(rect2)
+                if intersection.area >= (ratio * rect1.area):
+                    # Our current obj is embedded, skip
+                    skip = True
+                    break
+
+            if not skip:
+                results.append(obj)
+
+            # TODO: This simple heuristic is by no means perfect yet.
+            # Especially when an object is right at the border of a subframe,
+            # the results can get inaccurate.
+            # Further filtering has to be done here
         return results
 
     def get_img(self, source) -> np.ndarray:
