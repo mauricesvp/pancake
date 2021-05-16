@@ -59,7 +59,10 @@ def main(argv=None):
     )
 
     # INPUT DATA SETUP
-    DATA, is_webcam = load_data(source, MODEL)
+    DATA, is_webcam = load_data(
+        source, 
+        MODEL
+    )
 
     """
     TRACKING PROCEDURE
