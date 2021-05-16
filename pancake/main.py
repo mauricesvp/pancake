@@ -2,10 +2,13 @@ import argparse
 
 import cv2
 
-import models
+import models as m
+import tracker as tr
+
 from utils.common import load_data, visualize
 from utils.general import check_img_size, scale_coords
 from utils.torch_utils import time_synchronized
+from utils.parser import get_config
 
 """ CONFIGS """
 device = "0"
@@ -16,7 +19,10 @@ source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # weights = "yolov5s6.pt"
 model = "yolov5"
 weights = "weights/yolov5s6_10epochs.pt"
-tracker = "deep_sort"
+
+tracker = "deepsort"
+cfg = get_config(config_file="configs/deep_sort.yaml")
+
 img_size = 448
 verbose = 2
 
@@ -36,7 +42,7 @@ def main(argv=None):
     LOADING PROCEDURE
     """
     # MODEL SETUP
-    MODEL = models.MODEL_REGISTRY[model](
+    MODEL = m.MODEL_REGISTRY[model](
         device, 
         weights, 
         conf_thres, 
@@ -45,6 +51,12 @@ def main(argv=None):
         agnostic_nms,
         img_size
         )
+
+    # TRACKER SETUP
+    TRACKER = tr.TRACKER_REGISTRY[tracker](
+        cfg,
+        device=device
+    )
 
     # INPUT DATA SETUP
     DATA, is_webcam = load_data(source, MODEL)
