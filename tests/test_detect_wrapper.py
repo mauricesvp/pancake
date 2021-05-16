@@ -16,6 +16,7 @@ def test_detect_wrapper():
     dw.run_detection(l, c, r)
     dw.write("result.jpg")
     # TODO: Add asserts here
+    assert dw.result
 
 
 if __name__ == "__main__":

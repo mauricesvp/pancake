@@ -4,6 +4,7 @@ Detect Wrapper
 TODOs:
     * Apply ROIs
     * Filter by object class id
+      (this could be done in the detector as well)
 
 """
 import math
@@ -105,14 +106,16 @@ class DetectWrapper:
         assert imgl.shape == imgc.shape == imgr.shape
         self.shape = imgl.shape
         objs = []
-        # Note that reversing of rotation is not done yet
         objs += self.partial(imgl, side="l", imwrite=self.write_partials)
         rights = self.partial(imgr, side="r", imwrite=self.write_partials)
         mids = self.detect_mid(imgc)
         # Add offsets to mid/right
         h, w, _ = imgc.shape
-        mids = [(a + w, b, c + w, d, e, f) for a, b, c, d, e, f in mids]
-        rights = [(a + (2 * w), b, c + (2 * w), d, e, f) for a, b, c, d, e, f in rights]
+        mids = [(a + w, b, c + w, d, e) for a, b, c, d, *e in mids]
+        rights = [
+            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i)
+            for a, b, c, d, e, f, g, h, *i in rights
+        ]
         objs += mids + rights
 
         # TODO: Apply ROIs here
@@ -120,7 +123,7 @@ class DetectWrapper:
         self.result = objs
         self.imgs = [imgl, imgc, imgr]
         self.set_full_img()  # set self.img
-        self.draw()  # set self.printed
+        self.printed = self.draw(self.img, self.result)
         return objs
 
     def detect_mid(self, imgc) -> list:
@@ -222,25 +225,15 @@ class DetectWrapper:
                 objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
 
         # Filter embedded objects
-        results = self.rm_embedded(objs, subframes, ratio=0.85)
+        results = self.merge(objs, subframes)
 
         # Reverse rotation
+        # All object tuples now have all 4 corners!
         results = self.rev_rotate(img, results, CONST["ANGLE"])
-
-        # Filter again!
-        results = self.rm_embedded(results)
 
         # Draw results on image
         if imshow or imwrite:
-            for obj in results:
-                tlx, tly, brx, bry = obj[:4]
-                cv2.rectangle(
-                    orig_img,
-                    (tlx, tly),
-                    (brx, bry),
-                    (255, 0, 0),
-                    1,
-                )
+            orig_img = self.draw(orig_img, results)
 
         if imshow:
             cv2.namedWindow("results", cv2.WINDOW_NORMAL)
@@ -267,33 +260,32 @@ class DetectWrapper:
 
         for i, obj in enumerate(results):
             x0, y0, x1, y1, cf, cl = obj
-            # Get center of obj
-            # center = [np.mean(x0, x1), np.mean(y0, y1)]
+            area = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]).area
+            ar = (x1 - x0) // (y1 - y0)  # aspect ratio
             # Reverse rotation using rotation matrix
+            # Note that we will from this point on use all four corners!
             ntl = M.dot([x0, y0, 1])
             nbr = M.dot([x1, y1, 1])
-            # Actually do all four corners
             ntr = M.dot([x1, y0, 1])
             nbl = M.dot([x0, y1, 1])
 
-            allcords = [ntl] + [nbr] + [ntr] + [nbl]
-            allx = [x[0] for x in allcords]
-            ally = [x[1] for x in allcords]
-            tlx = min(allx)
-            tly = min(ally)
-            brx = max(allx)
-            bry = max(ally)
+            allcords = [ntl] + [ntr] + [nbr] + [nbl]
+            allcords = [[int(a), int(b)] for a, b in allcords]
+            allrebased = []
+            for point in allcords:
+                point[0] -= xdiff
+                point[1] -= ydiff
+                allrebased += point
 
-            # tlx, tly = ntl
-            # brx, bry = nbr
-            tlx -= xdiff
-            brx -= xdiff
-            tly -= ydiff
-            bry -= ydiff
-            results[i] = (int(tlx), int(tly), int(brx), int(bry), cf, cl)
+            results[i] = (*allrebased, cf, cl)
         return results
 
-    def rm_embedded(self, objs: list, subframes: list = None, ratio=0.9) -> list:
+    def merge(self, objs: list, subframes: list = None, ratio=0.8) -> list:
+        """Merge all detected objects of subframes.
+
+        Right now we use a single heuristic:
+        If obj is embedded in another object with 90% or more of its area, discard it.
+        """
         results = []
         while objs:
             obj = objs.pop(0)
@@ -307,8 +299,6 @@ class DetectWrapper:
                     results.append(obj)
                     continue
             # If yes, we need to do some filtering
-            # We can go about this more or less sophisticated.
-            # Naturally, we'll go with the easy way first.
 
             # Check if object is embedded in other object (with >80% of its area)
             x0, y0, x1, y1 = obj[:4]
@@ -330,6 +320,9 @@ class DetectWrapper:
             # Especially when an object is right at the border of a subframe,
             # the results can get inaccurate.
             # Further filtering has to be done here
+            # Example:
+            # * If obj is at the border of a subframe, check if it is in the middle
+            #   of another one (and discard if so)
         return results
 
     def get_img(self, source) -> np.ndarray:
@@ -343,40 +336,47 @@ class DetectWrapper:
             img = source
         return img
 
-    def draw(self) -> None:
+    def draw(self, img: np.ndarray, results: list) -> np.ndarray:
         """Draw results on image."""
-        if not len(self.result) or not len(self.img):
-            raise ValueError("Missing results or img, run detection first!")
-        img = self.img.copy()
-        for obj in self.result:
-            tlx, tly, brx, bry = obj[:4]
-            assert type(img) == np.ndarray
-            cv2.rectangle(
-                img,
-                (tlx, tly),
-                (brx, bry),
-                (255, 0, 0),
-                1,
-            )
-        self.printed = img
+        for obj in results:
+            if len(obj) > 8:
+                tlx, tly, trx, try_, brx, bry, blx, bly = obj[:8]
+                pts = np.array(
+                    [[x, y] for x, y in zip(obj[:8:2], obj[1:8:2])], dtype=np.int32
+                )
+                pts = pts.reshape((-1, 1, 2))
+                cv2.polylines(
+                    img,
+                    [pts],
+                    True,
+                    (255, 0, 0),
+                    1,
+                )
+            else:
+                tlx, tly, brx, bry = obj[:4]
+                cv2.rectangle(
+                    img,
+                    (tlx, tly),
+                    (brx, bry),
+                    (255, 0, 0),
+                    1,
+                )
+        return img
 
     def show(self) -> None:
         """Show concat of images."""
-        if not len(self.img):
-            raise ValueError("Missing img, run detection first!")
+        if not len(self.printed):
+            raise ValueError("No results yet, run detection first!")
         cv2.namedWindow("results", cv2.WINDOW_NORMAL)
-        cv2.imshow("results", self.img)
+        cv2.imshow("results", self.printed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    def write(self, filename="result.jpg", printed: bool = True) -> None:
+    def write(self, filename="result.jpg") -> None:
         """Write results to disk."""
-        if not len(self.img) or not len(self.printed):
-            raise ValueError("Missing img, run detection first!")
-        if printed:
-            cv2.imwrite(filename, self.printed)
-        else:
-            cv2.imwrite(filename, self.img)
+        if not len(self.printed):
+            raise ValueError("No results yet, run detection first!")
+        cv2.imwrite(filename, self.printed)
 
     def set_full_img(self):
         imgs = []
