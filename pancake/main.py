@@ -15,7 +15,8 @@ source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
 model = "yolov5"
-weights = "weights/yolov5s6_100epochs.pt"
+weights = "weights/yolov5s6_10epochs.pt"
+tracker = "deep_sort"
 img_size = 448
 verbose = 2
 
