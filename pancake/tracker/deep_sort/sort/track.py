@@ -63,8 +63,7 @@ class Track:
 
     """
 
-    def __init__(self, mean, covariance, track_id, n_init, max_age,
-                 feature=None):
+    def __init__(self, mean, covariance, track_id, n_init, max_age, feature=None):
         self.mean = mean
         self.covariance = covariance
         self.track_id = track_id
@@ -138,7 +137,8 @@ class Track:
 
         """
         self.mean, self.covariance = kf.update(
-            self.mean, self.covariance, detection.to_xyah())
+            self.mean, self.covariance, detection.to_xyah()
+        )
         self.features.append(detection.feature)
 
         self.hits += 1
@@ -146,20 +146,18 @@ class Track:
         if self.state == TrackState.Tentative and self.hits >= self._n_init:
             self.state = TrackState.Confirmed
 
-        self.pos_x = detection.tlwh[0] + 0.5* detection.tlwh[2]
-        self.pos_y = detection.tlwh[1] + 0.5* detection.tlwh[3]
+        self.pos_x = detection.tlwh[0] + 0.5 * detection.tlwh[2]
+        self.pos_y = detection.tlwh[1] + 0.5 * detection.tlwh[3]
 
     def mark_missed(self):
-        """Mark this track as missed (no association at the current time step).
-        """
+        """Mark this track as missed (no association at the current time step)."""
         if self.state == TrackState.Tentative:
             self.state = TrackState.Deleted
         elif self.time_since_update > self._max_age:
             self.state = TrackState.Deleted
 
     def is_tentative(self):
-        """Returns True if this track is tentative (unconfirmed).
-        """
+        """Returns True if this track is tentative (unconfirmed)."""
         return self.state == TrackState.Tentative
 
     def is_confirmed(self):

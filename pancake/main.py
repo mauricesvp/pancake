@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import cv2
 
@@ -12,16 +13,18 @@ from .utils.parser import get_config
 
 """ CONFIGS """
 device = "0"
+if os.system("nvidia-smi"):
+    device = "CPU"
 
 source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
 model = "yolov5"
-weights = "weights/detector/yolov5/yolov5s6_30epochs.pt"
+weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
-cfg = get_config(config_file="configs/tracker/deep_sort.yaml")
+cfg = get_config(config_file="../configs/tracker/deep_sort.yaml")
 
 img_size = 448
 verbose = 2
@@ -45,26 +48,14 @@ def main(argv=None):
     """
     # MODEL SETUP
     MODEL = m.MODEL_REGISTRY[model](
-        device, 
-        weights, 
-        conf_thres, 
-        iou_thres, 
-        classes, 
-        agnostic_nms,
-        img_size
-        )
+        device, weights, conf_thres, iou_thres, classes, agnostic_nms, img_size
+    )
 
     # TRACKER SETUP
-    TRACKER = tr.TRACKER_REGISTRY[tracker](
-        cfg,
-        device=device
-    )
+    TRACKER = tr.TRACKER_REGISTRY[tracker](cfg, device=device)
 
     # INPUT DATA SETUP
-    DATA, is_webcam = load_data(
-        source, 
-        MODEL
-    )
+    DATA, is_webcam = load_data(source, MODEL)
 
     """
     TRACKING PROCEDURE
@@ -103,14 +94,9 @@ def main(argv=None):
             # detections per class
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
-                s += (
-                    f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
-                )
+                s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
 
-            TRACKER.update(
-                det,
-                im0
-            )
+            TRACKER.update(det, im0)
 
             # print results for current frame
             if verbose > 0:
@@ -127,7 +113,7 @@ def main(argv=None):
                     hide_conf,
                     line_thickness,
                 )
-            #input()
+            # input()
 
 
 if __name__ == "__main__":
