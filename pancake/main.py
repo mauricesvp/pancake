@@ -2,13 +2,13 @@ import argparse
 
 import cv2
 
-from . import models as m
-from . import tracker as tr
+import models as m
+import tracker as tr
 
-from .utils.common import load_data, visualize
-from .utils.general import check_img_size, scale_coords
-from .utils.torch_utils import time_synchronized
-from .utils.parser import get_config
+from utils.common import load_data, visualize
+from utils.general import check_img_size, scale_coords
+from utils.torch_utils import time_synchronized
+from utils.parser import get_config
 
 """ CONFIGS """
 device = "0"

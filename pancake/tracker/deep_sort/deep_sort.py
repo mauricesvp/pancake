@@ -23,11 +23,14 @@ class DeepSort(object):
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
         self.tracker = Tracker(metric, max_iou_distance=max_iou_distance, max_age=max_age, n_init=n_init)
 
-    def update(self, bbox_xywh, confidences, ori_img):
+    def update(self, bbox_xyxy, confidences, ori_img):
         self.height, self.width = ori_img.shape[:2]
         # generate detections
-        features = self._get_features(bbox_xywh, ori_img)
-        bbox_tlwh = self._xywh_to_tlwh(bbox_xywh)
+        bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)
+        features = self._get_features(bbox_xyxy, ori_img)
+        bbox_tlwh = np.asarray(
+            [self._xyxy_to_tlwh(xyxy) for xyxy in bbox_xyxy]
+        )
         detections = [Detection(bbox_tlwh[i], conf, features[i]) for i,conf in enumerate(confidences) if conf>self.min_confidence]
 
         # run on non-maximum supression
@@ -102,10 +105,10 @@ class DeepSort(object):
         h = int(y2-y1)
         return t,l,w,h
     
-    def _get_features(self, bbox_xywh, ori_img):
+    def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
-        for box in bbox_xywh:
-            x1,y1,x2,y2 = self._xywh_to_xyxy(box)
+        for box in bbox_xyxy:
+            x1,y1,x2,y2 = box
             im = ori_img[y1:y2,x1:x2]
             im_crops.append(im)
         if im_crops:

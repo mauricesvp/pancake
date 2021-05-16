@@ -46,35 +46,13 @@ class DEEPSORT(BaseTracker):
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):
         """
-        Transform detection vector to numpy and from xyxy to xywh
+        Transform detection vector to numpy
 
         :param det (torch.Tensor): prediction tensor
 
-        :return xywh (np.ndarray (,4)): (center coordinates) x, y, width, height
+        :return xyxy (np.ndarray (,4)): x1, y1, x2, y2
                 conf (np.ndarray (,1)): class confidences
                 cls  (np,ndarray (,1)): class indeces
         """
         t_det = det.cpu().detach().numpy()
-        xywh, conf, cls = DEEPSORT.xyxy_to_xywh(t_det[:, :4]), t_det[..., 4], t_det[..., 5] 
-
-        return xywh, conf, cls
-
-    @staticmethod
-    def xyxy_to_xywh(boxes_xyxy: Union[np.ndarray, torch.Tensor]):
-        """
-        Helper function to transform array containing data in xyxy to xywh
-
-        :param boxes_xyxy (np.ndarray (n,4)): array containing n xyxy box coordinates
-        :return boxes_xywh (np.ndarray (n,4))
-        """
-        if isinstance(boxes_xyxy, torch.Tensor):
-            boxes_xywh = boxes_xyxy.clone()
-        elif isinstance(boxes_xyxy, np.ndarray):
-            boxes_xywh = boxes_xyxy.copy()
-
-        boxes_xywh[:, 0] = (boxes_xyxy[:, 0] + boxes_xyxy[:, 2]) / 2.
-        boxes_xywh[:, 1] = (boxes_xyxy[:, 1] + boxes_xyxy[:, 3]) / 2.
-        boxes_xywh[:, 2] = boxes_xyxy[:, 2] - boxes_xyxy[:, 0]
-        boxes_xywh[:, 3] = boxes_xyxy[:, 3] - boxes_xyxy[:, 1]
-
-        return boxes_xywh
+        return t_det[:, :4], t_det[..., 4], t_det[..., 5] 
