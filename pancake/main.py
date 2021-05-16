@@ -21,7 +21,7 @@ model = "yolov5"
 weights = "weights/yolov5s6_10epochs.pt"
 
 tracker = "deepsort"
-cfg = get_config(config_file="configs/deep_sort.yaml")
+cfg = get_config(config_file="configs/tracker/deep_sort.yaml")
 
 img_size = 448
 verbose = 2
@@ -52,11 +52,11 @@ def main(argv=None):
         img_size
         )
 
-    # TRACKER SETUP
-    TRACKER = tr.TRACKER_REGISTRY[tracker](
-        cfg,
-        device=device
-    )
+    # # TRACKER SETUP
+    # TRACKER = tr.TRACKER_REGISTRY[tracker](
+    #     cfg,
+    #     device=device
+    # )
 
     # INPUT DATA SETUP
     DATA, is_webcam = load_data(

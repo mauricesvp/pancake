@@ -2,7 +2,6 @@ import torch
 from abc import ABC, abstractmethod
 from typing import Type
 
-from models.experimental import attempt_load
 from utils.torch_utils import select_device
 
 
@@ -10,26 +9,19 @@ class BaseModel(ABC):
     _subclasses = {}
 
     def __init__(self, 
-                 device: str, 
-                 weights: str):
+                 device: str):
         """
         This class acts as a base class for different models.
 
         :param device (torch.device): device to calculate on (cpu, gpu)
         :param weights (str): path to custom trained weights or name of the official pretrained yolo
         """
+        self.model = None
         self._device = select_device(device)
         self._half = self._device.type != 'cpu'  # half precision only supported on CUDA
-
-        # load model
-        self.model = attempt_load(weights, map_location=self._device)
-        if self._half:
-            self.model.half()  # to FP16
         
-        self._stride = int(self.model.stride.max())  # model stride
-        self._classlabels = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
-
-        print(f'Class names: {self._classlabels}')
+        self._stride = None
+        self._required_img_size = None
 
     @classmethod
     def get_subclasses(cls):

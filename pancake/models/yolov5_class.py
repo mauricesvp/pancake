@@ -2,12 +2,12 @@
     encapsulates yolov5 functionalities (loading, inference)
 """
 import torch
-import sys
-sys.path.append('src/models')
 
 from typing import Type
 from .base_class import BaseModel
+from .experimental import attempt_load
 from utils.general import check_img_size, non_max_suppression
+
 
 
 class Yolov5Model(BaseModel):
@@ -29,7 +29,17 @@ class Yolov5Model(BaseModel):
         :param agnostic_nms(bool): class-agnostic NMS
         :param img_size (int): specified image size
         """
-        super(Yolov5Model, self).__init__(device, weights)
+        super(Yolov5Model, self).__init__(device)
+        # load model
+        self.model = attempt_load(weights, map_location=self._device)
+        if self._half:
+            self.model.half()  # to FP16
+        
+        self._stride = int(self.model.stride.max())  # model stride
+        self._classlabels = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
+
+        print(f'Class names: {self._classlabels}')
+
         self._conf_thres = conf_thres
         self._iou_thres = iou_thres
         self._classes = classes

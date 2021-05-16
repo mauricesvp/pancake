@@ -30,9 +30,17 @@ def load_data(source: str,
     if is_webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        return LoadStreams(source, img_size=model._required_img_size, stride=model._stride), True
+        return LoadStreams(
+            source, 
+            img_size=model._required_img_size, 
+            stride=model._stride
+            ), True
     else:
-        return LoadImages(source, img_size=model._required_img_size, stride=model._stride), False
+        return LoadImages(
+            source, 
+            img_size=model._required_img_size, 
+            stride=model._stride
+            ), False
 
 def visualize(det: Type[torch.Tensor],
               p: str,
@@ -57,7 +65,13 @@ def visualize(det: Type[torch.Tensor],
         c = int(cls)  # integer class
         label = None if hide_labels else (labels[c] if hide_conf else f'{labels[c]} {conf:.2f}')
 
-        plot_one_box(xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness)
+        plot_one_box(
+            xyxy, 
+            im0, 
+            label=label, 
+            color=colors(c, True), 
+            line_thickness=line_thickness
+        )
     
     cv2.imshow(str(p), im0)
     cv2.waitKey(1)  # 1 millisecond
