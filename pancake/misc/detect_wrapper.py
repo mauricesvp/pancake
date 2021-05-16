@@ -93,8 +93,9 @@ class DetectWrapper:
     img: np.ndarray  # Stitched panorama image
     printed: np.ndarray  # Stichted image with detection results
 
-    def __init__(self, detector, *args, **kwargs) -> None:
+    def __init__(self, detector, write_partials: bool = False, *args, **kwargs) -> None:
         self.detector = detector
+        self.write_partials = write_partials
 
     def run_detection(self, imgl, imgc, imgr) -> list:
         """Detect objects on Panorama images."""
@@ -105,8 +106,8 @@ class DetectWrapper:
         self.shape = imgl.shape
         objs = []
         # Note that reversing of rotation is not done yet
-        objs += self.partial(imgl, side="l")
-        rights = self.partial(imgr, side="r")
+        objs += self.partial(imgl, side="l", imwrite=self.write_partials)
+        rights = self.partial(imgr, side="r", imwrite=self.write_partials)
         mids = self.detect_mid(imgc)
         # Add offsets to mid/right
         h, w, _ = imgc.shape
@@ -132,7 +133,7 @@ class DetectWrapper:
         side: str = "",
         imshow: bool = False,
         imwrite: bool = False,
-        imwrite_filename: str = "results.jpg",
+        imwrite_filename: str = "partial.jpg",
     ) -> list:
         """Detect objects on image by splitting and merging.
 
@@ -155,10 +156,10 @@ class DetectWrapper:
         class id: Integer indicating the detected object type
 
         Modus operandi:
-        * Rotate image (without cropping)
+        * Rotate image (without cropping, i.e. adding padding)
         * Divide image into subframes
         * Detect objects on each subframe, saving classes and coordinates
-        * Dedup objects
+        * Filter and merge objects
         * Calculate coordinates on original frame
         """
         img = self.get_img(source)
@@ -171,6 +172,7 @@ class DetectWrapper:
         else:
             CONST = R_CONST
 
+        orig_img = img.copy()
         img = imutils.rotate_bound(img, CONST["ANGLE"])
 
         # Divide image into subframes
@@ -222,23 +224,41 @@ class DetectWrapper:
         # Filter embedded objects
         results = self.rm_embedded(objs, subframes, ratio=0.85)
 
+        # Reverse rotation
+        results = self.rev_rotate(img, results, CONST["ANGLE"])
+
+        # Filter again!
+        results = self.rm_embedded(results)
+
         # Draw results on image
         if imshow or imwrite:
             for obj in results:
                 tlx, tly, brx, bry = obj[:4]
                 cv2.rectangle(
-                    img,
+                    orig_img,
                     (tlx, tly),
                     (brx, bry),
                     (255, 0, 0),
                     1,
                 )
 
-        # Reverse rotation
+        if imshow:
+            cv2.namedWindow("results", cv2.WINDOW_NORMAL)
+            cv2.imshow("results", orig_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        if imwrite:
+            if imwrite_filename == "partial.jpg":
+                imwrite_filename = f"partial_{side}.jpg"
+            cv2.imwrite(imwrite_filename, orig_img)
+
+        return results
+
+    def rev_rotate(self, img: np.ndarray, results: list, angle: int) -> list:
         h, w, _ = img.shape
         center = (w // 2, h // 2)
-        M = cv2.getRotationMatrix2D(center, CONST["ANGLE"], 1.0)
-        tmpimg = imutils.rotate(img, CONST["ANGLE"])
+        M = cv2.getRotationMatrix2D(center, angle, 1.0)
+        tmpimg = imutils.rotate(img, angle)
         htmp, wtmp, _ = tmpimg.shape
         # original image(s) shape
         h, w, _ = self.shape
@@ -271,18 +291,6 @@ class DetectWrapper:
             tly -= ydiff
             bry -= ydiff
             results[i] = (int(tlx), int(tly), int(brx), int(bry), cf, cl)
-
-        # Filter again!
-        results = self.rm_embedded(results)
-
-        if imshow:
-            cv2.namedWindow("results", cv2.WINDOW_NORMAL)
-            cv2.imshow("results", img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        if imwrite:
-            cv2.imwrite(imwrite_filename, img)
-
         return results
 
     def rm_embedded(self, objs: list, subframes: list = None, ratio=0.9) -> list:

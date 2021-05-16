@@ -7,8 +7,12 @@ def test_detect_wrapper():
     c = "../samples/images/random2_4k/1c.jpg"
     r = "../samples/images/random2_4k/1r.jpg"
 
+    l = "../samples/images/random4_4k/1l.jpg"
+    c = "../samples/images/random4_4k/1c.jpg"
+    r = "../samples/images/random4_4k/1r.jpg"
+
     det = YOLODetector()
-    dw = DetectWrapper(det)
+    dw = DetectWrapper(det, write_partials=True)
     dw.run_detection(l, c, r)
     dw.write("result.jpg")
     # TODO: Add asserts here
