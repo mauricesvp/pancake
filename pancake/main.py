@@ -24,7 +24,7 @@ model = "yolov5"
 weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
-cfg = get_config(config_file="../configs/tracker/deep_sort.yaml")
+tracker_cfg_path = "../configs/tracker/deep_sort.yaml"
 
 img_size = 448
 verbose = 2
@@ -42,17 +42,25 @@ classes = None
 agnostic_nms = False
 
 
+def fix_path(path):
+    """Adjust relative path."""
+    return os.path.join(os.path.dirname(__file__), path)
+
+
 def main(argv=None):
     """
     LOADING PROCEDURE
     """
     # MODEL SETUP
+    weights_cfg = fix_path(weights)
     MODEL = m.MODEL_REGISTRY[model](
-        device, weights, conf_thres, iou_thres, classes, agnostic_nms, img_size
+        device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
     )
 
     # TRACKER SETUP
-    TRACKER = tr.TRACKER_REGISTRY[tracker](cfg, device=device)
+    tracker_cfg = fix_path(tracker_cfg_path)
+    tracker_cfg = get_config(config_file=tracker_cfg)
+    TRACKER = tr.TRACKER_REGISTRY[tracker](tracker_cfg, device=device)
 
     # INPUT DATA SETUP
     DATA, is_webcam = load_data(source, MODEL)

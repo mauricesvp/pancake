@@ -1,6 +1,8 @@
+import os
+from typing import Type, Union
+
 import numpy as np
 import torch
-from typing import Type, Union
 
 from .tracker import BaseTracker
 from .deep_sort.deep_sort import DeepSort
@@ -12,8 +14,11 @@ class DEEPSORT(BaseTracker):
             "device" in kwargs
         ), "Used device type needs to be specified (cpu, gpu:0, gpu:1)!"
 
+        # We need to jump through some hoops here to allow relative paths
+        path = os.path.join(os.path.dirname(__file__), "..", cfg.DEEPSORT.REID_CKPT)
+        path_resolved = os.path.abspath(path)
         self.DS = DeepSort(
-            cfg.DEEPSORT.REID_CKPT,
+            path_resolved,
             max_dist=cfg.DEEPSORT.MAX_DIST,
             min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
             nms_max_overlap=cfg.DEEPSORT.NMS_MAX_OVERLAP,
