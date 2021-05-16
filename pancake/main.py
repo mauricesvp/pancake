@@ -2,13 +2,13 @@ import argparse
 
 import cv2
 
-import models as m
-import tracker as tr
+from . import models as m
+from . import tracker as tr
 
-from utils.common import load_data, visualize
-from utils.general import check_img_size, scale_coords
-from utils.torch_utils import time_synchronized
-from utils.parser import get_config
+from .utils.common import load_data, visualize
+from .utils.general import check_img_size, scale_coords
+from .utils.torch_utils import time_synchronized
+from .utils.parser import get_config
 
 """ CONFIGS """
 device = "0"
@@ -18,7 +18,7 @@ source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
 model = "yolov5"
-weights = "weights/yolov5s6_10epochs.pt"
+weights = "weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
 cfg = get_config(config_file="configs/tracker/deep_sort.yaml")
@@ -26,11 +26,13 @@ cfg = get_config(config_file="configs/tracker/deep_sort.yaml")
 img_size = 448
 verbose = 2
 
+# visualization
 view_img = True
 hide_labels = False
 hide_conf = False
 line_thickness = 2
 
+# detector
 conf_thres = 0.65
 iou_thres = 0.7
 classes = None
@@ -97,6 +99,11 @@ def main(argv=None):
                 det[:, :4] = scale_coords(
                     prep_img.shape[2:], det[:, :4], im0.shape
                 ).round()
+
+            # TRACKER.update(
+            #     det,
+            #     im0
+            # )
 
             # detections per class
             for c in det[:, -1].unique():

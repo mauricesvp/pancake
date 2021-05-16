@@ -1,4 +1,4 @@
-"""Tracker base class."""
+""" Tracker base class. """
 from abc import ABC, abstractmethod
 
 class BaseTracker(ABC):
@@ -17,6 +17,6 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det):
+    def update(self, det, img):
         raise NotImplementedError
 
