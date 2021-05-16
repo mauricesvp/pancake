@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from typing import Type
+from typing import Type, Union
 
 from .tracker import BaseTracker
 from .deep_sort.deep_sort import DeepSort
@@ -32,14 +32,12 @@ class DEEPSORT(BaseTracker):
         """
         Tracker update function
 
-        :param det (np.darray): 
-        :param img (np.darray): original image
+        :param det (np.darray (,6)):  detections array 
+        :param img (np.darray (,3)): original image
 
-        :return (np.darray):
+        :return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]
         """
-        t_det = DEEPSORT.transform_detections(det)
-
-        bbox_xywh, confidences = t_det[:, :4], t_det[:, 4:]
+        bbox_xywh, confidences, _ = DEEPSORT.transform_detections(det)
         return self.DS.update(bbox_xywh, confidences, img)
 
     def get_tracker_flag(self):
@@ -47,12 +45,36 @@ class DEEPSORT(BaseTracker):
 
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):
-        t_det = det.cpu().detach().numpy()
-        t_det = DEEPSORT.transform_xyxy_to_xywh(t_det)
+        """
+        Transform detection vector to numpy and from xyxy to xywh
 
-        return t_det
+        :param det (torch.Tensor): prediction tensor
+
+        :return xywh (np.ndarray (,4)): (center coordinates) x, y, width, height
+                conf (np.ndarray (,1)): class confidences
+                cls  (np,ndarray (,1)): class indeces
+        """
+        t_det = det.cpu().detach().numpy()
+        xywh, conf, cls = DEEPSORT.xyxy_to_xywh(t_det[:, :4]), t_det[..., 4], t_det[..., 5] 
+
+        return xywh, conf, cls
 
     @staticmethod
-    def transform_xyxy_to_xywh(det: Type[np.ndarray]):
-        return det
+    def xyxy_to_xywh(boxes_xyxy: Union[np.ndarray, torch.Tensor]):
+        """
+        Helper function to transform array containing data in xyxy to xywh
 
+        :param boxes_xyxy (np.ndarray (n,4)): array containing n xyxy box coordinates
+        :return boxes_xywh (np.ndarray (n,4))
+        """
+        if isinstance(boxes_xyxy, torch.Tensor):
+            boxes_xywh = boxes_xyxy.clone()
+        elif isinstance(boxes_xyxy, np.ndarray):
+            boxes_xywh = boxes_xyxy.copy()
+
+        boxes_xywh[:, 0] = (boxes_xyxy[:, 0] + boxes_xyxy[:, 2]) / 2.
+        boxes_xywh[:, 1] = (boxes_xyxy[:, 1] + boxes_xyxy[:, 3]) / 2.
+        boxes_xywh[:, 2] = boxes_xyxy[:, 2] - boxes_xyxy[:, 0]
+        boxes_xywh[:, 3] = boxes_xyxy[:, 3] - boxes_xyxy[:, 1]
+
+        return boxes_xywh

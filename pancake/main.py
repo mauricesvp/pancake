@@ -54,11 +54,11 @@ def main(argv=None):
         img_size
         )
 
-    # # TRACKER SETUP
-    # TRACKER = tr.TRACKER_REGISTRY[tracker](
-    #     cfg,
-    #     device=device
-    # )
+    # TRACKER SETUP
+    TRACKER = tr.TRACKER_REGISTRY[tracker](
+        cfg,
+        device=device
+    )
 
     # INPUT DATA SETUP
     DATA, is_webcam = load_data(
@@ -100,17 +100,17 @@ def main(argv=None):
                     prep_img.shape[2:], det[:, :4], im0.shape
                 ).round()
 
-            # TRACKER.update(
-            #     det,
-            #     im0
-            # )
-
             # detections per class
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
                 s += (
                     f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
                 )
+
+            TRACKER.update(
+                det,
+                im0
+            )
 
             # print results for current frame
             if verbose > 0:
