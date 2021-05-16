@@ -113,8 +113,8 @@ class DetectWrapper:
         h, w, _ = imgc.shape
         mids = [(a + w, b, c + w, d, e) for a, b, c, d, *e in mids]
         rights = [
-            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i)
-            for a, b, c, d, e, f, g, h, *i in rights
+            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
+            for a, b, c, d, e, f, g, h, i, j in rights
         ]
         objs += mids + rights
 
