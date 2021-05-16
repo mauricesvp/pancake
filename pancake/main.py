@@ -1,8 +1,11 @@
 import argparse
+
 import cv2
 
-import detector
-from utils import load_data, scale_coords, visualize, time_synchronized
+import models
+from utils.common import load_data, visualize
+from utils.general import check_img_size, scale_coords
+from utils.torch_utils import time_synchronized
 
 """ CONFIGS """
 device = "0"
@@ -11,7 +14,7 @@ source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 # weights = "yolov5s6.pt"
-model = "YOLOv5"
+model = "yolov5"
 weights = "weights/yolov5s6_100epochs.pt"
 img_size = 448
 verbose = 2
@@ -32,7 +35,7 @@ def main(argv=None):
     LOADING PROCEDURE
     """
     # MODEL SETUP
-    DETECTOR = detector.MODEL_REGISTRY[model](
+    MODEL = models.MODEL_REGISTRY[model](
         device, 
         weights, 
         conf_thres, 
@@ -40,22 +43,22 @@ def main(argv=None):
         classes, 
         agnostic_nms,
         img_size
-    )
+        )
 
     # INPUT DATA SETUP
-    DATA, is_webcam = load_data(source, DETECTOR)
+    DATA, is_webcam = load_data(source, MODEL)
 
     """
     TRACKING PROCEDURE
     """
     for path, img, im0s, vid_cap in DATA:
-        prep_img = DETECTOR.prep_image_infer(
+        prep_img = MODEL.prep_image_infer(
             img
         )  # prep_img (tensor): resized and padded image preprocessed for inference, 4d tensor [x, R, G, B]
 
         # inference
         t1 = time_synchronized()
-        pred = DETECTOR.infer(
+        pred = MODEL.infer(
             prep_img
         )  # pred (tensor): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         t2 = time_synchronized()
@@ -83,7 +86,7 @@ def main(argv=None):
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
                 s += (
-                    f"{n} {DETECTOR._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
+                    f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
                 )
 
             # print results for current frame
@@ -96,7 +99,7 @@ def main(argv=None):
                     det,
                     p,
                     im0,
-                    DETECTOR._classlabels,
+                    MODEL._classlabels,
                     hide_labels,
                     hide_conf,
                     line_thickness,
