@@ -111,7 +111,7 @@ class DetectWrapper:
         mids = self.detect_mid(imgc)
         # Add offsets to mid/right
         h, w, _ = imgc.shape
-        mids = [(a + w, b, c + w, d, e) for a, b, c, d, *e in mids]
+        mids = [(a + w, b, c + w, d, e, f) for a, b, c, d, e, f in mids]
         rights = [
             (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
             for a, b, c, d, e, f, g, h, i, j in rights
