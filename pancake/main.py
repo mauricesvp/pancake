@@ -20,7 +20,7 @@ if not torch.cuda.is_available():
 source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
-# weights = "yolov5s6.pt"
+
 model = "yolov5"
 weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
@@ -91,7 +91,7 @@ def main(argv=None):
             else:
                 p, s, im0 = path, "", im0s.copy()
 
-            s += f"{prep_img.shape[2:]} || "  # print preprocessed image shape
+            s += f"{prep_img.shape[2:]}, "  # print preprocessed image shape
 
             # IMPORTANT
             if len(det):
@@ -100,12 +100,21 @@ def main(argv=None):
                     prep_img.shape[2:], det[:, :4], im0.shape
                 ).round()
 
+            # tracker update
+            tracks = TRACKER.update(det, im0) # [x1, y1, x2, y2, centre x, centre y, id]
+
             # detections per class
+            s += "Detections: "
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
-                s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
+                s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string   
 
-            results = TRACKER.update(det, im0) # [x1, y1, x2, y2, centre x, centre y, id]
+            # different tracks
+            s += f" Tracker-IDs: "
+            if len(tracks):
+                for track in tracks[:, 6]:
+                    s += f"{track}"
+                s += ", "
 
             # print results for current frame
             if verbose > 0:
@@ -114,13 +123,16 @@ def main(argv=None):
             # visualize detections
             if view_img:
                 visualize(
-                    det,
-                    p,
-                    im0,
-                    MODEL._classlabels,
-                    hide_labels,
-                    hide_conf,
-                    line_thickness,
+                    show_det=True,
+                    show_tracks=True,
+                    det=det,
+                    tracks=tracks,
+                    p=p,
+                    im0=im0,
+                    labels=MODEL._classlabels,
+                    hide_labels=hide_labels,
+                    hide_conf=hide_conf,
+                    line_thickness=line_thickness,
                 )
             # input()
 
