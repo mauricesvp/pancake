@@ -33,14 +33,15 @@ def test_series():
         dw.run_detection(l, c, r)
         assert dw.result
         results.append((*dw.result, timestamp))
-    with open("results.txt", "w+") as f:
+    with open("sample_results.py", "w+") as f:
+        f.write("sample_results=")
         f.write(str(results))
 
     # TODO: Add more asserts here
 
 
 def test_basic():
-    """Basic test using only one timeframe."""
+    """Basic test using one timestamp."""
     l = "../samples/images/random4_4k/1l.jpg"
     c = "../samples/images/random4_4k/1c.jpg"
     r = "../samples/images/random4_4k/1r.jpg"
