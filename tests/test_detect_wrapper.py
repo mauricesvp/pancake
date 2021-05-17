@@ -15,27 +15,30 @@ def same_shape(*imgs: list) -> bool:
     return True
 
 
-def test_series():
+def test_series(write: bool = False):
     """Test using series of images."""
     # Get images
     imgs = glob.glob("../samples/images/random3_4k/*/*jpg")
     each = len(imgs)//3
     imgslist = [(imgs[i], imgs[i+each], imgs[i+2*each]) for i in range(each)]
+    imgslist = imgslist[:1]
 
     # Init detector and wrapper
     det = YOLODetector()
-    dw = DetectWrapper(det)
+    dw = DetectWrapper(det, write_partials=True)
 
     # Run
     results = []
     for c, l, r in imgslist:  # c, l, r because of alphabetic order
         timestamp = os.path.basename(c).replace(".jpg", "")
-        dw.run_detection(l, c, r)
-        assert dw.result
-        results.append((*dw.result, timestamp))
-    with open("sample_results.py", "w+") as f:
-        f.write("sample_results=")
-        f.write(str(results))
+        det_res = dw.run_detection(l, c, r, imwrite_interim=True)
+        assert dw.result  # Double check
+        results.append((*det_res, timestamp))
+
+    if write:
+        with open("sample_results.py", "w+") as f:
+            f.write("sample_results=")
+            f.write(str(results))
 
     # TODO: Add more asserts here
 

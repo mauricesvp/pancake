@@ -40,7 +40,8 @@ def locate(subframes, x0, y0, x1, y1) -> list:
 
 
 def res2int(res):
-    """Note that confidence is a float value."""
+    """Convert detection results to integer values.
+    Note that confidence is a float value however."""
     objs = []
     for obj in res:
         x0, y0, x1, y1, conf, classid = obj
@@ -71,7 +72,7 @@ def f_l(x):
 
 L_CONST = {
     "ANGLE": 38,
-    "SIDE": 450 // 2,
+    "SIDE": 448 // 2,
     "START_X": 1925,
     "END_X": 4000,
     "STEPS": 6,
@@ -80,7 +81,7 @@ L_CONST = {
 
 R_CONST = {
     "ANGLE": 360 - 38,
-    "SIDE": 416 // 2,
+    "SIDE": 384 // 2,
     "START_X": 2900,
     "END_X": 600,
     "STEPS": 7,
@@ -95,10 +96,23 @@ class DetectWrapper:
     printed: np.ndarray  # Stichted image with detection results
 
     def __init__(self, detector, write_partials: bool = False, *args, **kwargs) -> None:
+        """
+
+        :param detector: Detector which provides 'detect' method,
+                         which can take one or multiple images.
+
+        """
         self.detector = detector
         self.write_partials = write_partials
 
-    def run_detection(self, imgl, imgc, imgr) -> list:
+    def run_detection(
+            self,
+            imgl,
+            imgc,
+            imgr,
+            imwrite_interim: bool = False,
+            imwrite_interim_filename: str = "partial_interim.jpg",
+        ) -> list:
         """Detect objects on Panorama images."""
         imgl = self.get_img(imgl)
         imgc = self.get_img(imgc)
@@ -106,8 +120,12 @@ class DetectWrapper:
         assert imgl.shape == imgc.shape == imgr.shape
         self.shape = imgl.shape
         objs = []
-        objs += self.partial(imgl, side="l", imwrite=self.write_partials)
-        rights = self.partial(imgr, side="r", imwrite=self.write_partials)
+        objs += self.partial(imgl, side="l", imwrite=self.write_partials,
+                imwrite_interim=imwrite_interim,
+                imwrite_interim_filename=imwrite_interim_filename)
+        rights = self.partial(imgr, side="r", imwrite=self.write_partials,
+                imwrite_interim=imwrite_interim,
+                imwrite_interim_filename=imwrite_interim_filename)
         mids = self.detect_mid(imgc)
         # Add offsets to mid/right
         h, w, _ = imgc.shape
@@ -137,6 +155,8 @@ class DetectWrapper:
         imshow: bool = False,
         imwrite: bool = False,
         imwrite_filename: str = "partial.jpg",
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = "partial_interim.jpg",
     ) -> list:
         """Detect objects on image by splitting and merging.
 
@@ -190,14 +210,14 @@ class DetectWrapper:
         ):
             y = CONST["F"](x)
             const_tmp = int(1.1 * const_tmp)
-            subframe = img[
-                y - const_tmp : y + const_tmp,
-                x - const_tmp : x + const_tmp,
-            ]
             # top left
             tlx, tly = x - const_tmp, y - const_tmp
             # bottom right
             brx, bry = x + const_tmp, y + const_tmp
+            subframe = img[
+                tly : bry,
+                tlx : brx,
+            ]
             subframes.append((tlx, tly, brx, bry))
             subframes_imgs.append((subframe, tlx, tly))
             cv2.rectangle(
@@ -229,6 +249,15 @@ class DetectWrapper:
                 rbrx, rbry = tlx + x1, tly + y1
                 # save coords, conf, class
                 objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+
+        if imwrite_interim:
+            img_interim = self.draw(img, objs)
+            # Also draw center point for good measure
+            for obj in subframes:
+                center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
+                center = (int(center[0]), int(center[1]))
+                cv2.circle(img_interim, center, 2, (255,0,0))
+            cv2.imwrite(side + imwrite_interim_filename, img_interim)
 
         # Merge objects on subframes
         results = self.merge(objs, subframes)
