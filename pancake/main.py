@@ -17,7 +17,7 @@ if not torch.cuda.is_available():
     device = "cpu"
     
 
-source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
+source = "/home/tuananhroman/dcaiti/pancake/samples/Highway - 20090.mp4"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 
@@ -110,10 +110,10 @@ def main(argv=None):
                 s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string   
 
             # different tracks
-            s += f" Tracker-IDs: "
+            s += f" Tracker-IDs:"
             if len(tracks):
                 for track in tracks[:, 6]:
-                    s += f"{track}"
+                    s += f" {track}"
                 s += ", "
 
             # print results for current frame
