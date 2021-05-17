@@ -181,6 +181,7 @@ class DetectWrapper:
         # Divide image into subframes
         objs = []
         subframes = []
+        subframes_imgs = []
         const_tmp = CONST["SIDE"]
         for x in range(
             CONST["START_X"],
@@ -198,6 +199,7 @@ class DetectWrapper:
             # bottom right
             brx, bry = x + const_tmp, y + const_tmp
             subframes.append((tlx, tly, brx, bry))
+            subframes_imgs.append((subframe, tlx, tly))
             cv2.rectangle(
                 img,
                 (tlx, tly),
@@ -206,8 +208,12 @@ class DetectWrapper:
                 5,
             )
 
-            res = self.detector.detect(subframe)[0]
-            for obj in res:
+        # Run batch detection on subframes
+        res = self.detector.detect([x[0] for x in subframes_imgs])
+        # Get real points
+        for i, sub in enumerate(res):
+            tlx, tly = subframes_imgs[i][1:]
+            for obj in sub:
                 x0, y0, x1, y1, conf, classid = obj
                 x0, y0, x1, y1, conf, classid = (
                     int(x0),
@@ -217,7 +223,6 @@ class DetectWrapper:
                     float(conf),
                     int(classid),
                 )
-                # real points
                 # top left
                 rtlx, rtly = tlx + x0, tly + y0
                 # bottom right
@@ -225,7 +230,7 @@ class DetectWrapper:
                 # save coords, conf, class
                 objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
 
-        # Filter embedded objects
+        # Merge objects on subframes
         results = self.merge(objs, subframes)
 
         # Reverse rotation
