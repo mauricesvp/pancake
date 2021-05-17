@@ -181,21 +181,22 @@ class DetectWrapper:
         # Divide image into subframes
         objs = []
         subframes = []
+        const_tmp = CONST["SIDE"]
         for x in range(
             CONST["START_X"],
             CONST["END_X"],
             -((CONST["START_X"] - CONST["END_X"]) // CONST["STEPS"]),
         ):
             y = CONST["F"](x)
-            CONST["SIDE"] = int(1.1 * CONST["SIDE"])
+            const_tmp = int(1.1 * const_tmp)
             subframe = img[
-                y - CONST["SIDE"] : y + CONST["SIDE"],
-                x - CONST["SIDE"] : x + CONST["SIDE"],
+                y - const_tmp : y + const_tmp,
+                x - const_tmp : x + const_tmp,
             ]
             # top left
-            tlx, tly = x - CONST["SIDE"], y - CONST["SIDE"]
+            tlx, tly = x - const_tmp, y - const_tmp
             # bottom right
-            brx, bry = x + CONST["SIDE"], y + CONST["SIDE"]
+            brx, bry = x + const_tmp, y + const_tmp
             subframes.append((tlx, tly, brx, bry))
             cv2.rectangle(
                 img,
