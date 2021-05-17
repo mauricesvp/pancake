@@ -1,7 +1,7 @@
 import argparse
 import os
-
 import cv2
+import torch
 
 from . import models as m
 from . import tracker as tr
@@ -13,8 +13,9 @@ from .utils.parser import get_config
 
 """ CONFIGS """
 device = "0"
-if os.system("nvidia-smi"):
-    device = "CPU"
+if not torch.cuda.is_available():
+    device = "cpu"
+    
 
 source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
@@ -96,7 +97,7 @@ def main(argv=None):
                 n = (det[:, -1] == c).sum()
                 s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
 
-            TRACKER.update(det, im0)
+            results = TRACKER.update(det, im0) # [x1, y1, x2, y2, centre x, centre y, id]
 
             # print results for current frame
             if verbose > 0:
