@@ -29,9 +29,10 @@ def test_series():
     # Run
     results = []
     for c, l, r in imgslist:  # c, l, r because of alphabetic order
+        timestamp = os.path.basename(c).replace(".jpg", "")
         dw.run_detection(l, c, r)
         assert dw.result
-        results += dw.result
+        results.append((*dw.result, timestamp))
     with open("results.txt", "w+") as f:
         f.write(str(results))
 
@@ -54,3 +55,4 @@ def test_basic():
 
 if __name__ == "__main__":
     test_series()
+    # test_basic()
