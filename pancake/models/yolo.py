@@ -70,6 +70,9 @@ class Detect(nn.Module):
                     self.grid[i] = self._make_grid(nx, ny).to(x[i].device)
 
                 y = x[i].sigmoid()
+
+                if not hasattr(self, 'inplace'):
+                    self.inplace = True
                 if self.inplace:
                     y[..., 0:2] = (
                         y[..., 0:2] * 2.0 - 0.5 + self.grid[i]
