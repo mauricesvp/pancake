@@ -15,9 +15,9 @@ from .utils.parser import get_config
 device = "0"
 if not torch.cuda.is_available():
     device = "cpu"
-    
 
-source = "/home/tuananhroman/dcaiti/pancake/samples/Highway - 20090.mp4"
+
+source = "../samples/Highway - 20090.mp4"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
 
@@ -64,6 +64,7 @@ def main(argv=None):
     TRACKER = tr.TRACKER_REGISTRY[tracker](tracker_cfg, device=device)
 
     # INPUT DATA SETUP
+    source_path = fix_path(source)
     DATA, is_webcam = load_data(source, MODEL)
 
     """
@@ -101,13 +102,15 @@ def main(argv=None):
                 ).round()
 
             # tracker update
-            tracks = TRACKER.update(det, im0) # [x1, y1, x2, y2, centre x, centre y, id]
+            tracks = TRACKER.update(
+                det, im0
+            )  # [x1, y1, x2, y2, centre x, centre y, id]
 
             # detections per class
             s += "Detections: "
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
-                s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string   
+                s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
 
             # different tracks
             s += f" Tracker-IDs:"
