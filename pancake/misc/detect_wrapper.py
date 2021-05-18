@@ -106,13 +106,13 @@ class DetectWrapper:
         self.write_partials = write_partials
 
     def run_detection(
-            self,
-            imgl,
-            imgc,
-            imgr,
-            imwrite_interim: bool = False,
-            imwrite_interim_filename: str = "partial_interim.jpg",
-        ) -> list:
+        self,
+        imgl,
+        imgc,
+        imgr,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = "partial_interim.jpg",
+    ) -> list:
         """Detect objects on Panorama images."""
         imgl = self.get_img(imgl)
         imgc = self.get_img(imgc)
@@ -120,12 +120,20 @@ class DetectWrapper:
         assert imgl.shape == imgc.shape == imgr.shape
         self.shape = imgl.shape
         objs = []
-        objs += self.partial(imgl, side="l", imwrite=self.write_partials,
-                imwrite_interim=imwrite_interim,
-                imwrite_interim_filename=imwrite_interim_filename)
-        rights = self.partial(imgr, side="r", imwrite=self.write_partials,
-                imwrite_interim=imwrite_interim,
-                imwrite_interim_filename=imwrite_interim_filename)
+        objs += self.partial(
+            imgl,
+            side="l",
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
+        rights = self.partial(
+            imgr,
+            side="r",
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
         mids = self.detect_mid(imgc)
         # Add offsets to mid/right
         h, w, _ = imgc.shape
@@ -215,8 +223,8 @@ class DetectWrapper:
             # bottom right
             brx, bry = x + const_tmp, y + const_tmp
             subframe = img[
-                tly : bry,
-                tlx : brx,
+                tly:bry,
+                tlx:brx,
             ]
             subframes.append((tlx, tly, brx, bry))
             subframes_imgs.append((subframe, tlx, tly))
@@ -256,7 +264,7 @@ class DetectWrapper:
             for obj in subframes:
                 center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
                 center = (int(center[0]), int(center[1]))
-                cv2.circle(img_interim, center, 2, (255,0,0))
+                cv2.circle(img_interim, center, 2, (255, 0, 0))
             cv2.imwrite(side + imwrite_interim_filename, img_interim)
 
         # Merge objects on subframes
