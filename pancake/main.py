@@ -31,7 +31,7 @@ img_size = 448
 verbose = 2
 
 # visualization
-view_img = True
+view_img = False
 hide_labels = False
 hide_conf = False
 line_thickness = 2
@@ -48,7 +48,7 @@ def fix_path(path):
     return os.path.join(os.path.dirname(__file__), path)
 
 
-def main(argv=None):
+def main(argv=None, *args, **kwargs):
     """
     LOADING PROCEDURE
     """
@@ -65,7 +65,7 @@ def main(argv=None):
 
     # INPUT DATA SETUP
     source_path = fix_path(source)
-    DATA, is_webcam = load_data(source, MODEL)
+    DATA, is_webcam = load_data(source_path, MODEL)
 
     """
     TRACKING PROCEDURE

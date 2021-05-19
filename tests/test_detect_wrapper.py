@@ -19,20 +19,22 @@ def same_shape(*imgs: list) -> bool:
 def test_series(write: bool = False):
     """Test using series of images."""
     # Get images
-    imgs = glob.glob("../samples/images/random3_4k/*/*jpg")
+    this = os.path.dirname(__file__)
+    path = os.path.join(this, "../samples/images/random3_4k/*/*jpg")
+    imgs = glob.glob(path)
     each = len(imgs) // 3
     imgslist = [(imgs[i], imgs[i + each], imgs[i + 2 * each]) for i in range(each)]
     imgslist = imgslist[:1]
 
     # Init detector and wrapper
     det = YOLODetector()
-    dw = DetectWrapper(det, write_partials=True)
+    dw = DetectWrapper(det, write_partials=False)
 
     # Run
     results = []
     for c, l, r in imgslist:  # c, l, r because of alphabetic order
         timestamp = os.path.basename(c).replace(".jpg", "")
-        det_res = dw.run_detection(l, c, r, imwrite_interim=True)
+        det_res = dw.run_detection(l, c, r, imwrite_interim=False)
         assert dw.result  # Double check
         results.append((*det_res, timestamp))
 
@@ -46,14 +48,18 @@ def test_series(write: bool = False):
 
 def test_basic():
     """Basic test using one timestamp."""
+    this = os.path.dirname(__file__)
     l = "../samples/images/random4_4k/1l.jpg"
     c = "../samples/images/random4_4k/1c.jpg"
     r = "../samples/images/random4_4k/1r.jpg"
+    pathl = os.path.join(this, l)
+    pathc = os.path.join(this, c)
+    pathr = os.path.join(this, r)
 
     det = YOLODetector()
-    dw = DetectWrapper(det, write_partials=True)
-    dw.run_detection(l, c, r)
-    dw.write("result.jpg")
+    dw = DetectWrapper(det, write_partials=False)
+    dw.run_detection(pathl, pathc, pathr)
+    # dw.write("result.jpg")
     # TODO: Add more asserts here
     assert dw.result
 
