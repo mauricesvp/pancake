@@ -7,6 +7,7 @@ from pancake.detector.detector_yolo import YOLODetector
 
 # Helper functions
 
+
 def same_shape(*imgs: list) -> bool:
     init = imgs[0].shape
     for other in imgs[1:]:
@@ -19,8 +20,8 @@ def test_series(write: bool = False):
     """Test using series of images."""
     # Get images
     imgs = glob.glob("../samples/images/random3_4k/*/*jpg")
-    each = len(imgs)//3
-    imgslist = [(imgs[i], imgs[i+each], imgs[i+2*each]) for i in range(each)]
+    each = len(imgs) // 3
+    imgslist = [(imgs[i], imgs[i + each], imgs[i + 2 * each]) for i in range(each)]
     imgslist = imgslist[:1]
 
     # Init detector and wrapper
