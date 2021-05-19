@@ -1,3 +1,8 @@
+"""
+This script tries to destrech the left and right side of the Panorama Camera.
+Note that this approach was dropped and is no longer supported,
+so this script will probably not produce usable results.
+"""
 import argparse
 
 import cv2

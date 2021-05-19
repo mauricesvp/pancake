@@ -1,7 +1,7 @@
 import argparse
 import os
-
 import cv2
+import torch
 
 from . import models as m
 from . import tracker as tr
@@ -13,24 +13,25 @@ from .utils.parser import get_config
 
 """ CONFIGS """
 device = "0"
-if os.system("nvidia-smi"):
-    device = "CPU"
+if not torch.cuda.is_available():
+    device = "cpu"
 
-source = "https://www.youtube.com/watch?v=uPvZJWp_ed8&ab_channel=8131okichan"
+
+source = "../samples/Highway - 20090.mp4"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
 # weights = "train_results_yolov5s6/weights/last.pt"
-# weights = "yolov5s6.pt"
+
 model = "yolov5"
 weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
-cfg = get_config(config_file="../configs/tracker/deep_sort.yaml")
+tracker_cfg_path = "../configs/tracker/deep_sort.yaml"
 
 img_size = 448
 verbose = 2
 
 # visualization
-view_img = True
+view_img = False
 hide_labels = False
 hide_conf = False
 line_thickness = 2
@@ -42,20 +43,29 @@ classes = None
 agnostic_nms = False
 
 
-def main(argv=None):
+def fix_path(path):
+    """Adjust relative path."""
+    return os.path.join(os.path.dirname(__file__), path)
+
+
+def main(argv=None, *args, **kwargs):
     """
     LOADING PROCEDURE
     """
     # MODEL SETUP
+    weights_cfg = fix_path(weights)
     MODEL = m.MODEL_REGISTRY[model](
-        device, weights, conf_thres, iou_thres, classes, agnostic_nms, img_size
+        device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
     )
 
     # TRACKER SETUP
-    TRACKER = tr.TRACKER_REGISTRY[tracker](cfg, device=device)
+    tracker_cfg = fix_path(tracker_cfg_path)
+    tracker_cfg = get_config(config_file=tracker_cfg)
+    TRACKER = tr.TRACKER_REGISTRY[tracker](tracker_cfg, device=device)
 
     # INPUT DATA SETUP
-    DATA, is_webcam = load_data(source, MODEL)
+    source_path = fix_path(source)
+    DATA, is_webcam = load_data(source_path, MODEL)
 
     """
     TRACKING PROCEDURE
@@ -82,7 +92,7 @@ def main(argv=None):
             else:
                 p, s, im0 = path, "", im0s.copy()
 
-            s += f"{prep_img.shape[2:]} || "  # print preprocessed image shape
+            s += f"{prep_img.shape[2:]}, "  # print preprocessed image shape
 
             # IMPORTANT
             if len(det):
@@ -91,12 +101,23 @@ def main(argv=None):
                     prep_img.shape[2:], det[:, :4], im0.shape
                 ).round()
 
+            # tracker update
+            tracks = TRACKER.update(
+                det, im0
+            )  # [x1, y1, x2, y2, centre x, centre y, id]
+
             # detections per class
+            s += "Detections: "
             for c in det[:, -1].unique():
                 n = (det[:, -1] == c).sum()
                 s += f"{n} {MODEL._classlabels[int(c)]}{'s' * (n > 1)}, "  # add to string
 
-            TRACKER.update(det, im0)
+            # different tracks
+            s += f" Tracker-IDs:"
+            if len(tracks):
+                for track in tracks[:, 6]:
+                    s += f" {track}"
+                s += ", "
 
             # print results for current frame
             if verbose > 0:
@@ -105,13 +126,16 @@ def main(argv=None):
             # visualize detections
             if view_img:
                 visualize(
-                    det,
-                    p,
-                    im0,
-                    MODEL._classlabels,
-                    hide_labels,
-                    hide_conf,
-                    line_thickness,
+                    show_det=True,
+                    show_tracks=True,
+                    det=det,
+                    tracks=tracks,
+                    p=p,
+                    im0=im0,
+                    labels=MODEL._classlabels,
+                    hide_labels=hide_labels,
+                    hide_conf=hide_conf,
+                    line_thickness=line_thickness,
                 )
             # input()
 

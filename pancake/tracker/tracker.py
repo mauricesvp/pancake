@@ -20,5 +20,5 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det, img):
+    def update(self, det, *args, **kwargs):
         raise NotImplementedError

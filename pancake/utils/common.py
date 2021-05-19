@@ -2,6 +2,7 @@ import cv2
 import sys
 import torch
 import torch.backends.cudnn as cudnn
+import numpy as np
 from typing import Type, List, Union
 
 from ..models.base_class import BaseModel
@@ -44,7 +45,10 @@ def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadIma
 
 
 def visualize(
+    show_det: bool,
+    show_tracks: bool,
     det: Type[torch.Tensor],
+    tracks: Type[np.ndarray], 
     p: str,
     im0,
     labels: List,
@@ -53,7 +57,10 @@ def visualize(
     line_thickness: int,
 ) -> None:
     """
+    :param show_det (bool): if detection bbox' should be visualized
+    :param show_tracks (bool): if tracked object bbox' should be visualized
     :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
+    :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
     :param p (str): path of image
     :param im0s (array): original image
     :param labels (list): list of model specific class labels
@@ -62,18 +69,26 @@ def visualize(
     :param line_thickness (int): line thickness
     """
     # Draw boxes
-    for *xyxy, conf, cls in reversed(det):
-        # Add bbox to image
-        c = int(cls)  # integer class
-        label = (
-            None
-            if hide_labels
-            else (labels[c] if hide_conf else f"{labels[c]} {conf:.2f}")
-        )
+    if show_det:
+        for *xyxy, conf, cls in reversed(det):
+            # Add bbox to image
+            c = int(cls)  # integer class
+            label = (
+                None
+                if hide_labels
+                else (labels[c] if hide_conf else f"{labels[c]} {conf:.2f}")
+            )
 
-        plot_one_box(
-            xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness
-        )
+            plot_one_box(
+                xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness
+            )
+
+    if show_tracks:
+        for *xyxy, _, _, id in tracks:
+            plot_one_box(
+                xyxy, im0, label=str(id), color=colors(int(id), True), line_thickness=line_thickness
+            )
+    
 
     cv2.imshow(str(p), im0)
     cv2.waitKey(1)  # 1 millisecond
