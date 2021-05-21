@@ -1,5 +1,6 @@
 """Encapsulates yolov5 functionalities (loading, inference)
 """
+import numpy as np
 from typing import Type
 import torch
 
@@ -61,19 +62,25 @@ class Yolov5Model(BaseModel):
         """
         super(Yolov5Model, self)._init_infer(img_size)
 
-    def prep_image_infer(self, img):
+    def prep_image_infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
         """
-        :param img: padded and resized image
-        :return prep_img: preprocessed image (on device, expanded dim (,4), half precision (fp16))
+        :param img: padded and resized image (meeting stride-multiple constraints)
+        :return prep_img: preprocessed image 4d tensor [, R, G, B] (on device, 
+                          expanded dim (,4), half precision (fp16))
         """
         return super(Yolov5Model, self).prep_image_infer(img)
 
-    def infer(self, img: Type[torch.Tensor]) -> Type[torch.Tensor]:
+    def infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
         """
-        :param img (tensor): resized and padded image preprocessed for inference (meeting stride-multiple constraints),
-                            4d tensor [x, R, G, B]
+        :param img (np.array): resized and padded image [R, G, B] or [, R, G, B]
+                             
         :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
+                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device, 
+                              expanded dim (,4), half precision (fp16)) 
         """
+        # Prepare img for inference
+        img = self.prep_image_infer(img)
+
         # Inference
         pred = super(Yolov5Model, self).infer(img)
 
@@ -81,4 +88,4 @@ class Yolov5Model(BaseModel):
         pred = non_max_suppression(
             pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms
         )
-        return pred
+        return pred, img

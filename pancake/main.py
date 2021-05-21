@@ -71,14 +71,10 @@ def main(argv=None, *args, **kwargs):
     TRACKING PROCEDURE
     """
     for path, img, im0s, vid_cap in DATA:
-        prep_img = MODEL.prep_image_infer(
-            img
-        )  # prep_img (tensor): resized and padded image preprocessed for inference, 4d tensor [x, R, G, B]
-
         # inference
         t1 = time_synchronized()
-        pred = MODEL.infer(
-            prep_img
+        pred, prep_img = MODEL.infer(
+            img
         )  # pred (tensor): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         t2 = time_synchronized()
 
