@@ -259,6 +259,88 @@ class LoadImages:  # for inference
     def __len__(self):
         return self.nf  # number of files
 
+class LoadImageDirs:  # for inference
+    def __init__(self, dirs, img_size=640, stride=32):
+        n = len(dirs)
+        self.files = [None] * n
+        self.nf = [None] * n
+        self.video_flag = [None] * n
+
+        for i, path in enumerate(dirs):
+            p = str(Path(path).absolute()) # os-agnostic absolute path
+            if "*" in p:
+                files = sorted(glob.glob(p, recursive=True))  # glob
+            elif os.path.isdir(p):
+                files = sorted(glob.glob(os.path.join(p, "*.*")))  # dir
+            elif os.path.isfile(p):
+                files = [p]  # files
+            else:
+                raise Exception(f"ERROR: {p} does not exist")
+
+            images = [x for x in files if x.split(".")[-1].lower() in img_formats]
+            videos = [x for x in files if x.split(".")[-1].lower() in vid_formats]
+
+            ni, nv = len(images), len(videos)
+
+            assert (len(images) and not len(videos)), (
+                f"Currently only images are supported for multi directory option, "
+                f"found {nv} videos in {p}"
+            )
+            assert ni > 0, (
+                f"No images found in {p}. "
+                f"Supported formats are:\nimages: {img_formats}"
+            )
+
+            self.files[i] = images + videos
+            self.nf[i] = ni + nv
+            self.video_flag[i] = [False] * ni + [True] * nv
+
+        self.sources = [path.split("/")[-1] for path in dirs]
+        self.img_size = img_size
+        self.stride = stride
+        self.mode = "image"
+
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count == min(self.nf):
+            raise StopIteration
+
+        paths = [dir[self.count] for dir in self.files]
+
+        # Read images
+        self.count += 1
+        img0 = [cv2.imread(path) for path in paths] # BGR
+        
+        for i, img in enumerate(img0):
+            assert img is not None, "Image Not Found " + paths[i]
+            print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
+
+        # Padded resize
+        img = [
+            letterbox(x, self.img_size, stride=self.stride)[0]
+            for x in img0
+        ]
+
+        # Stack
+        img = np.stack(img, 0)
+        
+        # Convert
+        img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
+        img = np.ascontiguousarray(img)
+
+        return paths, img, img0, None
+
+    def new_video(self, path):
+        self.frame = 0
+        self.cap = cv2.VideoCapture(path)
+        self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    def __len__(self):
+        return self.nf  # number of files
 
 class LoadWebcam:  # for inference
     def __init__(self, pipe="0", img_size=640, stride=32):

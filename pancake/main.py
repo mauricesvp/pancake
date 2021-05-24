@@ -17,11 +17,13 @@ if not torch.cuda.is_available():
     device = "cpu"
 
 
-source = "../samples/Highway - 20090.mp4"
+# source = "../samples/streams.txt"
 # source = "samples/images/random2_4k/1r-cropped-rotated.jpg"
-# weights = "train_results_yolov5s6/weights/last.pt"
+source = ["../samples/r45/1l", "../samples/r45/1c", "../samples/r45/1r"]
+
 
 model = "yolov5"
+#weights = "yolov5l6.pt"
 weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
@@ -31,20 +33,27 @@ img_size = 448
 verbose = 2
 
 # visualization
-view_img = False
+view_img = True
 hide_labels = False
 hide_conf = False
 line_thickness = 2
 
 # detector
-conf_thres = 0.65
-iou_thres = 0.7
+conf_thres = 0.55
+iou_thres = 0.6
 classes = None
 agnostic_nms = False
 
 
 def fix_path(path):
     """Adjust relative path."""
+    if type(path) is list:
+        return list(
+            map(
+                lambda p: os.path.join(os.path.dirname(__file__), p), 
+                path
+                )
+            )
     return os.path.join(os.path.dirname(__file__), path)
 
 
@@ -83,7 +92,7 @@ def main(argv=None, *args, **kwargs):
 
         # process detections
         for i, det in enumerate(pred):  # iterate over image batch
-            if is_webcam:  # batch_size >= 1
+            if is_webcam or type(source) is list:  # batch_size >= 1
                 p, s, im0 = path[i], "%g: " % i, im0s[i].copy()
             else:
                 p, s, im0 = path, "", im0s.copy()
@@ -123,7 +132,7 @@ def main(argv=None, *args, **kwargs):
             if view_img:
                 visualize(
                     show_det=True,
-                    show_tracks=True,
+                    show_tracks=False,
                     det=det,
                     tracks=tracks,
                     p=p,

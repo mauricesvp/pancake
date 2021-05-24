@@ -6,7 +6,7 @@ import numpy as np
 from typing import Type, List, Union
 
 from ..models.base_class import BaseModel
-from .datasets import LoadStreams, LoadImages, LoadWebcam
+from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
 from .general import check_img_size, scale_coords, check_imshow
 from .plots import colors, plot_one_box
 from .torch_utils import time_synchronized
@@ -23,25 +23,35 @@ def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadIma
     ), "Your model needs to specify a model specific image size "
     "in class attribute '._required_img_size'"
 
-    is_webcam = (
-        source.isnumeric()
-        or source.endswith(".txt")
-        or source.lower().startswith(("rtsp://", "rtmp://", "http://", "https://"))
-    )
-    if is_webcam:
-        view_img = check_imshow()
-        cudnn.benchmark = True  # set True to speed up constant image size inference
-        return (
-            LoadStreams(
-                source, img_size=model._required_img_size, stride=model._stride
-            ),
-            True,
+    try:
+        is_webcam = (
+            source.isnumeric()
+            or source.endswith(".txt")
+            or source.lower().startswith(("rtsp://", "rtmp://", "http://", "https://"))
         )
-    else:
-        return (
-            LoadImages(source, img_size=model._required_img_size, stride=model._stride),
-            False,
-        )
+    except AttributeError:
+        is_webcam = False
+
+    finally:
+        if is_webcam:
+            view_img = check_imshow()
+            cudnn.benchmark = True  # set True to speed up constant image size inference
+            return (
+                LoadStreams(
+                    source, img_size=model._required_img_size, stride=model._stride
+                ),
+                True,
+            )
+        elif type(source) is list:
+            return (
+                LoadImageDirs(source, img_size=model._required_img_size, stride=model._stride),
+                False,
+            )
+        else:
+            return (
+                LoadImages(source, img_size=model._required_img_size, stride=model._stride),
+                False,
+            )
 
 
 def visualize(
@@ -89,6 +99,6 @@ def visualize(
                 xyxy, im0, label=str(id), color=colors(int(id), True), line_thickness=line_thickness
             )
     
-
+    im0 = cv2.resize(im0, (1080, 640))
     cv2.imshow(str(p), im0)
     cv2.waitKey(1)  # 1 millisecond
