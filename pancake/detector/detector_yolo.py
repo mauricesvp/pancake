@@ -10,7 +10,7 @@ class YOLODetector(Detector):
     def __init__(self, size="s", *args, **kwargs) -> None:
         assert size in ["s", "m", "l", "x"]
         self.model = torch.hub.load(
-            "ultralytics/yolov5", f"yolov5{size}6", pretrained=True
+            "ultralytics/yolov5", f"yolov5{size}", pretrained=True
         )
 
     def detect(self, imgs) -> list:

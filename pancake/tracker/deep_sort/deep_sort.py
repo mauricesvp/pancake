@@ -41,9 +41,7 @@ class DeepSort(object):
         # generate detections
         bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)
         features = self._get_features(bbox_xyxy, ori_img)
-        bbox_tlwh = np.asarray(
-            [self._xyxy_to_tlwh(xyxy) for xyxy in bbox_xyxy]
-        )
+        bbox_tlwh = np.asarray([self._xyxy_to_tlwh(xyxy) for xyxy in bbox_xyxy])
         detections = [
             Detection(bbox_tlwh[i], conf, features[i])
             for i, conf in enumerate(confidences)
@@ -121,15 +119,15 @@ class DeepSort(object):
 
         t = x1
         l = y1
-        w = int(x2-x1)
-        h = int(y2-y1)
-        return t,l,w,h
-    
+        w = int(x2 - x1)
+        h = int(y2 - y1)
+        return t, l, w, h
+
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
         for box in bbox_xyxy:
-            x1,y1,x2,y2 = box
-            im = ori_img[y1:y2,x1:x2]
+            x1, y1, x2, y2 = box
+            im = ori_img[y1:y2, x1:x2]
             im_crops.append(im)
         if im_crops:
             features = self.extractor(im_crops)

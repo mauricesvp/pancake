@@ -23,7 +23,7 @@ source = ["../samples/r45/1l", "../samples/r45/1c", "../samples/r45/1r"]
 
 
 model = "yolov5"
-#weights = "yolov5l6.pt"
+# weights = "yolov5l6.pt"
 weights = "../weights/detector/yolov5/yolov5s6_30epochs.pt"
 
 tracker = "deepsort"
@@ -48,12 +48,7 @@ agnostic_nms = False
 def fix_path(path):
     """Adjust relative path."""
     if type(path) is list:
-        return list(
-            map(
-                lambda p: os.path.join(os.path.dirname(__file__), p), 
-                path
-                )
-            )
+        return list(map(lambda p: os.path.join(os.path.dirname(__file__), p), path))
     return os.path.join(os.path.dirname(__file__), path)
 
 

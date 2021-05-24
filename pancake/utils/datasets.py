@@ -259,6 +259,7 @@ class LoadImages:  # for inference
     def __len__(self):
         return self.nf  # number of files
 
+
 class LoadImageDirs:  # for inference
     def __init__(self, dirs, img_size=640, stride=32):
         n = len(dirs)
@@ -267,7 +268,7 @@ class LoadImageDirs:  # for inference
         self.video_flag = [None] * n
 
         for i, path in enumerate(dirs):
-            p = str(Path(path).absolute()) # os-agnostic absolute path
+            p = str(Path(path).absolute())  # os-agnostic absolute path
             if "*" in p:
                 files = sorted(glob.glob(p, recursive=True))  # glob
             elif os.path.isdir(p):
@@ -282,7 +283,7 @@ class LoadImageDirs:  # for inference
 
             ni, nv = len(images), len(videos)
 
-            assert (len(images) and not len(videos)), (
+            assert len(images) and not len(videos), (
                 f"Currently only images are supported for multi directory option, "
                 f"found {nv} videos in {p}"
             )
@@ -300,7 +301,6 @@ class LoadImageDirs:  # for inference
         self.stride = stride
         self.mode = "image"
 
-
     def __iter__(self):
         self.count = 0
         return self
@@ -313,21 +313,18 @@ class LoadImageDirs:  # for inference
 
         # Read images
         self.count += 1
-        img0 = [cv2.imread(path) for path in paths] # BGR
-        
+        img0 = [cv2.imread(path) for path in paths]  # BGR
+
         for i, img in enumerate(img0):
             assert img is not None, "Image Not Found " + paths[i]
             print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
 
         # Padded resize
-        img = [
-            letterbox(x, self.img_size, stride=self.stride)[0]
-            for x in img0
-        ]
+        img = [letterbox(x, self.img_size, stride=self.stride)[0] for x in img0]
 
         # Stack
         img = np.stack(img, 0)
-        
+
         # Convert
         img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
         img = np.ascontiguousarray(img)
@@ -341,6 +338,7 @@ class LoadImageDirs:  # for inference
 
     def __len__(self):
         return self.nf  # number of files
+
 
 class LoadWebcam:  # for inference
     def __init__(self, pipe="0", img_size=640, stride=32):

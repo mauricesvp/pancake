@@ -71,7 +71,7 @@ class Detect(nn.Module):
 
                 y = x[i].sigmoid()
 
-                if not hasattr(self, 'inplace'):
+                if not hasattr(self, "inplace"):
                     self.inplace = True
                 if self.inplace:
                     y[..., 0:2] = (
