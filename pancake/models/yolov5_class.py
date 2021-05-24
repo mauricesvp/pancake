@@ -65,7 +65,7 @@ class Yolov5Model(BaseModel):
     def prep_image_infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
         """
         :param img: padded and resized image (meeting stride-multiple constraints)
-        :return prep_img: preprocessed image 4d tensor [, R, G, B] (on device, 
+        :return prep_img: preprocessed image 4d tensor [, R, G, B] (on device,
                           expanded dim (,4), half precision (fp16))
         """
         return super(Yolov5Model, self).prep_image_infer(img)
@@ -73,10 +73,10 @@ class Yolov5Model(BaseModel):
     def infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
         """
         :param img (np.array): resized and padded image [R, G, B] or [, R, G, B]
-                             
+
         :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device, 
-                              expanded dim (,4), half precision (fp16)) 
+                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
+                              expanded dim (,4), half precision (fp16))
         """
         # Prepare img for inference
         img = self.prep_image_infer(img)

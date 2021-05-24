@@ -56,4 +56,4 @@ class DEEPSORT(BaseTracker):
                 cls  (np,ndarray (,1)): class indeces
         """
         t_det = det.cpu().detach().numpy()
-        return t_det[:, :4], t_det[..., 4], t_det[..., 5] 
+        return t_det[:, :4], t_det[..., 4], t_det[..., 5]

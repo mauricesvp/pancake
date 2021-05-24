@@ -44,12 +44,16 @@ def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadIma
             )
         elif type(source) is list:
             return (
-                LoadImageDirs(source, img_size=model._required_img_size, stride=model._stride),
+                LoadImageDirs(
+                    source, img_size=model._required_img_size, stride=model._stride
+                ),
                 False,
             )
         else:
             return (
-                LoadImages(source, img_size=model._required_img_size, stride=model._stride),
+                LoadImages(
+                    source, img_size=model._required_img_size, stride=model._stride
+                ),
                 False,
             )
 
@@ -58,7 +62,7 @@ def visualize(
     show_det: bool,
     show_tracks: bool,
     det: Type[torch.Tensor],
-    tracks: Type[np.ndarray], 
+    tracks: Type[np.ndarray],
     p: str,
     im0,
     labels: List,
@@ -90,15 +94,23 @@ def visualize(
             )
 
             plot_one_box(
-                xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness
+                xyxy,
+                im0,
+                label=label,
+                color=colors(c, True),
+                line_thickness=line_thickness,
             )
 
     if show_tracks:
         for *xyxy, _, _, id in tracks:
             plot_one_box(
-                xyxy, im0, label=str(id), color=colors(int(id), True), line_thickness=line_thickness
+                xyxy,
+                im0,
+                label=str(id),
+                color=colors(int(id), True),
+                line_thickness=line_thickness,
             )
-    
+
     im0 = cv2.resize(im0, (1080, 640))
     cv2.imshow(str(p), im0)
     cv2.waitKey(1)  # 1 millisecond
