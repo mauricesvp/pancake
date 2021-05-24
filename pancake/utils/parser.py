@@ -4,9 +4,7 @@ from easydict import EasyDict as edict
 
 
 class YamlParser(edict):
-    """
-    This is yaml parser based on EasyDict.
-    """
+    """Yaml parser based on EasyDict."""
 
     def __init__(self, cfg_dict=None, config_file=None):
         if cfg_dict is None:
