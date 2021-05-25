@@ -136,6 +136,7 @@ def main(argv=None, *args, **kwargs):
                     hide_labels=hide_labels,
                     hide_conf=hide_conf,
                     line_thickness=line_thickness,
+                    debug=False,  # Set to true to enable manual stepping
                 )
             # input()
 

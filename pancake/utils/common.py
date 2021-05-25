@@ -69,6 +69,7 @@ def visualize(
     hide_labels: bool,
     hide_conf: bool,
     line_thickness: int,
+    debug: bool = False,
 ) -> None:
     """
     :param show_det (bool): if detection bbox' should be visualized
@@ -81,6 +82,7 @@ def visualize(
     :param hide_labels (bool): if labels should be visualized
     :param hide_conf (bool): if confidences should be visualized
     :param line_thickness (int): line thickness
+    :param debug (bool): enables debug stepping
     """
     # Draw boxes
     if show_det:
@@ -112,5 +114,5 @@ def visualize(
             )
 
     im0 = cv2.resize(im0, (1080, 640))
-    cv2.imshow(str(p), im0)
-    cv2.waitKey(1)  # 1 millisecond
+    cv2.imshow("Pancake", im0)
+    cv2.waitKey(0 if debug else 1)
