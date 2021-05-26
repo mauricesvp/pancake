@@ -65,7 +65,6 @@ def visualize(
     show_tracks: bool,
     det: Type[torch.Tensor],
     tracks: Type[np.ndarray],
-    p: str,
     im0,
     labels: List,
     hide_labels: bool,
@@ -78,8 +77,7 @@ def visualize(
     :param show_tracks (bool): if tracked object bbox' should be visualized
     :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
     :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
-    :param p (str): path of image
-    :param im0s (array): original image
+    :param im0 (array): original image
     :param labels (list): list of model specific class labels
     :param hide_labels (bool): if labels should be visualized
     :param hide_conf (bool): if confidences should be visualized

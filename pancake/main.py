@@ -130,7 +130,6 @@ def main(argv=None, *args, **kwargs):
                     show_tracks=False,
                     det=det,
                     tracks=tracks,
-                    p=p,
                     im0=im0,
                     labels=MODEL._classlabels,
                     hide_labels=hide_labels,
