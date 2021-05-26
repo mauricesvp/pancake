@@ -1,4 +1,7 @@
 """Custom trained detector based on YOLOv5."""
+import math
+
+import cv2
 import torch
 
 import pancake.models as m
@@ -26,8 +29,18 @@ class YOLOCustomDetector(Detector):
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
         )
 
+    def round(self, val: int, base: int) -> int:
+        return self.model._stride * math.floor(val / self.model._stride)
+
     def detect(self, imgs) -> list:
-        if type(imgs) is not list:
-            imgs = [imgs]
-        res = self.model.infer(imgs)
+        # TODO: Make this better ...
+        h, w, _ = imgs.shape
+        self.model._stride = self.round(max(h, w) // 10, 64)
+        self.model._stride = max(64, self.model._stride)
+        hr = self.round(h, self.model._stride)
+        wr = self.round(w, self.model._stride)
+        if h != hr or w != wr:
+            imgs = cv2.resize(imgs, (wr, hr))
+        imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2RGB).transpose(2, 0, 1)
+        res, _ = self.model.infer(imgs)
         return res

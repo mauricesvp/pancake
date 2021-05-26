@@ -75,18 +75,14 @@ def main():
 
     DATA, is_webcam = load_data(source)
 
+    iteration = 0
     for path, img, im0s, vid_cap in DATA:
-        print("iteration")
-        # Starting from here stuff is not working quite yet
+        l.debug(f"Iteration {iteration}")
+        iteration += 1
+
         detections = BACKEND.detect(im0s)
         stitched = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
-
-        for i, x in enumerate(detections):
-            detections[i] = torch.FloatTensor(list(x))
-        # detections = torch.tensor(detections)
-        # empty = torch.Tensor()
-        empty = torch.stack(detections, dim=0)
-        tracks = TRACKER.update(empty, stitched)
+        tracks = TRACKER.update(detections, stitched)
 
         if config.PANCAKE.VISUALIZATION.VIEW_IMG:
             hide_labels = config.PANCAKE.VISUALIZATION.HIDE_LABELS
@@ -103,7 +99,7 @@ def main():
                 hide_labels=hide_labels,
                 hide_conf=hide_conf,
                 line_thickness=line_thickness,
-                debug=False,  # Set to True to enable manual stepping
+                debug=True,  # Set to True to enable manual stepping
             )
 
 
