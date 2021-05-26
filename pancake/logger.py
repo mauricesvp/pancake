@@ -28,7 +28,7 @@ def setup_logger(name: str) -> logging.Logger:
     stderr_handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
     logger.addHandler(stderr_handler)
     return logger
