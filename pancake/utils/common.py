@@ -1,9 +1,11 @@
-import cv2
+import os
 import sys
+from typing import Type, List, Union
+
+import cv2
+import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-import numpy as np
-from typing import Type, List, Union
 
 from ..models.base_class import BaseModel
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
@@ -116,3 +118,12 @@ def visualize(
     im0 = cv2.resize(im0, (1080, 640))
     cv2.imshow("Pancake", im0)
     cv2.waitKey(0 if debug else 1)
+
+
+def fix_path(path: str) -> str:
+    """Adjust relative path."""
+    if type(path) is list:
+        return list(
+            map(lambda p: os.path.join(os.path.dirname(__file__), p), "..", path)
+        )
+    return os.path.join(os.path.dirname(__file__), "..", path)

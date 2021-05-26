@@ -4,7 +4,7 @@ import torch
 from .detector import Detector
 
 
-class YOLODetector(Detector):
+class YOLOSimpleDetector(Detector):
     """Very simple detector using pretrained yolov5."""
 
     def __init__(self, size="s", *args, **kwargs) -> None:

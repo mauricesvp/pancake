@@ -2,7 +2,7 @@ import configparser
 import os
 
 
-def get_config() -> configparser.ConfigParser:
+def pancake_config() -> configparser.ConfigParser:
     """Parse config file."""
     config = configparser.ConfigParser()
     basedir = os.path.dirname(__file__)

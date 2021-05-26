@@ -2,7 +2,7 @@ import glob
 import os
 
 from pancake.misc.detect_wrapper import DetectWrapper
-from pancake.detector.detector_yolo import YOLODetector
+from pancake.detector.detector_yolo_simple import YOLOSimpleDetector
 
 
 # Helper functions
@@ -27,7 +27,7 @@ def test_series(write: bool = False):
     imgslist = imgslist[:1]
 
     # Init detector and wrapper
-    det = YOLODetector()
+    det = YOLOSimpleDetector()
     dw = DetectWrapper(det, write_partials=False)
 
     # Run
@@ -56,7 +56,7 @@ def test_basic():
     pathc = os.path.join(this, c)
     pathr = os.path.join(this, r)
 
-    det = YOLODetector()
+    det = YOLOSimpleDetector()
     dw = DetectWrapper(det, write_partials=False)
     dw.run_detection(pathl, pathc, pathr)
     # dw.write("result.jpg")
