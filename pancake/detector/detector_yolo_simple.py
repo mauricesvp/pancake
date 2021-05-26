@@ -7,11 +7,8 @@ from .detector import Detector
 class YOLOSimpleDetector(Detector):
     """Very simple detector using pretrained yolov5."""
 
-    def __init__(self, size="s", *args, **kwargs) -> None:
-        assert size in ["s", "m", "l", "x"]
-        self.model = torch.hub.load(
-            "ultralytics/yolov5", f"yolov5{size}", pretrained=True
-        )
+    def __init__(self, *args, **kwargs) -> None:
+        self.model = torch.hub.load("ultralytics/yolov5", f"yolov5s", pretrained=True)
 
     def detect(self, imgs) -> list:
         if type(imgs) is not list:

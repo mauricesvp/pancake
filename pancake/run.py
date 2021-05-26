@@ -1,32 +1,46 @@
 import logging
 
+import cv2
+import numpy as np
+import torch
+
 from . import detector as det
 from . import tracker as tr
+from .detector import backends as be
 
 from .config import pancake_config
 from .logger import setup_logger
-from .utils.common import fix_path
+from .utils.common import fix_path, load_data, visualize
 from .utils.parser import get_config
 
 l = setup_logger(__name__)
 
 
 def setup_detector(config):
-    name = config["DETECTOR"]["detector"]
-    params = config["DETECTOR_" + name.upper()]
+    name = config.DETECTOR.NAME
+    params = getattr(config.DETECTOR, name.upper())
 
-    device = config["GENERAL"]["device"]
+    device = config.DEVICE
+    if config.USE_GPU and torch.cuda.is_available():
+        device = 0
 
     DETECTOR = det.DETECTOR_REGISTRY[name](params, device=device)
     return DETECTOR
 
 
-def setup_tracker(config):
-    name = config["TRACKER"]["tracker"]
-    conf = config["TRACKER_" + name.upper()]
-    tracker_cfg = get_config(config_file=conf["tracker_cfg_path"])
+def setup_backend(config, detector):
+    name = config.DETECTOR.BACKEND
+    return be.BACKEND_REGISTRY[name](detector)
 
-    device = config["GENERAL"]["device"]
+
+def setup_tracker(config):
+    name = config.TRACKER.NAME
+    params = getattr(config.TRACKER, name.upper())
+    tracker_cfg = get_config(config_file=params.TRACKER_CFG_PATH)
+
+    device = config.DEVICE
+    if config.USE_GPU and torch.cuda.is_available():
+        device = 0
 
     TRACKER = tr.TRACKER_REGISTRY[name](tracker_cfg, device=device)
     return TRACKER
@@ -34,7 +48,7 @@ def setup_tracker(config):
 
 def setup_logging(config):
     try:
-        log_level = getattr(logging, config["level"])
+        log_level = getattr(logging, config.LOGGING.LEVEL)
         l.setLevel(log_level)
     except:
         l.setLevel(logging.INFO)
@@ -46,42 +60,46 @@ def main():
 
     config = pancake_config()
 
-    setup_logging(config["LOGGING"])
+    setup_logging(config.PANCAKE)
 
     # Detector setup
-    DETECTOR = setup_detector(config)
+    DETECTOR = setup_detector(config.PANCAKE)
+    BACKEND = setup_backend(config.PANCAKE, DETECTOR)
 
     # Tracker setup
-    TRACKER = setup_tracker(config)
-    # tracker_cfg = fix_path(tracker_cfg_path)
-    # TRACKER = tr.TRACKER_REGISTRY[tracker](tracker_cfg, device=device)
+    TRACKER = setup_tracker(config.PANCAKE)
 
     # Input data setup
-    source = config["DATA"]["source"]
+    source = config.PANCAKE.DATA.SOURCE
     source_path = fix_path(source)
 
-    # Starting from here stuff is not working quite yet
-    return
-
-    # !!! TODO: Make load_data _not_ require model param !!!
-    # DATA, is_webcam = load_data(source, MODEL)
+    DATA, is_webcam = load_data(source)
 
     for path, img, im0s, vid_cap in DATA:
-        # TODO: Wrap this around backends
-        detections = DETECTOR.detect(img)
-        tracks = TRACKER.update(detections)
+        print("iteration")
+        # Starting from here stuff is not working quite yet
+        detections = BACKEND.detect(im0s)
+        stitched = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
 
-        if config["VISUALIZATION"]["view_img"]:
-            hide_labels = config["VISUALIZATION"]["hide_labels"]
-            hide_conf = config["VISUALIZATION"]["hide_conf"]
-            line_thickness = int(config["VISUALIZATION"]["line_thickness"])
+        for i, x in enumerate(detections):
+            detections[i] = torch.FloatTensor(list(x))
+        # detections = torch.tensor(detections)
+        # empty = torch.Tensor()
+        empty = torch.stack(detections, dim=0)
+        tracks = TRACKER.update(empty, stitched)
+
+        if config.PANCAKE.VISUALIZATION.VIEW_IMG:
+            hide_labels = config.PANCAKE.VISUALIZATION.HIDE_LABELS
+            hide_conf = config.PANCAKE.VISUALIZATION.HIDE_CONF
+            line_thickness = config.PANCAKE.VISUALIZATION.LINE_THICKNESS
             visualize(
                 show_det=True,
-                show_tracks=False,
+                show_tracks=True,
                 det=detections,
                 tracks=tracks,
-                im0=im0,
-                labels=MODEL._classlabels,  # TODO: fix
+                # im0=im0,
+                im0=stitched,
+                labels=None,  # TODO: fix; get labels from config?
                 hide_labels=hide_labels,
                 hide_conf=hide_conf,
                 line_thickness=line_thickness,

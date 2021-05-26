@@ -6,7 +6,10 @@ import torch
 
 from .base_class import BaseModel
 from .experimental import attempt_load
+from pancake.logger import setup_logger
 from pancake.utils.general import check_img_size, non_max_suppression
+
+l = setup_logger(__name__)
 
 
 class Yolov5Model(BaseModel):
@@ -44,7 +47,7 @@ class Yolov5Model(BaseModel):
             else self.model.names
         )  # get class names
 
-        print(f"Class names: {self._classlabels}")
+        l.debug(f"Class names: {self._classlabels}")
 
         self._conf_thres = conf_thres
         self._iou_thres = iou_thres

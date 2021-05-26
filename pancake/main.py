@@ -34,6 +34,7 @@ verbose = 2
 
 # visualization
 view_img = True
+view_img = False
 hide_labels = False
 hide_conf = False
 line_thickness = 2

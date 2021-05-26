@@ -317,7 +317,7 @@ class LoadImageDirs:  # for inference
 
         for i, img in enumerate(img0):
             assert img is not None, "Image Not Found " + paths[i]
-            print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
+            # print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
 
         # Padded resize
         img = [letterbox(x, self.img_size, stride=self.stride)[0] for x in img0]
@@ -1129,6 +1129,8 @@ def letterbox(
     scaleup=True,
     stride=32,
 ):
+    if not new_shape:
+        return img, 0, (0, 0)
     # Resize and pad image while meeting stride-multiple constraints
     shape = img.shape[:2]  # current shape [height, width]
     if isinstance(new_shape, int):

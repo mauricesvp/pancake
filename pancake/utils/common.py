@@ -14,16 +14,28 @@ from .plots import colors, plot_one_box
 from .torch_utils import time_synchronized
 
 
-def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadImages]:
+def load_data(
+    source: str, model: Type[BaseModel] = None
+) -> Union[LoadStreams, LoadImages]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     :param model (BaseModel): model wrapper
     :param img_size (int): inference size (pixels)
     """
-    assert (
-        model._required_img_size
-    ), "Your model needs to specify a model specific image size "
-    "in class attribute '._required_img_size'"
+    if not model:
+        img_size = None
+        stride = None
+    else:
+        assert (
+            model._required_img_size
+        ), "Your model needs to specify a model specific image size "
+        "in class attribute '._required_img_size'"
+        assert (
+            model._stride
+        ), "Your model needs to specify a model specific stride size "
+        "in class attribute '._stride'"
+        img_size = model._required_img_size
+        stride = model._stride
 
     try:
         is_webcam = (
@@ -39,23 +51,17 @@ def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadIma
             view_img = check_imshow()
             cudnn.benchmark = True  # set True to speed up constant image size inference
             return (
-                LoadStreams(
-                    source, img_size=model._required_img_size, stride=model._stride
-                ),
+                LoadStreams(source, img_size=img_size, stride=stride),
                 True,
             )
         elif type(source) is list:
             return (
-                LoadImageDirs(
-                    source, img_size=model._required_img_size, stride=model._stride
-                ),
+                LoadImageDirs(source, img_size=img_size, stride=stride),
                 False,
             )
         else:
             return (
-                LoadImages(
-                    source, img_size=model._required_img_size, stride=model._stride
-                ),
+                LoadImages(source, img_size=img_size, stride=stride),
                 False,
             )
 
@@ -63,13 +69,13 @@ def load_data(source: str, model: Type[BaseModel]) -> Union[LoadStreams, LoadIma
 def visualize(
     show_det: bool,
     show_tracks: bool,
-    det: Type[torch.Tensor],
-    tracks: Type[np.ndarray],
     im0,
-    labels: List,
     hide_labels: bool,
     hide_conf: bool,
     line_thickness: int,
+    labels: List = None,
+    det: Type[torch.Tensor] = None,
+    tracks: Type[np.ndarray] = None,
     debug: bool = False,
 ) -> None:
     """
@@ -113,15 +119,14 @@ def visualize(
                 line_thickness=line_thickness,
             )
 
-    im0 = cv2.resize(im0, (1080, 640))
+    cv2.namedWindow("Pancake", cv2.WINDOW_NORMAL)
+    # im0 = cv2.resize(im0, (1080, 640))
     cv2.imshow("Pancake", im0)
     cv2.waitKey(0 if debug else 1)
 
 
-def fix_path(path: str) -> str:
+def fix_path(path: Union[str, list]) -> str:
     """Adjust relative path."""
     if type(path) is list:
-        return list(
-            map(lambda p: os.path.join(os.path.dirname(__file__), p), "..", path)
-        )
+        return list(map(lambda p: fix_path(p), path))
     return os.path.join(os.path.dirname(__file__), "..", path)
