@@ -127,7 +127,7 @@ class DEI(Backend):
         self.shape = imgl.shape
         objs = []
         objs += self.partial(
-        #objs += self.partial_non_batch(
+            # objs += self.partial_non_batch(
             imgl,
             side="l",
             imwrite=self.write_partials,
@@ -135,7 +135,7 @@ class DEI(Backend):
             imwrite_interim_filename=imwrite_interim_filename,
         )
         rights = self.partial(
-        #rights = self.partial_non_batch(
+            # rights = self.partial_non_batch(
             imgr,
             side="r",
             imwrite=self.write_partials,

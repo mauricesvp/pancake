@@ -43,18 +43,21 @@ class YOLOCustomDetector(Detector):
             imgs = [imgs]
 
         # Save initial sizes
-        img_sizes = [img.shape for img in imgs]  
+        img_sizes = [img.shape for img in imgs]
 
         # Padded resize
-        pr_imgs = [letterbox(
-            x, self.model._required_img_size, stride=self.model._stride
-            )[0] for x in imgs]
+        pr_imgs = [
+            letterbox(x, self.model._required_img_size, stride=self.model._stride)[0]
+            for x in imgs
+        ]
 
         # Stack
         pr_imgs = np.stack(pr_imgs, 0)
 
         # Convert
-        pr_imgs = pr_imgs[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
+        pr_imgs = pr_imgs[:, :, :, ::-1].transpose(
+            0, 3, 1, 2
+        )  # BGR to RGB, to bsx3x416x416
         pr_imgs = np.ascontiguousarray(pr_imgs)
 
         # Inference
@@ -63,8 +66,6 @@ class YOLOCustomDetector(Detector):
         # Rescale images from preprocessed to original
         res = [None] * len(det)
         for i, x in enumerate(det):
-            x[:, :4] = scale_coords(
-                        pr_imgs.shape[2:], x[:, :4], img_sizes[i]
-                    ).round()
+            x[:, :4] = scale_coords(pr_imgs.shape[2:], x[:, :4], img_sizes[i]).round()
             res[i] = x
         return res
