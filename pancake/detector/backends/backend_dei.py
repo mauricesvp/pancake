@@ -122,16 +122,16 @@ class DEI(Backend):
         assert imgl.shape == imgc.shape == imgr.shape
         self.shape = imgl.shape
         objs = []
-        # objs += self.partial(
-        objs += self.partial_non_batch(
+        objs += self.partial(
+        #objs += self.partial_non_batch(
             imgl,
             side="l",
             imwrite=self.write_partials,
             imwrite_interim=imwrite_interim,
             imwrite_interim_filename=imwrite_interim_filename,
         )
-        # rights = self.partial(
-        rights = self.partial_non_batch(
+        rights = self.partial(
+        #rights = self.partial_non_batch(
             imgr,
             side="r",
             imwrite=self.write_partials,
@@ -173,8 +173,6 @@ class DEI(Backend):
         return objs
 
     def detect_mid(self, imgc) -> list:
-        # imgc = cv2.resize(imgc, (448*4, 448*4))
-        # imgc = cv2.cvtColor(imgc, cv2.COLOR_BGR2RGB).transpose(2, 0, 1)
         res = self.detector.detect(imgc)[0]
         return res2int(res)
 

@@ -1,6 +1,7 @@
 """Custom trained detector based on YOLOv5."""
 import math
 import numpy as np
+import time
 
 import cv2
 import torch
@@ -33,18 +34,37 @@ class YOLOCustomDetector(Detector):
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)
 
-    def detect(self, imgs) -> list:
-        # TODO: Make this better ...
-         # Padded resize
-        pr_imgs = letterbox(
-            imgs, self.model._required_img_size, stride=self.model._stride)[0]
+    def detect(self, imgs: list) -> list:
+        """
+        :param imgs (list): list of images, images as np.array in BGR
+        :return res (list): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
+        """
+        if type(imgs) is not list:
+            imgs = [imgs]
+
+        # Save initial sizes
+        img_sizes = [img.shape for img in imgs]  
+
+        # Padded resize
+        pr_imgs = [letterbox(
+            x, self.model._required_img_size, stride=self.model._stride
+            )[0] for x in imgs]
+
+        # Stack
+        pr_imgs = np.stack(pr_imgs, 0)
 
         # Convert
-        pr_imgs = pr_imgs[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+        pr_imgs = pr_imgs[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
         pr_imgs = np.ascontiguousarray(pr_imgs)
 
-        res = self.model.infer(pr_imgs)[0][0]
-        res[:, :4] = scale_coords(
-                    pr_imgs.shape[1:], res[:, :4], imgs.shape
-                ).round()
-        return [res]
+        # Inference
+        det, _ = self.model.infer(pr_imgs)
+
+        # Rescale images from preprocessed to original
+        res = [None] * len(det)
+        for i, x in enumerate(det):
+            x[:, :4] = scale_coords(
+                        pr_imgs.shape[2:], x[:, :4], img_sizes[i]
+                    ).round()
+            res[i] = x
+        return res

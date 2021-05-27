@@ -106,11 +106,11 @@ def main():
                 tracks=tracks,
                 # im0=im0,
                 im0=stitched,
-                labels=DETECTOR.model.names,  # TODO: fix; get labels from config?
+                labels=DETECTOR.model.names,
                 hide_labels=hide_labels,
                 hide_conf=hide_conf,
                 line_thickness=line_thickness,
-                debug=True,  # Set to True to enable manual stepping
+                debug=False,  # Set to True to enable manual stepping
             )
 
 
