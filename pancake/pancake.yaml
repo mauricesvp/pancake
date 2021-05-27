@@ -17,6 +17,7 @@ PANCAKE:
   DETECTOR:
     # NAME: "yolo_custom"
     NAME: "yolo_simple"
+    # BACKEND: "simple"
     BACKEND: "dei"  # divide et impera
 
     YOLO_SIMPLE:
