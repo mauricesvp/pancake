@@ -41,13 +41,13 @@ class Yolov5Model(BaseModel):
             self.model.half()  # to FP16
 
         self._stride = int(self.model.stride.max())  # model stride
-        self._classlabels = (
+        self.names = (
             self.model.module.names
             if hasattr(self.model, "module")
             else self.model.names
         )  # get class names
 
-        l.debug(f"Class names: {self._classlabels}")
+        l.debug(f"Class names: {self.names}")
 
         self._conf_thres = conf_thres
         self._iou_thres = iou_thres

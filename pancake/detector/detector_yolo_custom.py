@@ -1,5 +1,6 @@
 """Custom trained detector based on YOLOv5."""
 import math
+import numpy as np
 
 import cv2
 import torch
@@ -7,6 +8,8 @@ import torch
 import pancake.models as m
 from pancake.utils.common import fix_path
 from .detector import Detector
+from pancake.utils.datasets import letterbox
+from pancake.utils.general import scale_coords
 
 
 class YOLOCustomDetector(Detector):
@@ -22,8 +25,6 @@ class YOLOCustomDetector(Detector):
         agnostic_nms = True if "True" == config["agnostic_nms"] else False
         img_size = int(config["img_size"])
         device = kwargs.get("device", "CPU")
-        if device.isdigit():
-            device = int(device)
 
         self.model = m.MODEL_REGISTRY[model](
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
@@ -34,13 +35,17 @@ class YOLOCustomDetector(Detector):
 
     def detect(self, imgs) -> list:
         # TODO: Make this better ...
-        h, w, _ = imgs.shape
-        self.model._stride = self.round(max(h, w) // 10, 64)
-        self.model._stride = max(64, self.model._stride)
-        hr = self.round(h, self.model._stride)
-        wr = self.round(w, self.model._stride)
-        if h != hr or w != wr:
-            imgs = cv2.resize(imgs, (wr, hr))
-        imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2RGB).transpose(2, 0, 1)
-        res, _ = self.model.infer(imgs)
-        return res
+         # Padded resize
+        pr_imgs = letterbox(
+            imgs, self.model._required_img_size, stride=self.model._stride)[0]
+
+        # Convert
+        imgs = imgs[:, :, ::-1].transpose(2, 0, 1) # BGR to RGB, to 3x416x416
+        pr_imgs = pr_imgs[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+        pr_imgs = np.ascontiguousarray(pr_imgs)
+
+        res = self.model.infer(pr_imgs)[0][0]
+        res[:, :4] = scale_coords(
+                    pr_imgs.shape[1:], res[:, :4], imgs.shape
+                ).round()
+        return [res]

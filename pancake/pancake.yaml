@@ -1,7 +1,6 @@
 PANCAKE:
+  # "CPU", "GPU", "0", "1", ... (for specific gpu device)
   DEVICE: "CPU"
-  # Use GPU if available
-  USE_GPU: True
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -16,7 +15,7 @@ PANCAKE:
 
   DETECTOR:
     # NAME: "yolo_custom"
-    NAME: "yolo_simple"
+    NAME: "yolo_custom"
     BACKEND: "dei"  # divide et impera
 
     YOLO_SIMPLE:
@@ -29,7 +28,7 @@ PANCAKE:
       conf_thres: 0.65
       iou_thres: 0.7
       classes: null
-      agnostic_nms: False
+      agnostic_nms: True
 
   TRACKER:
     NAME: "deepsort"
@@ -39,6 +38,6 @@ PANCAKE:
 
   VISUALIZATION:
     VIEW_IMG: True
-    HIDE_LABELS: True
+    HIDE_LABELS: False
     HIDE_CONF: False
     LINE_THICKNESS: 2

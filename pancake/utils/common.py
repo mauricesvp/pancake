@@ -120,7 +120,6 @@ def visualize(
             )
 
     cv2.namedWindow("Pancake", cv2.WINDOW_NORMAL)
-    # im0 = cv2.resize(im0, (1080, 640))
     cv2.imshow("Pancake", im0)
     cv2.waitKey(0 if debug else 1)
 
