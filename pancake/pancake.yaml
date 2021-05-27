@@ -8,10 +8,20 @@ PANCAKE:
     LEVEL: "DEBUG"
 
   DATA:
-    SOURCE:
-      - "../samples/r45/1l"
-      - "../samples/r45/1c"
-      - "../samples/r45/1r"
+    #             SUPPORTED SOURCE TYPES
+    # ~ '../path/to/image'    - single image
+    # ~ '../path/to/video'    - video frames 
+    # ~ '../path/to/imagedir' - sequence of images 
+    # ~ ['../path/to/dir1', 
+    #    '../path/to/dir2',   - directories with videos
+    #    '../path/to/dir3']     /sequence of images
+    # ~ 'url_to_streams.txt'  - live streams    
+    SOURCE: '../samples/output.avi'
+       
+      
+      # - "../samples/r45/1l"
+      # - "../samples/r45/1c"
+      # - "../samples/r45/1r"
     ROI:
       # null -> get max/min from shape
       ../samples/r45/1l:
@@ -33,7 +43,7 @@ PANCAKE:
   DETECTOR:
     # NAME: "yolo_custom"
     NAME: "yolo_custom"
-    BACKEND: "dei"  # divide et impera
+    BACKEND: "simple"  # divide et impera
 
     YOLO_SIMPLE:
       size: "s"

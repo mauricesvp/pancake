@@ -94,8 +94,13 @@ def main():
         iteration += 1
 
         detections = BACKEND.detect(im0s)
-        stitched = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
-        tracks = TRACKER.update(detections, stitched)
+
+        if not type(im0s) is list:
+            frame = im0s
+        else:
+            # TODO: adapt concat to arbitrary number of frames 
+            frame = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
+        tracks = TRACKER.update(detections, frame)
 
         if config.PANCAKE.VISUALIZATION.VIEW_IMG:
             hide_labels = config.PANCAKE.VISUALIZATION.HIDE_LABELS
@@ -107,7 +112,7 @@ def main():
                 det=detections,
                 tracks=tracks,
                 # im0=im0,
-                im0=stitched,
+                im0=frame,
                 labels=DETECTOR.model.names,
                 hide_labels=hide_labels,
                 hide_conf=hide_conf,
