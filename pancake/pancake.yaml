@@ -13,6 +13,23 @@ PANCAKE:
       - "../samples/r45/1l"
       - "../samples/r45/1c"
       - "../samples/r45/1r"
+    ROI:
+      # null -> get max/min from shape
+      ../samples/r45/1l:
+        - 1200  # x0
+        - 550  # y0
+        - 3775  # x1
+        - 1300  # y1
+      ../samples/r45/1c:
+        - null  # x0
+        - 550  # y0
+        - null  # x1
+        - 1350  # y1
+      ../samples/r45/1r:
+        - 25  # x0
+        - 600  # y0
+        - 3100  # x1
+        - 1350  # y1
 
   DETECTOR:
     # NAME: "yolo_custom"

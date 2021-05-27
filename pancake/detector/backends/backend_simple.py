@@ -13,7 +13,7 @@ from .backend import Backend
 
 
 class SIMPLE(Backend):
-    def __init__(self, detector, *args, **kwargs) -> None:
+    def __init__(self, detector, roi: list = None, *args, **kwargs) -> None:
         """
 
         :param detector: Detector which provides 'detect' method,
@@ -21,6 +21,8 @@ class SIMPLE(Backend):
 
         """
         self.detector = detector
+        if roi:
+            self.roi = roi
 
     def detect(self, source) -> list:
         """Detect objects on image(s).

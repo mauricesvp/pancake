@@ -30,7 +30,9 @@ def setup_detector(config):
 
 def setup_backend(config, detector):
     name = config.DETECTOR.BACKEND
-    return be.BACKEND_REGISTRY[name](detector)
+
+    ROI = config.DATA.ROI
+    return be.BACKEND_REGISTRY[name](detector, roi=ROI)
 
 
 def setup_tracker(config):
