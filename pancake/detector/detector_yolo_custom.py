@@ -1,5 +1,7 @@
 """Custom trained detector based on YOLOv5."""
 import math
+import numpy as np
+import time
 
 import cv2
 import torch
@@ -7,6 +9,8 @@ import torch
 import pancake.models as m
 from pancake.utils.common import fix_path
 from .detector import Detector
+from pancake.utils.datasets import letterbox
+from pancake.utils.general import scale_coords
 
 
 class YOLOCustomDetector(Detector):
@@ -22,8 +26,6 @@ class YOLOCustomDetector(Detector):
         agnostic_nms = True if "True" == config["agnostic_nms"] else False
         img_size = int(config["img_size"])
         device = kwargs.get("device", "CPU")
-        if device.isdigit():
-            device = int(device)
 
         self.model = m.MODEL_REGISTRY[model](
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
@@ -32,15 +34,37 @@ class YOLOCustomDetector(Detector):
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)
 
-    def detect(self, imgs) -> list:
-        # TODO: Make this better ...
-        h, w, _ = imgs.shape
-        self.model._stride = self.round(max(h, w) // 10, 64)
-        self.model._stride = max(64, self.model._stride)
-        hr = self.round(h, self.model._stride)
-        wr = self.round(w, self.model._stride)
-        if h != hr or w != wr:
-            imgs = cv2.resize(imgs, (wr, hr))
-        imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2RGB).transpose(2, 0, 1)
-        res, _ = self.model.infer(imgs)
+    def detect(self, imgs: list) -> list:
+        """
+        :param imgs (list): list of images, images as np.array in BGR
+        :return res (list): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
+        """
+        if type(imgs) is not list:
+            imgs = [imgs]
+
+        # Save initial sizes
+        img_sizes = [img.shape for img in imgs]  
+
+        # Padded resize
+        pr_imgs = [letterbox(
+            x, self.model._required_img_size, stride=self.model._stride
+            )[0] for x in imgs]
+
+        # Stack
+        pr_imgs = np.stack(pr_imgs, 0)
+
+        # Convert
+        pr_imgs = pr_imgs[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
+        pr_imgs = np.ascontiguousarray(pr_imgs)
+
+        # Inference
+        det, _ = self.model.infer(pr_imgs)
+
+        # Rescale images from preprocessed to original
+        res = [None] * len(det)
+        for i, x in enumerate(det):
+            x[:, :4] = scale_coords(
+                        pr_imgs.shape[2:], x[:, :4], img_sizes[i]
+                    ).round()
+            res[i] = x
         return res

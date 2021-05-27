@@ -20,9 +20,14 @@ def setup_detector(config):
     name = config.DETECTOR.NAME
     params = getattr(config.DETECTOR, name.upper())
 
-    device = config.DEVICE
-    if config.USE_GPU and torch.cuda.is_available():
-        device = 0
+    device_cfg = config.DEVICE
+    device = 'CPU'
+
+    if type(device_cfg) is str and torch.cuda.is_available():
+        if device_cfg.upper() == 'GPU':
+            device = "0"
+        elif device_cfg.isdigit():
+            device = device_cfg
 
     DETECTOR = det.DETECTOR_REGISTRY[name](params, device=device)
     return DETECTOR
@@ -38,11 +43,17 @@ def setup_backend(config, detector):
 def setup_tracker(config):
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
-    tracker_cfg = get_config(config_file=params.TRACKER_CFG_PATH)
+    tracker_cfg = get_config(
+        config_file=fix_path(params.TRACKER_CFG_PATH))
 
-    device = config.DEVICE
-    if config.USE_GPU and torch.cuda.is_available():
-        device = 0
+    device_cfg = config.DEVICE
+    device = 'CPU'
+
+    if type(device_cfg) is str and torch.cuda.is_available():
+        if device_cfg.upper() == 'GPU':
+            device = "0"
+        elif device_cfg.isdigit():
+            device = device_cfg
 
     TRACKER = tr.TRACKER_REGISTRY[name](tracker_cfg, device=device)
     return TRACKER
@@ -75,7 +86,7 @@ def main():
     source = config.PANCAKE.DATA.SOURCE
     source_path = fix_path(source)
 
-    DATA, is_webcam = load_data(source)
+    DATA, is_webcam = load_data(source_path)
 
     iteration = 0
     for path, img, im0s, vid_cap in DATA:
@@ -97,11 +108,11 @@ def main():
                 tracks=tracks,
                 # im0=im0,
                 im0=stitched,
-                labels=None,  # TODO: fix; get labels from config?
+                labels=DETECTOR.model.names,
                 hide_labels=hide_labels,
                 hide_conf=hide_conf,
                 line_thickness=line_thickness,
-                debug=True,  # Set to True to enable manual stepping
+                debug=False,  # Set to True to enable manual stepping
             )
 
 
