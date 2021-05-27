@@ -1,7 +1,6 @@
 # YOLOv5 YOLO-specific modules
 
 import argparse
-import logging
 import sys
 from copy import deepcopy
 from pathlib import Path
@@ -9,12 +8,12 @@ from pathlib import Path
 sys.path.append(
     Path(__file__).parent.parent.absolute().__str__()
 )  # to run '$ python *.py' files in subdirectories
-logger = logging.getLogger(__name__)
 
 from .common import *
 from .experimental import *
+from pancake.logger import setup_logger
 from pancake.utils.autoanchor import check_anchor_order
-from pancake.utils.general import make_divisible, check_file, set_logging
+from pancake.utils.general import make_divisible, check_file
 from pancake.utils.torch_utils import (
     time_synchronized,
     fuse_conv_and_bn,
@@ -29,6 +28,8 @@ try:
     import thop  # for FLOPS computation
 except ImportError:
     thop = None
+
+l = setup_logger(__name__)
 
 
 class Detect(nn.Module):
@@ -113,17 +114,17 @@ class Model(nn.Module):
         # Define model
         ch = self.yaml["ch"] = self.yaml.get("ch", ch)  # input channels
         if nc and nc != self.yaml["nc"]:
-            logger.info(f"Overriding model.yaml nc={self.yaml['nc']} with nc={nc}")
+            l.debug(f"Overriding model.yaml nc={self.yaml['nc']} with nc={nc}")
             self.yaml["nc"] = nc  # override yaml value
         if anchors:
-            logger.info(f"Overriding model.yaml anchors with anchors={anchors}")
+            l.debug(f"Overriding model.yaml anchors with anchors={anchors}")
             self.yaml["anchors"] = round(anchors)  # override yaml value
         self.model, self.save = parse_model(
             deepcopy(self.yaml), ch=[ch]
         )  # model, savelist
         self.names = [str(i) for i in range(self.yaml["nc"])]  # default names
         self.inplace = self.yaml.get("inplace", True)
-        # logger.info([x.shape for x in self.forward(torch.zeros(1, ch, 64, 64))])
+        # l.debug([x.shape for x in self.forward(torch.zeros(1, ch, 64, 64))])
 
         # Build strides, anchors
         m = self.model[-1]  # Detect()
@@ -137,12 +138,11 @@ class Model(nn.Module):
             check_anchor_order(m)
             self.stride = m.stride
             self._initialize_biases()  # only run once
-            # logger.info('Strides: %s' % m.stride.tolist())
+            # l.debug('Strides: %s' % m.stride.tolist())
 
         # Init weights, biases
         initialize_weights(self)
         self.info()
-        logger.info("")
 
     def forward(self, x, augment=False, profile=False):
         if augment:
@@ -184,16 +184,16 @@ class Model(nn.Module):
                     _ = m(x)
                 dt.append((time_synchronized() - t) * 100)
                 if m == self.model[0]:
-                    logger.info(
+                    l.debug(
                         f"{'time (ms)':>10s} {'GFLOPS':>10s} {'params':>10s}  {'module'}"
                     )
-                logger.info(f"{dt[-1]:10.2f} {o:10.2f} {m.np:10.0f}  {m.type}")
+                l.debug(f"{dt[-1]:10.2f} {o:10.2f} {m.np:10.0f}  {m.type}")
 
             x = m(x)  # run
             y.append(x if m.i in self.save else None)  # save output
 
         if profile:
-            logger.info("%.1fms total" % sum(dt))
+            l.debug("%.1fms total" % sum(dt))
         return x
 
     def _descale_pred(self, p, flips, scale, img_size):
@@ -239,7 +239,7 @@ class Model(nn.Module):
         m = self.model[-1]  # Detect() module
         for mi in m.m:  # from
             b = mi.bias.detach().view(m.na, -1).T  # conv.bias(255) to (3,85)
-            logger.info(
+            l.debug(
                 ("%6g Conv2d.bias:" + "%10.3g" * 6)
                 % (mi.weight.shape[1], *b[:5].mean(1).tolist(), b[5:].mean())
             )
@@ -247,10 +247,10 @@ class Model(nn.Module):
     # def _print_weights(self):
     #     for m in self.model.modules():
     #         if type(m) is Bottleneck:
-    #             logger.info('%10.3g' % (m.w.detach().sigmoid() * 2))  # shortcut weights
+    #             l.debug('%10.3g' % (m.w.detach().sigmoid() * 2))  # shortcut weights
 
     def fuse(self):  # fuse model Conv2d() + BatchNorm2d() layers
-        logger.info("Fusing layers... ")
+        l.debug("Fusing layers... ")
         for m in self.model.modules():
             if type(m) is Conv and hasattr(m, "bn"):
                 m.conv = fuse_conv_and_bn(m.conv, m.bn)  # update conv
@@ -262,19 +262,19 @@ class Model(nn.Module):
     def nms(self, mode=True):  # add or remove NMS module
         present = type(self.model[-1]) is NMS  # last layer is NMS
         if mode and not present:
-            logger.info("Adding NMS... ")
+            l.debug("Adding NMS... ")
             m = NMS()  # module
             m.f = -1  # from
             m.i = self.model[-1].i + 1  # index
             self.model.add_module(name="%s" % m.i, module=m)  # add
             self.eval()
         elif not mode and present:
-            logger.info("Removing NMS... ")
+            l.debug("Removing NMS... ")
             self.model = self.model[:-1]  # remove
         return self
 
     def autoshape(self):  # add autoShape module
-        logger.info("Adding autoShape... ")
+        l.debug("Adding autoShape... ")
         m = autoShape(self)  # wrap model
         copy_attr(
             m, self, include=("yaml", "nc", "hyp", "names", "stride"), exclude=()
@@ -286,7 +286,7 @@ class Model(nn.Module):
 
 
 def parse_model(d, ch):  # model_dict, input_channels(3)
-    logger.info(
+    l.debug(
         "\n%3s%18s%3s%10s  %-40s%-30s"
         % ("", "from", "n", "params", "module", "arguments")
     )
@@ -361,7 +361,7 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
             t,
             np,
         )  # attach index, 'from' index, type, number params
-        logger.info("%3s%18s%3s%10.0f  %-40s%-30s" % (i, f, n, np, t, args))  # print
+        l.debug("%3s%18s%3s%10.0f  %-40s%-30s" % (i, f, n, np, t, args))  # print
         save.extend(
             x % i for x in ([f] if isinstance(f, int) else f) if x != -1
         )  # append to savelist
@@ -380,7 +380,6 @@ if __name__ == "__main__":
     )
     opt = parser.parse_args()
     opt.cfg = check_file(opt.cfg)  # check file
-    set_logging()
     device = select_device(opt.device)
 
     # Create model
@@ -394,6 +393,6 @@ if __name__ == "__main__":
     # Tensorboard (not working https://github.com/ultralytics/yolov5/issues/2898)
     # from torch.utils.tensorboard import SummaryWriter
     # tb_writer = SummaryWriter('.')
-    # logger.info("Run 'tensorboard --logdir=models' to view tensorboard at http://localhost:6006/")
+    # l.debug("Run 'tensorboard --logdir=models' to view tensorboard at http://localhost:6006/")
     # tb_writer.add_graph(torch.jit.trace(model, img, strict=False), [])  # add model graph
     # tb_writer.add_image('test', img[0], dataformats='CWH')  # add model to tensorboard

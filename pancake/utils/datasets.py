@@ -1,7 +1,6 @@
 # Dataset utils and dataloaders
 
 import glob
-import logging
 import math
 import os
 import random
@@ -33,6 +32,10 @@ from .general import (
 )
 from .torch_utils import torch_distributed_zero_first
 
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
+
 # Parameters
 help_url = "https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data"
 img_formats = [
@@ -56,7 +59,6 @@ vid_formats = [
     "wmv",
     "mkv",
 ]  # acceptable video suffixes
-logger = logging.getLogger(__name__)
 
 # Get orientation exif tag
 for orientation in ExifTags.TAGS.keys():
@@ -731,9 +733,9 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         x["version"] = 0.1  # cache version
         try:
             torch.save(x, path)  # save for next time
-            logging.info(f"{prefix}New cache created: {path}")
+            l.info(f"{prefix}New cache created: {path}")
         except Exception as e:
-            logging.info(
+            l.info(
                 f"{prefix}WARNING: Cache directory {path.parent} is not writeable: {e}"
             )  # path not writeable
         return x

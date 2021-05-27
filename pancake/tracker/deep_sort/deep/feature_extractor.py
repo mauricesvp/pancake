@@ -2,9 +2,11 @@ import torch
 import torchvision.transforms as transforms
 import numpy as np
 import cv2
-import logging
 
 from .model import Net
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
 
 
 class Extractor(object):
@@ -15,8 +17,7 @@ class Extractor(object):
             "net_dict"
         ]
         self.net.load_state_dict(state_dict)
-        logger = logging.getLogger("root.tracker")
-        logger.info("Loading weights from {}... Done!".format(model_path))
+        l.debug("Loading weights from {} done.".format(model_path))
         self.net.to(self.device)
         self.size = (64, 128)
         self.norm = transforms.Compose(
