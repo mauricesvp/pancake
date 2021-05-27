@@ -244,14 +244,7 @@ class LoadImages:  # for inference
             assert img0 is not None, "Image Not Found " + path
             print(f"image {self.count}/{self.nf} {path}: ", end="")
 
-        # Padded resize
-        img = letterbox(img0, self.img_size, stride=self.stride)[0]
-
-        # Convert
-        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
-        img = np.ascontiguousarray(img)
-
-        return path, img, img0, self.cap
+        return path, img0, self.cap
 
     def new_video(self, path):
         self.frame = 0
@@ -377,14 +370,7 @@ class LoadWebcam:  # for inference
         img_path = "webcam.jpg"
         print(f"webcam {self.count}: ", end="")
 
-        # Padded resize
-        img = letterbox(img0, self.img_size, stride=self.stride)[0]
-
-        # Convert
-        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
-        img = np.ascontiguousarray(img)
-
-        return img_path, img, img0, None
+        return img_path, img0, None
 
     def __len__(self):
         return 0
@@ -468,20 +454,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             cv2.destroyAllWindows()
             raise StopIteration
 
-        # Letterbox
-        img = [
-            letterbox(x, self.img_size, auto=self.rect, stride=self.stride)[0]
-            for x in img0
-        ]
-
-        # Stack
-        img = np.stack(img, 0)
-
-        # Convert
-        img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
-        img = np.ascontiguousarray(img)
-
-        return self.sources, img, img0, None
+        return self.sources, img0, None
 
     def __len__(self):
         return 0  # 1E12 frames = 32 streams at 30 FPS for 30 years
