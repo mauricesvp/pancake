@@ -15,28 +15,11 @@ from .torch_utils import time_synchronized
 
 
 def load_data(
-    source: str, model: Type[BaseModel] = None
+    source: str
 ) -> Union[LoadStreams, LoadImages]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
-    :param model (BaseModel): model wrapper
-    :param img_size (int): inference size (pixels)
     """
-    if not model:
-        img_size = None
-        stride = None
-    else:
-        assert (
-            model._required_img_size
-        ), "Your model needs to specify a model specific image size "
-        "in class attribute '._required_img_size'"
-        assert (
-            model._stride
-        ), "Your model needs to specify a model specific stride size "
-        "in class attribute '._stride'"
-        img_size = model._required_img_size
-        stride = model._stride
-
     try:
         is_webcam = (
             source.isnumeric()
@@ -51,17 +34,17 @@ def load_data(
             view_img = check_imshow()
             cudnn.benchmark = True  # set True to speed up constant image size inference
             return (
-                LoadStreams(source, img_size=img_size, stride=stride),
+                LoadStreams(source),
                 True,
             )
         elif type(source) is list:
             return (
-                LoadImageDirs(source, img_size=img_size, stride=stride),
+                LoadImageDirs(source),
                 False,
             )
         else:
             return (
-                LoadImages(source, img_size=img_size, stride=stride),
+                LoadImages(source),
                 False,
             )
 

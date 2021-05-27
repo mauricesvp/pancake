@@ -178,7 +178,7 @@ class _RepeatSampler(object):
 
 
 class LoadImages:  # for inference
-    def __init__(self, path, img_size=640, stride=32):
+    def __init__(self, path):
         p = str(Path(path).absolute())  # os-agnostic absolute path
         if "*" in p:
             files = sorted(glob.glob(p, recursive=True))  # glob
@@ -193,8 +193,6 @@ class LoadImages:  # for inference
         videos = [x for x in files if x.split(".")[-1].lower() in vid_formats]
         ni, nv = len(images), len(videos)
 
-        self.img_size = img_size
-        self.stride = stride
         self.files = images + videos
         self.nf = ni + nv  # number of files
         self.video_flag = [False] * ni + [True] * nv
@@ -256,7 +254,7 @@ class LoadImages:  # for inference
 
 
 class LoadImageDirs:  # for inference
-    def __init__(self, dirs, img_size=640, stride=32):
+    def __init__(self, dirs):
         n = len(dirs)
         self.files = [None] * n
         self.nf = [None] * n
@@ -292,8 +290,6 @@ class LoadImageDirs:  # for inference
             self.video_flag[i] = [False] * ni + [True] * nv
 
         self.sources = [path.split("/")[-1] for path in dirs]
-        self.img_size = img_size
-        self.stride = stride
         self.mode = "image"
 
     def __iter__(self):
@@ -326,10 +322,7 @@ class LoadImageDirs:  # for inference
 
 
 class LoadWebcam:  # for inference
-    def __init__(self, pipe="0", img_size=640, stride=32):
-        self.img_size = img_size
-        self.stride = stride
-
+    def __init__(self, pipe="0"):
         if pipe.isnumeric():
             pipe = eval(pipe)  # local camera
         # pipe = 'rtsp://192.168.1.64/1'  # IP camera
@@ -377,10 +370,8 @@ class LoadWebcam:  # for inference
 
 
 class LoadStreams:  # multiple IP or RTSP cameras
-    def __init__(self, sources="streams.txt", img_size=640, stride=32):
+    def __init__(self, sources="streams.txt"):
         self.mode = "stream"
-        self.img_size = img_size
-        self.stride = stride
 
         if os.path.isfile(sources):
             with open(sources, "r") as f:
@@ -412,23 +403,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             thread = Thread(target=self.update, args=([i, cap]), daemon=True)
             print(f" success ({w}x{h} at {self.fps:.2f} FPS).")
             thread.start()
-        print("")  # newline
 
-        # check for common shapes
-        s = np.stack(
-            [
-                letterbox(x, self.img_size, stride=self.stride)[0].shape
-                for x in self.imgs
-            ],
-            0,
-        )  # shapes
-        self.rect = (
-            np.unique(s, axis=0).shape[0] == 1
-        )  # rect inference if all shapes equal
-        if not self.rect:
-            print(
-                "WARNING: Different stream shapes detected. For optimal performance supply similarly-shaped streams."
-            )
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
