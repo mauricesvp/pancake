@@ -23,6 +23,8 @@ class SIMPLE(Backend):
         self.detector = detector
         if roi:
             self.roi = [v for v in roi.values()][:-2]
+        else:
+            self.roi = None
 
     def detect(self, source) -> list:
         """Detect objects on image(s).

@@ -88,7 +88,7 @@ def main():
     DATA, is_webcam = load_data(source_path)
 
     iteration = 0
-    for path, img, im0s, vid_cap in DATA:
+    for path, im0s, vid_cap in DATA:
         l.debug(f"Iteration {iteration}")
         iteration += 1
 

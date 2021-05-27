@@ -321,17 +321,7 @@ class LoadImageDirs:  # for inference
             assert img is not None, "Image Not Found " + paths[i]
             # print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
 
-        # Padded resize
-        img = [letterbox(x, self.img_size, stride=self.stride)[0] for x in img0]
-
-        # Stack
-        img = np.stack(img, 0)
-
-        # Convert
-        img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
-        img = np.ascontiguousarray(img)
-
-        return paths, img, img0, None
+        return paths, img0, None
 
     def new_video(self, path):
         self.frame = 0

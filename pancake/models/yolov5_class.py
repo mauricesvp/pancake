@@ -91,4 +91,5 @@ class Yolov5Model(BaseModel):
         pred = non_max_suppression(
             pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms
         )
+        pred = [x.cpu() for x in pred]
         return pred, img
