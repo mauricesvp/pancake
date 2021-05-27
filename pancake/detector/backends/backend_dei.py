@@ -98,7 +98,9 @@ class DEI(Backend):
     img: np.ndarray  # Stitched panorama image
     printed: np.ndarray  # Stitched image with detection results
 
-    def __init__(self, detector, write_partials: bool = False, *args, **kwargs) -> None:
+    def __init__(
+        self, detector, roi: list = None, write_partials: bool = False, *args, **kwargs
+    ) -> None:
         """
 
         :param detector: Detector which provides 'detect' method,
@@ -107,6 +109,8 @@ class DEI(Backend):
         """
         self.detector = detector
         self.write_partials = write_partials
+        if roi:
+            self.roi = roi
 
     def detect(
         self,

@@ -17,5 +17,5 @@ class Backend(ABC):
         Backend._subclasses[module_name] = cls
 
     @abstractmethod
-    def detect(self, img, *args, **kwargs) -> list:
+    def detect(self, img, roi=None, *args, **kwargs) -> list:
         raise NotImplementedError

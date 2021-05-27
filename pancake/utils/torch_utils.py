@@ -1,7 +1,6 @@
 # YOLOv5 PyTorch utils
 
 import datetime
-import logging
 import math
 import os
 import platform
@@ -21,7 +20,10 @@ try:
     import thop  # for FLOPS computation
 except ImportError:
     thop = None
-logger = logging.getLogger(__name__)
+
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
 
 
 @contextmanager
@@ -63,6 +65,7 @@ def git_describe(path=Path(__file__).parent):  # path must be a directory
 def select_device(device="", batch_size=None):
     # device = 'cpu' or '0' or '0,1,2,3'
     s = f"YOLOv5 🚀 {git_describe() or date_modified()} torch {torch.__version__} "  # string
+    s = ""
     cpu = device.lower() == "cpu"
     if cpu:
         os.environ[
@@ -90,7 +93,7 @@ def select_device(device="", batch_size=None):
     else:
         s += "CPU\n"
 
-    logger.info(
+    l.debug(
         s.encode().decode("ascii", "ignore") if platform.system() == "Windows" else s
     )  # emoji-safe
     return torch.device("cuda:0" if cuda else "cpu")
@@ -113,14 +116,14 @@ def profile(x, ops, n=100, device=None):
     device = device or torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     x = x.to(device)
     x.requires_grad = True
-    print(
-        torch.__version__,
-        device.type,
-        torch.cuda.get_device_properties(0) if device.type == "cuda" else "",
-    )
-    print(
-        f"\n{'Params':>12s}{'GFLOPS':>12s}{'forward (ms)':>16s}{'backward (ms)':>16s}{'input':>24s}{'output':>24s}"
-    )
+    # print(
+    # torch.__version__,
+    # device.type,
+    # torch.cuda.get_device_properties(0) if device.type == "cuda" else "",
+    # # )
+    # print(
+    # f"\n{'Params':>12s}{'GFLOPS':>12s}{'forward (ms)':>16s}{'backward (ms)':>16s}{'input':>24s}{'output':>24s}"
+    # # )
     for m in ops if isinstance(ops, list) else [ops]:
         m = m.to(device) if hasattr(m, "to") else m  # device
         m = (
@@ -155,9 +158,9 @@ def profile(x, ops, n=100, device=None):
             if isinstance(m, nn.Module)
             else 0
         )  # parameters
-        print(
-            f"{p:12}{flops:12.4g}{dtf:16.4g}{dtb:16.4g}{str(s_in):>24s}{str(s_out):>24s}"
-        )
+        # print(
+        # f"{p:12}{flops:12.4g}{dtf:16.4g}{dtb:16.4g}{str(s_in):>24s}{str(s_out):>24s}"
+        # )
 
 
 def is_parallel(model):
@@ -206,12 +209,12 @@ def prune(model, amount=0.3):
     # Prune model to requested global sparsity
     import torch.nn.utils.prune as prune
 
-    print("Pruning model... ", end="")
+    # print("Pruning model... ", end="")
     for name, m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             prune.l1_unstructured(m, name="weight", amount=amount)  # prune
             prune.remove(m, "weight")  # make permanent
-    print(" %.3g global sparsity" % sparsity(model))
+    # print(" %.3g global sparsity" % sparsity(model))
 
 
 def fuse_conv_and_bn(conv, bn):
@@ -255,11 +258,11 @@ def model_info(model, verbose=False, img_size=640):
     n_g = sum(
         x.numel() for x in model.parameters() if x.requires_grad
     )  # number gradients
-    if verbose:
-        print(
-            "%5s %40s %9s %12s %20s %10s %10s"
-            % ("layer", "name", "gradient", "parameters", "shape", "mu", "sigma")
-        )
+    if verbose and False:
+        # print(
+        # "%5s %40s %9s %12s %20s %10s %10s"
+        # % ("layer", "name", "gradient", "parameters", "shape", "mu", "sigma")
+        # )
         for i, (name, p) in enumerate(model.named_parameters()):
             name = name.replace("module_list.", "")
             print(
@@ -295,7 +298,7 @@ def model_info(model, verbose=False, img_size=640):
     except (ImportError, Exception):
         fs = ""
 
-    logger.info(
+    l.debug(
         f"Model Summary: {len(list(model.modules()))} layers, {n_p} parameters, {n_g} gradients{fs}"
     )
 
