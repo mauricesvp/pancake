@@ -40,7 +40,6 @@ class YOLOCustomDetector(Detector):
             imgs, self.model._required_img_size, stride=self.model._stride)[0]
 
         # Convert
-        imgs = imgs[:, :, ::-1].transpose(2, 0, 1) # BGR to RGB, to 3x416x416
         pr_imgs = pr_imgs[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         pr_imgs = np.ascontiguousarray(pr_imgs)
 
