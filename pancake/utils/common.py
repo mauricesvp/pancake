@@ -16,7 +16,7 @@ from .torch_utils import time_synchronized
 
 def load_data(
     source: str
-) -> Union[LoadStreams, LoadImages]:
+) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     """

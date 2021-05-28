@@ -39,7 +39,7 @@ class Tracker:
 
     """
 
-    def __init__(self, metric, max_iou_distance=0.7, max_age=70, n_init=3, max_ids=100):
+    def __init__(self, metric, max_iou_distance=0.7, max_age=70, n_init=3, max_id=100):
         self.metric = metric
         self.max_iou_distance = max_iou_distance
         self.max_age = max_age
@@ -49,7 +49,7 @@ class Tracker:
         self.tracks = []
         self._next_id = 1
 
-        self.max_ids = max_ids
+        self.max_id = max_id
         self.flag = 0
 
     def predict(self):
@@ -151,7 +151,7 @@ class Tracker:
 
     def _initiate_track(self, detection):
         mean, covariance = self.kf.initiate(detection.to_xyah())
-        if self._next_id > 100:
+        if self._next_id > self.max_id:
             self.tracks.clear()
             self._next_id = 1
             self.flag = 1

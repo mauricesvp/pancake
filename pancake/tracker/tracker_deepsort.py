@@ -26,6 +26,7 @@ class DEEPSORT(BaseTracker):
             max_age=cfg.DEEPSORT.MAX_AGE,
             n_init=cfg.DEEPSORT.N_INIT,
             nn_budget=cfg.DEEPSORT.NN_BUDGET,
+            max_id=cfg.DEEPSORT.MAX_ID,
             use_cuda=True if kwargs["device"] != "CPU" else False,
         )
 

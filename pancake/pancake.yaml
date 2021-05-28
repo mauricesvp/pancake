@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "CPU"
+  DEVICE: "0"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -16,43 +16,45 @@ PANCAKE:
     #    '../path/to/dir2',   - directories with videos
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
-    SOURCE: '../samples/output.avi'
-       
+    SOURCE: 
+      # '../samples/streams.txt'
       
-      # - "../samples/r45/1l"
-      # - "../samples/r45/1c"
-      # - "../samples/r45/1r"
+      # '../samples/output.avi'
+       
+      - "../samples/r44/1l"
+      - "../samples/r44/1c"
+      - "../samples/r44/1r"
     ROI:
-      A:
-        - 1200  # x0
-        - 550  # y0
-        - 3775  # x1
-        - 1300  # y1
-      B:
-        - 0  # x0
-        - 550  # y0
-        - 3840  # x1
-        - 1350  # y1
-      C:
-        - 25  # x0
-        - 600  # y0
-        - 3100  # x1
-        - 1350  # y1
+      # A:
+      #   - 1200  # x0
+      #   - 550  # y0
+      #   - 3775  # x1
+      #   - 1300  # y1
+      # B:
+      #   - 0  # x0
+      #   - 550  # y0
+      #   - 3840  # x1
+      #   - 1350  # y1
+      # C:
+      #   - 25  # x0
+      #   - 600  # y0
+      #   - 3100  # x1
+      #   - 1350  # y1
 
   DETECTOR:
     # NAME: "yolo_custom"
     NAME: "yolo_custom"
-    BACKEND: "simple"  # divide et impera
+    BACKEND: "dei"  # divide et impera
 
     YOLO_SIMPLE:
       size: "s"
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights: "../weights/detector/yolov5/yolov5s6_30epochs.pt"
-      img_size: 448
-      conf_thres: 0.65
-      iou_thres: 0.7
+      weights: "../weights/detector/yolov5/yolov5s6_100epochs.pt"
+      img_size: 640
+      conf_thres: 0.5
+      iou_thres: 0.85
       classes: null
       agnostic_nms: True
 
