@@ -98,6 +98,7 @@ def main(cfg_path: str=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', nargs='?', type=str, default='pancake/pancake.yaml', help='pancake config path')
-    
-    main()
+    parser.add_argument('--cfg', nargs='?', type=str, default=None, help='pancake config path')
+    args = args = parser.parse_args()
+
+    main(args.cfg)
