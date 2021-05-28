@@ -66,8 +66,7 @@ def main():
         if not type(im0s) is list:
             frame = im0s
         else:
-            # TODO: adapt concat to arbitrary number of frames
-            frame = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
+            frame = cv2.hconcat([*im0s])
         tracks = TRACKER.update(detections, frame)
 
         if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:
