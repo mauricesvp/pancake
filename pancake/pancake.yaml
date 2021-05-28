@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "0"
+  DEVICE: "CPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -66,6 +66,20 @@ PANCAKE:
 
   VISUALIZATION:
     VIEW_IMG: True
+    SHOW_DET: True
+    SHOW_TRACKS: True
+
     HIDE_LABELS: False
     HIDE_CONF: False
-    LINE_THICKNESS: 2
+    LINE_THICKNESS: 1
+
+    DEBUG: False
+
+  SAVE_RESULT:
+    SAVE_RES: True
+    PATH: "pancake_results"
+    SUBDIR: "run"
+    MODE: "image" # "image" or "video"
+    VID_FPS: 20 # fps of the merged video, when mode = "video"
+    EXIST_OK: False # save in already existing dir, 
+                   # do not increment automatically
