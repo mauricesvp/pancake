@@ -11,51 +11,8 @@ from .detector import backends as be
 from .config import pancake_config
 from .logger import setup_logger
 from .utils.common import fix_path, load_data, visualize
-from .utils.parser import get_config
 
 l = setup_logger(__name__)
-
-
-def setup_detector(config):
-    name = config.DETECTOR.NAME
-    params = getattr(config.DETECTOR, name.upper())
-
-    device_cfg = config.DEVICE
-    device = "CPU"
-
-    if type(device_cfg) is str and torch.cuda.is_available():
-        if device_cfg.upper() == "GPU":
-            device = "0"
-        elif device_cfg.isdigit():
-            device = device_cfg
-
-    DETECTOR = det.DETECTOR_REGISTRY[name](params, device=device)
-    return DETECTOR
-
-
-def setup_backend(config, detector):
-    name = config.DETECTOR.BACKEND
-
-    ROI = config.DATA.ROI
-    return be.BACKEND_REGISTRY[name](detector, roi=ROI)
-
-
-def setup_tracker(config):
-    name = config.TRACKER.NAME
-    params = getattr(config.TRACKER, name.upper())
-    tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))
-
-    device_cfg = config.DEVICE
-    device = "CPU"
-
-    if type(device_cfg) is str and torch.cuda.is_available():
-        if device_cfg.upper() == "GPU":
-            device = "0"
-        elif device_cfg.isdigit():
-            device = device_cfg
-
-    TRACKER = tr.TRACKER_REGISTRY[name](tracker_cfg, device=device)
-    return TRACKER
 
 
 def setup_logging(config):
@@ -75,11 +32,11 @@ def main():
     setup_logging(config.PANCAKE)
 
     # Detector setup
-    DETECTOR = setup_detector(config.PANCAKE)
-    BACKEND = setup_backend(config.PANCAKE, DETECTOR)
+    DETECTOR = det.setup_detector(config.PANCAKE)
+    BACKEND = be.setup_backend(config.PANCAKE, DETECTOR)
 
     # Tracker setup
-    TRACKER = setup_tracker(config.PANCAKE)
+    TRACKER = tr.setup_tracker(config.PANCAKE)
 
     # Input data setup
     source = config.PANCAKE.DATA.SOURCE
