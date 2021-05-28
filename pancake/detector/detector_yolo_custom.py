@@ -15,6 +15,7 @@ from pancake.utils.general import scale_coords
 
 l = setup_logger(__name__)
 
+
 class YOLOCustomDetector(Detector):
     """Very simple detector using pretrained yolov5."""
 

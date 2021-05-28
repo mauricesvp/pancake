@@ -11,8 +11,7 @@ from .detector import backends as be
 
 from .config import pancake_config
 from .logger import setup_logger
-from .utils.common import (
-    fix_path, load_data, draw_boxes, visualize, save)
+from .utils.common import fix_path, load_data, draw_boxes, visualize, save
 from .utils.general import increment_path
 
 l = setup_logger(__name__)
@@ -53,8 +52,7 @@ def main():
 
     if save_cfg.SAVE_RES:
         save_dir = increment_path(
-            Path(save_cfg.PATH) / save_cfg.SUBDIR, 
-            exist_ok=save_cfg.EXIST_OK
+            Path(save_cfg.PATH) / save_cfg.SUBDIR, exist_ok=save_cfg.EXIST_OK
         )  # increment run
         save_dir.mkdir(parents=True, exist_ok=True)
 
@@ -68,7 +66,7 @@ def main():
         if not type(im0s) is list:
             frame = im0s
         else:
-            # TODO: adapt concat to arbitrary number of frames 
+            # TODO: adapt concat to arbitrary number of frames
             frame = cv2.hconcat([im0s[0], im0s[1], im0s[2]])
         tracks = TRACKER.update(detections, frame)
 
@@ -82,21 +80,21 @@ def main():
                 labels=DETECTOR.model.names,
                 hide_labels=vis_cfg.HIDE_LABELS,
                 hide_conf=vis_cfg.HIDE_CONF,
-                line_thickness=vis_cfg.LINE_THICKNESS
+                line_thickness=vis_cfg.LINE_THICKNESS,
             )
 
             if vis_cfg.VIEW_IMG:
                 visualize(im0=frame, debug=vis_cfg.DEBUG)
-            
+
             if save_cfg.SAVE_RES:
                 save(
                     im0=frame,
                     vid_cap=vid_cap,
                     vid_fps=save_cfg.VID_FPS,
                     mode=save_cfg.MODE,
-                    path=save_dir
+                    path=save_dir,
                 )
-                
+
 
 if __name__ == "__main__":
     main()

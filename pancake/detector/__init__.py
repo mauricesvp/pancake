@@ -3,10 +3,11 @@ from .detector import Detector
 from .detector_yolo_custom import YOLOCustomDetector
 from .detector_yolo_simple import YOLOSimpleDetector
 
-__all__ = ['DETECTOR_REGISTRY', 'setup_detector']
+__all__ = ["DETECTOR_REGISTRY", "setup_detector"]
 
 
 DETECTOR_REGISTRY = Detector.get_subclasses()
+
 
 def setup_detector(config):
     name = config.DETECTOR.NAME

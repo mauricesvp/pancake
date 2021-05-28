@@ -404,7 +404,6 @@ class LoadStreams:  # multiple IP or RTSP cameras
             print(f" success ({w}x{h} at {self.fps:.2f} FPS).")
             thread.start()
 
-
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
         n = 0

@@ -4,10 +4,11 @@ from .tracker_deepsort import DEEPSORT
 from ..utils.common import fix_path
 from ..utils.parser import get_config
 
-__all__ = ['TRACKER_REGISTRY', 'setup_tracker']
+__all__ = ["TRACKER_REGISTRY", "setup_tracker"]
 
 
 TRACKER_REGISTRY = BaseTracker.get_subclasses()
+
 
 def setup_tracker(config):
     name = config.TRACKER.NAME

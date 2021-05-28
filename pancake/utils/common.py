@@ -11,15 +11,12 @@ import torch.backends.cudnn as cudnn
 
 from ..models.base_class import BaseModel
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
-from .general import (
-    check_img_size, scale_coords, check_imshow, resize_aspectratio)
+from .general import check_img_size, scale_coords, check_imshow, resize_aspectratio
 from .plots import colors, plot_one_box
 from .torch_utils import time_synchronized
 
 
-def load_data(
-    source: str
-) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
+def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
     """
     :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
     """
@@ -51,6 +48,7 @@ def load_data(
                 False,
             )
 
+
 def draw_boxes(
     show_det: bool,
     show_tracks: bool,
@@ -60,7 +58,7 @@ def draw_boxes(
     line_thickness: int,
     labels: List = None,
     det: Type[torch.Tensor] = None,
-    tracks: Type[np.ndarray] = None
+    tracks: Type[np.ndarray] = None,
 ) -> Type[np.array]:
     """
     :param show_det (bool): if detection bbox' should be visualized
@@ -104,12 +102,9 @@ def draw_boxes(
                 line_thickness=line_thickness,
             )
     return im0
-    
 
-def visualize(
-    im0: Type[np.array],
-    debug: bool=False
-) -> None:
+
+def visualize(im0: Type[np.array], debug: bool = False) -> None:
     """
     :param im0 (array): original image
     :param debug (bool): enables debug stepping
@@ -118,12 +113,13 @@ def visualize(
     cv2.imshow("Pancake", im0)
     cv2.waitKey(0 if debug else 1)
 
+
 def save(
     im0: Type[np.array],
     vid_cap: Type[cv2.VideoCapture] = None,
     vid_fps: int = 30,
     mode: str = "image",
-    path: str = "../pancake_results"
+    path: str = "../pancake_results",
 ) -> None:
     """
     :param im0 (array): image to save
@@ -133,7 +129,7 @@ def save(
     :param path (str): target directory
     """
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-    
+
     # image named after timestamp
     save_path = str(path / now)
 
@@ -142,7 +138,7 @@ def save(
         cv2.imwrite(save_path, im0)
     else:  # 'video' or 'stream'
         if not "vid_path" in globals() or not "vid_writer" in globals():
-            globals()["vid_path"],  globals()["vid_writer"] = None, None
+            globals()["vid_path"], globals()["vid_writer"] = None, None
 
         if im0.shape[1] > 3200:
             im0 = resize_aspectratio(im0, width=3200)
@@ -159,10 +155,11 @@ def save(
                 h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             else:  # images, stream
                 fps, w, h = vid_fps, im0.shape[1], im0.shape[0]
-                save_path += '.avi'
+                save_path += ".avi"
 
             globals()["vid_writer"] = cv2.VideoWriter(
-                save_path, cv2.VideoWriter_fourcc(*'XVID'), fps, (w, h))
+                save_path, cv2.VideoWriter_fourcc(*"XVID"), fps, (w, h)
+            )
         vid_writer.write(im0)
 
 
@@ -171,4 +168,3 @@ def fix_path(path: Union[str, list]) -> str:
     if type(path) is list:
         return list(map(lambda p: fix_path(p), path))
     return os.path.join(os.path.dirname(__file__), "..", path)
-
