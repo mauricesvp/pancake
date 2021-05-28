@@ -6,12 +6,14 @@ import time
 import cv2
 import torch
 
-import pancake.models as m
-from pancake.utils.common import fix_path
 from .detector import Detector
+import pancake.models as m
+from pancake.logger import setup_logger
+from pancake.utils.common import fix_path
 from pancake.utils.datasets import letterbox
 from pancake.utils.general import scale_coords
 
+l = setup_logger(__name__)
 
 class YOLOCustomDetector(Detector):
     """Very simple detector using pretrained yolov5."""
@@ -59,6 +61,8 @@ class YOLOCustomDetector(Detector):
             0, 3, 1, 2
         )  # BGR to RGB, to bsx3x416x416
         pr_imgs = np.ascontiguousarray(pr_imgs)
+
+        l.debug(f"Inference on: {pr_imgs.shape}")
 
         # Inference
         det, _ = self.model.infer(pr_imgs)
