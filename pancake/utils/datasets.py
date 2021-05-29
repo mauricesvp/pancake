@@ -1,7 +1,6 @@
 # Dataset utils and dataloaders
 
 import glob
-import logging
 import math
 import os
 import random
@@ -33,6 +32,10 @@ from .general import (
 )
 from .torch_utils import torch_distributed_zero_first
 
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
+
 # Parameters
 help_url = "https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data"
 img_formats = [
@@ -56,7 +59,6 @@ vid_formats = [
     "wmv",
     "mkv",
 ]  # acceptable video suffixes
-logger = logging.getLogger(__name__)
 
 # Get orientation exif tag
 for orientation in ExifTags.TAGS.keys():
@@ -176,7 +178,7 @@ class _RepeatSampler(object):
 
 
 class LoadImages:  # for inference
-    def __init__(self, path, img_size=640, stride=32):
+    def __init__(self, path):
         p = str(Path(path).absolute())  # os-agnostic absolute path
         if "*" in p:
             files = sorted(glob.glob(p, recursive=True))  # glob
@@ -191,8 +193,6 @@ class LoadImages:  # for inference
         videos = [x for x in files if x.split(".")[-1].lower() in vid_formats]
         ni, nv = len(images), len(videos)
 
-        self.img_size = img_size
-        self.stride = stride
         self.files = images + videos
         self.nf = ni + nv  # number of files
         self.video_flag = [False] * ni + [True] * nv
@@ -230,7 +230,7 @@ class LoadImages:  # for inference
                     ret_val, img0 = self.cap.read()
 
             self.frame += 1
-            print(
+            l.debug(
                 f"video {self.count + 1}/{self.nf} ({self.frame}/{self.nframes}) {path}: ",
                 end="",
             )
@@ -240,16 +240,9 @@ class LoadImages:  # for inference
             self.count += 1
             img0 = cv2.imread(path)  # BGR
             assert img0 is not None, "Image Not Found " + path
-            print(f"image {self.count}/{self.nf} {path}: ", end="")
+            l.debug(f"image {self.count}/{self.nf} {path}: ", end="")
 
-        # Padded resize
-        img = letterbox(img0, self.img_size, stride=self.stride)[0]
-
-        # Convert
-        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
-        img = np.ascontiguousarray(img)
-
-        return path, img, img0, self.cap
+        return path, img0, self.cap
 
     def new_video(self, path):
         self.frame = 0
@@ -261,7 +254,7 @@ class LoadImages:  # for inference
 
 
 class LoadImageDirs:  # for inference
-    def __init__(self, dirs, img_size=640, stride=32):
+    def __init__(self, dirs):
         n = len(dirs)
         self.files = [None] * n
         self.nf = [None] * n
@@ -283,68 +276,103 @@ class LoadImageDirs:  # for inference
 
             ni, nv = len(images), len(videos)
 
-            assert len(images) and not len(videos), (
-                f"Currently only images are supported for multi directory option, "
-                f"found {nv} videos in {p}"
+            assert (len(images) and not len(videos)) or (
+                not len(images) and len(videos)), (
+                f"LoadImageDirs can only consider directories with one type of source,\n"
+                f"source can either be an image found or video!\n" 
+                f"({ni} images and {nv} videos in {p})"
             )
-            assert ni > 0, (
-                f"No images found in {p}. "
-                f"Supported formats are:\nimages: {img_formats}"
+
+            assert ni or nv, (
+                f"No images or videos found in {p}. "
+                f"Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}"
             )
 
             self.files[i] = images + videos
             self.nf[i] = ni + nv
             self.video_flag[i] = [False] * ni + [True] * nv
 
-        self.sources = [path.split("/")[-1] for path in dirs]
-        self.img_size = img_size
-        self.stride = stride
-        self.mode = "image"
+        # check if different source types are provided for each dir
+        same_datatypes = [all(flags) for flags in self.video_flag]
+        assert all(same_datatypes) or not any(same_datatypes), (
+            "Given directories possess different type of sources!")
+
+        self.mode = "image" if not any(same_datatypes) else "video"
+
+        if self.mode == "video":
+            # currently only one video per directory is supported
+            assert all([nf == 1 for nf in self.nf]), (
+                "Currently only one video per directory is supported"
+            ) 
+            self.new_video([files[0] for files in self.files])  # new video
+        else:
+            self.cap = None
 
     def __iter__(self):
         self.count = 0
         return self
 
     def __next__(self):
+        # stop when last image/video was reached
         if self.count == min(self.nf):
             raise StopIteration
-
+        
         paths = [dir[self.count] for dir in self.files]
 
-        # Read images
-        self.count += 1
-        img0 = [cv2.imread(path) for path in paths]  # BGR
+        if self.mode == "video":
+            returns = [cap.read() for cap in self.cap]
 
-        for i, img in enumerate(img0):
-            assert img is not None, "Image Not Found " + paths[i]
-            print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
+            ret_val = [ret[0] for ret in returns]
+            img0 = [ret[1] for ret in returns]
 
-        # Padded resize
-        img = [letterbox(x, self.img_size, stride=self.stride)[0] for x in img0]
+            # one video ended (for now stop tracking from here)
+            if not all(ret_val):
+                for cap in self.cap:
+                    cap.release()
+                raise StopIteration
+                
+            self.frame += 1
 
-        # Stack
-        img = np.stack(img, 0)
+            if l.level == 10:
+                s = ""
+                num_dirs = len(self.cap)
+                for i in range(num_dirs):
+                    s += f"Video {i+1}/{num_dirs}: ({self.frame}/{self.nframes[i]})"
+                    if i < num_dirs-1:
+                        s += ", "
+                l.debug(
+                    f"{s}"
+                )
+        else:
+            # Read images
+            self.count += 1
+            img0 = [cv2.imread(path) for path in paths]  # BGR
 
-        # Convert
-        img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
-        img = np.ascontiguousarray(img)
+            s = ""
+            for i, img in enumerate(img0):
+                assert img is not None, "Image Not Found " + paths[i]
+                
+                if l.level == 10:
+                    s += f"Image {i+1}/{len(img0)}: {self.count}/{self.nf[i]}"
+                    if i < len(img0)-1:
+                        s += ", "
+                    
+            l.debug(f"{s}")
+            
+        return paths, img0, None
 
-        return paths, img, img0, None
-
-    def new_video(self, path):
+    def new_video(self, paths: list):
         self.frame = 0
-        self.cap = cv2.VideoCapture(path)
-        self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.cap = [cv2.VideoCapture(path) for path in paths]
+        self.nframes = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            for cap in self.cap]
 
     def __len__(self):
         return self.nf  # number of files
 
 
 class LoadWebcam:  # for inference
-    def __init__(self, pipe="0", img_size=640, stride=32):
-        self.img_size = img_size
-        self.stride = stride
-
+    def __init__(self, pipe="0"):
         if pipe.isnumeric():
             pipe = eval(pipe)  # local camera
         # pipe = 'rtsp://192.168.1.64/1'  # IP camera
@@ -383,26 +411,17 @@ class LoadWebcam:  # for inference
         # Print
         assert ret_val, f"Camera Error {self.pipe}"
         img_path = "webcam.jpg"
-        print(f"webcam {self.count}: ", end="")
+        l.debug(f"webcam {self.count}: ", end="")
 
-        # Padded resize
-        img = letterbox(img0, self.img_size, stride=self.stride)[0]
-
-        # Convert
-        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
-        img = np.ascontiguousarray(img)
-
-        return img_path, img, img0, None
+        return img_path, img0, None
 
     def __len__(self):
         return 0
 
 
 class LoadStreams:  # multiple IP or RTSP cameras
-    def __init__(self, sources="streams.txt", img_size=640, stride=32):
+    def __init__(self, sources="streams.txt"):
         self.mode = "stream"
-        self.img_size = img_size
-        self.stride = stride
 
         if os.path.isfile(sources):
             with open(sources, "r") as f:
@@ -434,23 +453,6 @@ class LoadStreams:  # multiple IP or RTSP cameras
             thread = Thread(target=self.update, args=([i, cap]), daemon=True)
             print(f" success ({w}x{h} at {self.fps:.2f} FPS).")
             thread.start()
-        print("")  # newline
-
-        # check for common shapes
-        s = np.stack(
-            [
-                letterbox(x, self.img_size, stride=self.stride)[0].shape
-                for x in self.imgs
-            ],
-            0,
-        )  # shapes
-        self.rect = (
-            np.unique(s, axis=0).shape[0] == 1
-        )  # rect inference if all shapes equal
-        if not self.rect:
-            print(
-                "WARNING: Different stream shapes detected. For optimal performance supply similarly-shaped streams."
-            )
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
@@ -476,20 +478,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             cv2.destroyAllWindows()
             raise StopIteration
 
-        # Letterbox
-        img = [
-            letterbox(x, self.img_size, auto=self.rect, stride=self.stride)[0]
-            for x in img0
-        ]
-
-        # Stack
-        img = np.stack(img, 0)
-
-        # Convert
-        img = img[:, :, :, ::-1].transpose(0, 3, 1, 2)  # BGR to RGB, to bsx3x416x416
-        img = np.ascontiguousarray(img)
-
-        return self.sources, img, img0, None
+        return self.sources, img0, None
 
     def __len__(self):
         return 0  # 1E12 frames = 32 streams at 30 FPS for 30 years
@@ -731,9 +720,9 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         x["version"] = 0.1  # cache version
         try:
             torch.save(x, path)  # save for next time
-            logging.info(f"{prefix}New cache created: {path}")
+            l.info(f"{prefix}New cache created: {path}")
         except Exception as e:
-            logging.info(
+            l.info(
                 f"{prefix}WARNING: Cache directory {path.parent} is not writeable: {e}"
             )  # path not writeable
         return x
@@ -1129,6 +1118,8 @@ def letterbox(
     scaleup=True,
     stride=32,
 ):
+    if not new_shape:
+        return img, 0, (0, 0)
     # Resize and pad image while meeting stride-multiple constraints
     shape = img.shape[:2]  # current shape [height, width]
     if isinstance(new_shape, int):

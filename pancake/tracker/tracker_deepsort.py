@@ -26,7 +26,8 @@ class DEEPSORT(BaseTracker):
             max_age=cfg.DEEPSORT.MAX_AGE,
             n_init=cfg.DEEPSORT.N_INIT,
             nn_budget=cfg.DEEPSORT.NN_BUDGET,
-            use_cuda=True if kwargs["device"] != "cpu" else False,
+            max_id=cfg.DEEPSORT.MAX_ID,
+            use_cuda=True if kwargs["device"] != "CPU" else False,
         )
 
     def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:

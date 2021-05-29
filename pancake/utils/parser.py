@@ -15,7 +15,7 @@ class YamlParser(edict):
                 config_file
             ), f"Config file not found at {config_file}"
             with open(config_file, "r") as fo:
-                cfg_dict.update(yaml.load(fo.read()))
+                cfg_dict.update(yaml.load(fo.read(), Loader=yaml.FullLoader))
 
         super(YamlParser, self).__init__(cfg_dict)
 

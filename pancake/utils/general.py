@@ -1,7 +1,6 @@
 # YOLOv5 general utils
 
 import glob
-import logging
 import math
 import os
 import platform
@@ -24,6 +23,11 @@ from .google_utils import gsutil_getsize
 from .metrics import fitness
 from .torch_utils import init_torch_seeds
 
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
+
+
 # Settings
 torch.set_printoptions(linewidth=320, precision=5, profile="long")
 np.set_printoptions(
@@ -37,10 +41,11 @@ os.environ["NUMEXPR_MAX_THREADS"] = str(min(os.cpu_count(), 8))  # NumExpr max t
 
 
 def set_logging(rank=-1, verbose=True):
-    logging.basicConfig(
-        format="%(message)s",
-        level=logging.INFO if (verbose and rank in [-1, 0]) else logging.WARN,
-    )
+    raise DeprecationWarning("Use pancake.logger instead!")
+    # logging.basicConfig(
+    # format="%(message)s",
+    # level=logging.INFO if (verbose and rank in [-1, 0]) else logging.WARN,
+    # )
 
 
 def init_seeds(seed=0):
@@ -880,3 +885,19 @@ def increment_path(path, exist_ok=False, sep="", mkdir=False):
     if not dir.exists() and mkdir:
         dir.mkdir(parents=True, exist_ok=True)  # make directory
     return path
+
+
+def resize_aspectratio(image, width=None, height=None, inter=cv2.INTER_AREA):
+    dim = None
+    (h, w) = image.shape[:2]
+
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    return cv2.resize(image, dim, interpolation=inter)

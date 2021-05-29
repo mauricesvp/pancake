@@ -22,6 +22,7 @@ class DeepSort(object):
         max_age=70,
         n_init=3,
         nn_budget=100,
+        max_id=100,
         use_cuda=True,
     ):
         self.min_confidence = min_confidence
@@ -30,10 +31,13 @@ class DeepSort(object):
         self.extractor = Extractor(model_path, use_cuda=use_cuda)
 
         max_cosine_distance = max_dist
-        nn_budget = 100
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
         self.tracker = Tracker(
-            metric, max_iou_distance=max_iou_distance, max_age=max_age, n_init=n_init
+            metric,
+            max_iou_distance=max_iou_distance,
+            max_age=max_age,
+            n_init=n_init,
+            max_id=max_id,
         )
 
     def update(self, bbox_xyxy, confidences, ori_img):
@@ -128,7 +132,8 @@ class DeepSort(object):
         for box in bbox_xyxy:
             x1, y1, x2, y2 = box
             im = ori_img[y1:y2, x1:x2]
-            im_crops.append(im)
+            if im.any():
+                im_crops.append(im)
         if im_crops:
             features = self.extractor(im_crops)
         else:

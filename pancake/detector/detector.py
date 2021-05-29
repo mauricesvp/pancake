@@ -1,9 +1,21 @@
 """Detector base class."""
+from abc import ABC, abstractmethod
 
 
-class Detector:
+class Detector(ABC):
+    _subclasses = {}
+
     def __init__(self, *args, **kwargs) -> None:
         pass
 
-    def detect(self, img) -> list:
+    @classmethod
+    def get_subclasses(cls):
+        return dict(cls._subclasses)
+
+    def __init_subclass__(cls):
+        module_name = cls.__module__.split(".")[-1].replace("detector_", "")
+        Detector._subclasses[module_name] = cls
+
+    @abstractmethod
+    def detect(self, img, *args, **kwargs) -> list:
         raise NotImplementedError

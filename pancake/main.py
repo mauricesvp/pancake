@@ -34,6 +34,7 @@ verbose = 2
 
 # visualization
 view_img = True
+view_img = False
 hide_labels = False
 hide_conf = False
 line_thickness = 2
@@ -130,12 +131,12 @@ def main(argv=None, *args, **kwargs):
                     show_tracks=False,
                     det=det,
                     tracks=tracks,
-                    p=p,
                     im0=im0,
                     labels=MODEL._classlabels,
                     hide_labels=hide_labels,
                     hide_conf=hide_conf,
                     line_thickness=line_thickness,
+                    debug=False,  # Set to true to enable manual stepping
                 )
             # input()
 
