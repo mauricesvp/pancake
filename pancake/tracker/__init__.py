@@ -1,15 +1,12 @@
 import torch
 from .tracker import BaseTracker
 from .tracker_deepsort import DEEPSORT
-<<<<<<< HEAD
 from .tracker_centroid import CentroidTracker
-=======
 from ..utils.common import fix_path
 from ..utils.parser import get_config
 
 __all__ = ["TRACKER_REGISTRY", "setup_tracker"]
 
->>>>>>> 0969e9564df0b228c4e5d70c92c09bbd2d9c63ac
 
 TRACKER_REGISTRY = BaseTracker.get_subclasses()
 
