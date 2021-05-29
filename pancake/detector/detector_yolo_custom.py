@@ -63,7 +63,7 @@ class YOLOCustomDetector(Detector):
         )  # BGR to RGB, to bsx3x416x416
         pr_imgs = np.ascontiguousarray(pr_imgs)
 
-        l.debug(f"Inference on: {pr_imgs.shape}")
+        l.info(f"Inference on: {pr_imgs.shape}")
 
         # Inference
         det, _ = self.model.infer(pr_imgs)
