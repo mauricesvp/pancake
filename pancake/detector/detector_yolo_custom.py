@@ -21,7 +21,7 @@ class YOLOCustomDetector(Detector):
 
     def __init__(self, config, *args, **kwargs) -> None:
         weights = config["weights"]
-        weights_cfg = fix_path(weights)
+        weights_cfg = fix_path(weights) if type(weights) is str else weights
         model = config["model"]
         conf_thres = float(config["conf_thres"])
         iou_thres = float(config["iou_thres"])
