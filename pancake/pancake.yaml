@@ -20,7 +20,6 @@ PANCAKE:
       # '../samples/streams.txt'
       
       # '../samples/output.avi'
-       
       - "../samples/r44/1l"
       - "../samples/r44/1c"
       - "../samples/r44/1r"
@@ -51,10 +50,12 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights: "../weights/detector/yolov5/yolov5s6_100epochs.pt"
+      weights: 
+        - "yolov5s6.pt"
+        - "yolov5l6.pt"
       img_size: 640
-      conf_thres: 0.5
-      iou_thres: 0.85
+      conf_thres: 0.55
+      iou_thres: 0.7
       classes: null
       agnostic_nms: True
 
