@@ -230,7 +230,7 @@ class LoadImages:  # for inference
                     ret_val, img0 = self.cap.read()
 
             self.frame += 1
-            print(
+            l.debug(
                 f"video {self.count + 1}/{self.nf} ({self.frame}/{self.nframes}) {path}: ",
                 end="",
             )
@@ -240,7 +240,7 @@ class LoadImages:  # for inference
             self.count += 1
             img0 = cv2.imread(path)  # BGR
             assert img0 is not None, "Image Not Found " + path
-            print(f"image {self.count}/{self.nf} {path}: ", end="")
+            l.debug(f"image {self.count}/{self.nf} {path}: ", end="")
 
         return path, img0, self.cap
 
@@ -276,46 +276,96 @@ class LoadImageDirs:  # for inference
 
             ni, nv = len(images), len(videos)
 
-            assert len(images) and not len(videos), (
-                f"Currently only images are supported for multi directory option, "
-                f"found {nv} videos in {p}"
+            assert (len(images) and not len(videos)) or (
+                not len(images) and len(videos)), (
+                f"LoadImageDirs can only consider directories with one type of source,\n"
+                f"source can either be an image found or video!\n" 
+                f"({ni} images and {nv} videos in {p})"
             )
-            assert ni > 0, (
-                f"No images found in {p}. "
-                f"Supported formats are:\nimages: {img_formats}"
+
+            assert ni or nv, (
+                f"No images or videos found in {p}. "
+                f"Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}"
             )
 
             self.files[i] = images + videos
             self.nf[i] = ni + nv
             self.video_flag[i] = [False] * ni + [True] * nv
 
-        self.sources = [path.split("/")[-1] for path in dirs]
-        self.mode = "image"
+        # check if different source types are provided for each dir
+        same_datatypes = [all(flags) for flags in self.video_flag]
+        assert all(same_datatypes) or not any(same_datatypes), (
+            "Given directories possess different type of sources!")
+
+        self.mode = "image" if not any(same_datatypes) else "video"
+
+        if self.mode == "video":
+            # currently only one video per directory is supported
+            assert all([nf == 1 for nf in self.nf]), (
+                "Currently only one video per directory is supported"
+            ) 
+            self.new_video([files[0] for files in self.files])  # new video
+        else:
+            self.cap = None
 
     def __iter__(self):
         self.count = 0
         return self
 
     def __next__(self):
+        # stop when last image/video was reached
         if self.count == min(self.nf):
             raise StopIteration
-
+        
         paths = [dir[self.count] for dir in self.files]
 
-        # Read images
-        self.count += 1
-        img0 = [cv2.imread(path) for path in paths]  # BGR
+        if self.mode == "video":
+            returns = [cap.read() for cap in self.cap]
 
-        for i, img in enumerate(img0):
-            assert img is not None, "Image Not Found " + paths[i]
-            # print(f"image {self.count}/{self.nf[i]} {paths[i]}: ", end="")
+            ret_val = [ret[0] for ret in returns]
+            img0 = [ret[1] for ret in returns]
 
+            # one video ended (for now stop tracking from here)
+            if not all(ret_val):
+                for cap in self.cap:
+                    cap.release()
+                raise StopIteration
+                
+            self.frame += 1
+
+            if l.level == 10:
+                s = ""
+                num_dirs = len(self.cap)
+                for i in range(num_dirs):
+                    s += f"Video {i+1}/{num_dirs}: ({self.frame}/{self.nframes[i]})"
+                    if i < num_dirs-1:
+                        s += ", "
+                l.debug(
+                    f"{s}"
+                )
+        else:
+            # Read images
+            self.count += 1
+            img0 = [cv2.imread(path) for path in paths]  # BGR
+
+            s = ""
+            for i, img in enumerate(img0):
+                assert img is not None, "Image Not Found " + paths[i]
+                
+                if l.level == 10:
+                    s += f"Image {i+1}/{len(img0)}: {self.count}/{self.nf[i]}"
+                    if i < len(img0)-1:
+                        s += ", "
+                    
+            l.debug(f"{s}")
+            
         return paths, img0, None
 
-    def new_video(self, path):
+    def new_video(self, paths: list):
         self.frame = 0
-        self.cap = cv2.VideoCapture(path)
-        self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.cap = [cv2.VideoCapture(path) for path in paths]
+        self.nframes = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            for cap in self.cap]
 
     def __len__(self):
         return self.nf  # number of files
@@ -361,7 +411,7 @@ class LoadWebcam:  # for inference
         # Print
         assert ret_val, f"Camera Error {self.pipe}"
         img_path = "webcam.jpg"
-        print(f"webcam {self.count}: ", end="")
+        l.debug(f"webcam {self.count}: ", end="")
 
         return img_path, img0, None
 
