@@ -1,3 +1,4 @@
+import argparse
 import logging
 
 import cv2
@@ -26,10 +27,10 @@ def setup_logging(config):
     l.debug(f"Log level set to {log_level}.")
 
 
-def main():
+def main(cfg_path: str=None):
     l.debug("Starting pancake.")
 
-    config = pancake_config()
+    config = pancake_config(cfg_path)
 
     setup_logging(config.PANCAKE)
 
@@ -96,4 +97,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cfg', nargs='?', type=str, default=None, help='pancake config path')
+    args = args = parser.parse_args()
+
+    main(args.cfg)
