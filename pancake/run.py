@@ -27,7 +27,7 @@ def setup_logging(config):
     l.debug(f"Log level set to {log_level}.")
 
 
-def main(cfg_path: str=None):
+def main(cfg_path: str = None):
     l.debug("Starting pancake.")
 
     config = pancake_config(cfg_path)
@@ -57,6 +57,8 @@ def main(cfg_path: str=None):
         )  # increment run
         save_dir.mkdir(parents=True, exist_ok=True)
 
+    track_history = []
+
     iteration = 0
     for path, im0s, vid_cap in DATA:
         l.debug(f"Iteration {iteration}")
@@ -71,6 +73,8 @@ def main(cfg_path: str=None):
         tracks = TRACKER.update(detections, frame)
 
         if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:
+            if len(tracks):
+                track_history.append(tracks)
             frame = draw_boxes(
                 show_det=vis_cfg.SHOW_DET,
                 show_tracks=vis_cfg.SHOW_TRACKS,
@@ -81,6 +85,8 @@ def main(cfg_path: str=None):
                 hide_labels=vis_cfg.HIDE_LABELS,
                 hide_conf=vis_cfg.HIDE_CONF,
                 line_thickness=vis_cfg.LINE_THICKNESS,
+                track_history=track_history,
+                show_track_history=vis_cfg.SHOW_TRACK_HIST,
             )
 
             if vis_cfg.VIEW_IMG:
@@ -98,7 +104,9 @@ def main(cfg_path: str=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', nargs='?', type=str, default=None, help='pancake config path')
+    parser.add_argument(
+        "--cfg", nargs="?", type=str, default=None, help="pancake config path"
+    )
     args = args = parser.parse_args()
 
     main(args.cfg)

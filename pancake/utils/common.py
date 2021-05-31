@@ -58,7 +58,9 @@ def draw_boxes(
     line_thickness: int,
     labels: List = None,
     det: Type[torch.Tensor] = None,
-    tracks: Type[np.ndarray] = None,
+    tracks: Type[np.ndarray] = [],
+    track_history: Type[np.ndarray] = [],
+    show_track_history: bool = False,
 ) -> Type[np.array]:
     """
     :param show_det (bool): if detection bbox' should be visualized
@@ -101,6 +103,24 @@ def draw_boxes(
                 color=colors(int(id), True),
                 line_thickness=line_thickness,
             )
+    if show_track_history:
+        id_hist = {}
+        init = True
+        for state in track_history:
+            for *_, x, y, id in state:
+                if init:
+                    id_hist.update({id: [(x, y)]})
+                elif id not in id_hist:
+                    continue
+                else:
+                    id_hist[id].append((x, y))
+            init = False
+        for id in id_hist:
+            points = id_hist[id]
+            x0, y0 = points.pop(0)
+            for x, y in points:
+                cv2.line(im0, (x0, y0), (x, y), colors(id, True), 5)
+                x0, y0 = x, y
     return im0
 
 
