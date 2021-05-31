@@ -73,8 +73,11 @@ def main(cfg_path: str = None):
         tracks = TRACKER.update(detections, frame)
 
         if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:
-            if len(tracks):
+            if len(track_history) > vis_cfg.MAX_TRACK_HIST_LEN:
+                track_history = []
+            if len(tracks) and vis_cfg.SHOW_TRACK_HIST:
                 track_history.append(tracks)
+                
             frame = draw_boxes(
                 show_det=vis_cfg.SHOW_DET,
                 show_tracks=vis_cfg.SHOW_TRACKS,

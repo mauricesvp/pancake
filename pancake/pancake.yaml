@@ -53,7 +53,6 @@ PANCAKE:
       model: "yolov5"
       weights:
         - "yolov5s6.pt"
-        - "yolov5l6.pt"
       img_size: 640
       conf_thres: 0.55
       iou_thres: 0.7
@@ -73,13 +72,14 @@ PANCAKE:
     SHOW_DET: False
     SHOW_TRACKS: True
     SHOW_TRACK_HIST: True
+    MAX_TRACK_HIST_LEN: 1000
 
     HIDE_LABELS: False
     HIDE_CONF: False
 
-    LINE_THICKNESS: 5
+    LINE_THICKNESS: 3
 
-    DEBUG: True
+    DEBUG: False
 
   SAVE_RESULT:
     SAVE_RES: True
