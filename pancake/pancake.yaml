@@ -18,39 +18,39 @@ PANCAKE:
     # ~ 'url_to_streams.txt'  - live streams    
     SOURCE: 
       # '../samples/streams.txt'
-      
       # '../samples/output.avi'
-      - "../samples/r44/1l"
-      - "../samples/r44/1c"
-      - "../samples/r44/1r"
+      - "../samples/r45/1l"
+      - "../samples/r45/1c"
+      - "../samples/r45/1r"
     ROI:
-      # A:
-      #   - 1200  # x0
-      #   - 550  # y0
-      #   - 3775  # x1
-      #   - 1300  # y1
-      # B:
-      #   - 0  # x0
-      #   - 550  # y0
-      #   - 3840  # x1
-      #   - 1350  # y1
-      # C:
-      #   - 25  # x0
-      #   - 600  # y0
-      #   - 3100  # x1
-      #   - 1350  # y1
+      A:
+        - 1200  # x0
+        - 550  # y0
+        - 3775  # x1
+        - 1300  # y1
+      B:
+        - 0  # x0
+        - 550  # y0
+        - 3840  # x1
+        - 1350  # y1
+      C:
+        - 25  # x0
+        - 600  # y0
+        - 3100  # x1
+        - 1350  # y1
 
   DETECTOR:
-    # NAME: "yolo_custom"
     NAME: "yolo_custom"
+    # NAME: "yolo_simple"
     BACKEND: "dei"  # divide et impera
+    # BACKEND: "simple"
 
     YOLO_SIMPLE:
       size: "s"
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights: 
+      weights:
         - "yolov5s6.pt"
         - "yolov5l6.pt"
       img_size: 640
@@ -67,14 +67,15 @@ PANCAKE:
 
   VISUALIZATION:
     VIEW_IMG: True
-    SHOW_DET: True
+    SHOW_DET: False
     SHOW_TRACKS: True
+    SHOW_TRACK_HIST: True
 
     HIDE_LABELS: False
     HIDE_CONF: False
-    LINE_THICKNESS: 1
+    LINE_THICKNESS: 5
 
-    DEBUG: False
+    DEBUG: True
 
   SAVE_RESULT:
     SAVE_RES: True
