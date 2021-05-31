@@ -277,9 +277,10 @@ class LoadImageDirs:  # for inference
             ni, nv = len(images), len(videos)
 
             assert (len(images) and not len(videos)) or (
-                not len(images) and len(videos)), (
+                not len(images) and len(videos)
+            ), (
                 f"LoadImageDirs can only consider directories with one type of source,\n"
-                f"source can either be an image found or video!\n" 
+                f"source can either be an image found or video!\n"
                 f"({ni} images and {nv} videos in {p})"
             )
 
@@ -294,16 +295,17 @@ class LoadImageDirs:  # for inference
 
         # check if different source types are provided for each dir
         same_datatypes = [all(flags) for flags in self.video_flag]
-        assert all(same_datatypes) or not any(same_datatypes), (
-            "Given directories possess different type of sources!")
+        assert all(same_datatypes) or not any(
+            same_datatypes
+        ), "Given directories possess different type of sources!"
 
         self.mode = "image" if not any(same_datatypes) else "video"
 
         if self.mode == "video":
             # currently only one video per directory is supported
-            assert all([nf == 1 for nf in self.nf]), (
-                "Currently only one video per directory is supported"
-            ) 
+            assert all(
+                [nf == 1 for nf in self.nf]
+            ), "Currently only one video per directory is supported"
             self.new_video([files[0] for files in self.files])  # new video
         else:
             self.cap = None
@@ -316,7 +318,7 @@ class LoadImageDirs:  # for inference
         # stop when last image/video was reached
         if self.count == min(self.nf):
             raise StopIteration
-        
+
         paths = [dir[self.count] for dir in self.files]
 
         if self.mode == "video":
@@ -330,7 +332,7 @@ class LoadImageDirs:  # for inference
                 for cap in self.cap:
                     cap.release()
                 raise StopIteration
-                
+
             self.frame += 1
 
             if l.level == 10:
@@ -338,11 +340,9 @@ class LoadImageDirs:  # for inference
                 num_dirs = len(self.cap)
                 for i in range(num_dirs):
                     s += f"Video {i+1}/{num_dirs}: ({self.frame}/{self.nframes[i]})"
-                    if i < num_dirs-1:
+                    if i < num_dirs - 1:
                         s += ", "
-                l.debug(
-                    f"{s}"
-                )
+                l.debug(f"{s}")
         else:
             # Read images
             self.count += 1
@@ -351,21 +351,20 @@ class LoadImageDirs:  # for inference
             s = ""
             for i, img in enumerate(img0):
                 assert img is not None, "Image Not Found " + paths[i]
-                
+
                 if l.level == 10:
                     s += f"Image {i+1}/{len(img0)}: {self.count}/{self.nf[i]}"
-                    if i < len(img0)-1:
+                    if i < len(img0) - 1:
                         s += ", "
-                    
+
             l.debug(f"{s}")
-            
+
         return paths, img0, None
 
     def new_video(self, paths: list):
         self.frame = 0
         self.cap = [cv2.VideoCapture(path) for path in paths]
-        self.nframes = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            for cap in self.cap]
+        self.nframes = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
 
     def __len__(self):
         return self.nf  # number of files

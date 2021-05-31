@@ -3,7 +3,7 @@ import configparser
 import os
 
 
-def pancake_config(cfg_path: str=None) -> configparser.ConfigParser:
+def pancake_config(cfg_path: str = None) -> configparser.ConfigParser:
     """Parse config file."""
     # Using pancake.cfg
     # config = configparser.ConfigParser()

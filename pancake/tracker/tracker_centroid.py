@@ -16,22 +16,20 @@ class CentroidTracker(BaseTracker):
         x = sum(x_list) // len(x_list)
         y = sum(y_list) // len(y_list)
         return x, y
-    
-    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
+
+    def update(
+        self, det: Type[torch.Tensor], img: Type[np.ndarray]
+    ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
         print("UPDATE CENTROID TRACKER")
         bbox_xywh, confidences, _ = self.transform_detections(det)
-        centroids = [[5,6,7,8, 1,2, 0] for b in bbox_xywh]
+        centroids = [[5, 6, 7, 8, 1, 2, 0] for b in bbox_xywh]
 
         print(centroids)
-        #return centroids
-        
+        # return centroids
+
         outputs = []
 
-        outputs.append(
-                np.array(
-                    [5,6,7,8, 1,2, 0], dtype=np.int
-                )
-            )
+        outputs.append(np.array([5, 6, 7, 8, 1, 2, 0], dtype=np.int))
 
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
