@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "CPU"
+  DEVICE: "GPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -52,15 +52,15 @@ PANCAKE:
     YOLO_CUSTOM:
       model: "yolov5"
       weights:
-        - "yolov5s6.pt"
+        - "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       img_size: 640
-      conf_thres: 0.55
-      iou_thres: 0.7
+      conf_thres: 0.65
+      iou_thres: 0.6
       classes: null
       agnostic_nms: True
 
   TRACKER:
-    NAME: "centroid"
+    NAME: "deepsort"
 
     CENTROID:
       TRACKER_CFG_PATH: "../configs/tracker/centroid.yaml"
@@ -69,7 +69,7 @@ PANCAKE:
 
   VISUALIZATION:
     VIEW_IMG: True
-    SHOW_DET: False
+    SHOW_DET: True
     SHOW_TRACKS: True
     SHOW_TRACK_HIST: True
     MAX_TRACK_HIST_LEN: 1000
@@ -82,10 +82,10 @@ PANCAKE:
     DEBUG: False
 
   SAVE_RESULT:
-    SAVE_RES: True
+    SAVE_RES: False
     PATH: "pancake_results"
-    SUBDIR: "run"
+    SUBDIR: "yolov5m_100epochs_640px"
     MODE: "image" # "image" or "video"
     VID_FPS: 20 # fps of the merged video, when mode = "video"
-    EXIST_OK: False # save in already existing dir, 
+    EXIST_OK: True # save in already existing dir, 
                    # do not increment automatically
