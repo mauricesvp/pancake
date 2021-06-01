@@ -17,6 +17,9 @@ import torch
 from shapely.geometry import Polygon
 
 from .backend import Backend
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
 
 
 # Helper functions
@@ -501,8 +504,8 @@ class DEI(Backend):
             # If not, we can add it directly
             if subframes:
                 locations = locate(subframes, *obj[:4])
-                if len(locations) == 0:
-                    continue  # This should _never_ happen
+                if len(locations) == 0:  # This should _never_ happen
+                    l.warn("Object not located in any subframe!")
                 if len(locations) == 1:
                     results.append(obj)
                     continue
