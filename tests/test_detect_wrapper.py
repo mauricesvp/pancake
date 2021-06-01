@@ -65,5 +65,5 @@ def test_basic():
 
 
 if __name__ == "__main__":
-    test_series()
-    # test_basic()
+    # test_series()
+    test_basic()
