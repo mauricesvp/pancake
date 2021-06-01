@@ -36,7 +36,7 @@ class CentroidTracker(BaseTracker):
         # need to deregister the object from tracking
         # constants
         self.MAX_DISAPPEARED = cfg.CENTROID.MAX_DISAPPEARED
-        self.IS_VIDEO_INPUT  = cfg.CENTROID.IS_VIDEO_INPUT
+        self.IS_VIDEO_INPUT = cfg.CENTROID.IS_VIDEO_INPUT
         self.DISTANCE_TOLERANCE = cfg.CENTROID.DISTANCE_TOLERANCE
         self.VERTICAL_TOLERANCE = cfg.CENTROID.VERTICAL_TOLERANCE
         self.IGNORE_REGISTRATION_ZONES = cfg.CENTROID.IGNORE_REGISTRATION_ZONES
@@ -50,8 +50,8 @@ class CentroidTracker(BaseTracker):
     def _centroid(self, vertices):
         x_list = [vertex for vertex in vertices[::2]]
         y_list = [vertex for vertex in vertices[1::2]]
-        x = int( sum(x_list) // len(x_list) )
-        y = int( sum(y_list) // len(y_list) )
+        x = int(sum(x_list) // len(x_list))
+        y = int(sum(y_list) // len(y_list))
         return x, y
 
     def _return(self):
@@ -59,14 +59,22 @@ class CentroidTracker(BaseTracker):
         for id in list(self.objects.keys()):
             outputs.append(
                 np.array(
-                    [self.bbox[id][0],self.bbox[id][1], self.bbox[id][2],self.bbox[id][3], 
-                    self.objects[id][0], self.objects[id][1], id], dtype=np.int
+                    [
+                        self.bbox[id][0],
+                        self.bbox[id][1],
+                        self.bbox[id][2],
+                        self.bbox[id][3],
+                        self.objects[id][0],
+                        self.objects[id][1],
+                        id,
+                    ],
+                    dtype=np.int,
                 )
             )
 
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
-        
+
         self.l.debug(outputs)
 
         return outputs
@@ -74,28 +82,37 @@ class CentroidTracker(BaseTracker):
     def _continueMovement(self, objectID):
         # check if values for the last valid movement is existing (i.e. the object must have been detected at least once in two consecutive frames)
         if self.lastValidMovement[objectID] is not None:
-            self.objects[objectID][0] = self.objects[objectID][0] + \
-                                        (self.lastValidMovement[objectID][0] * self.time_between_frames)
+            self.objects[objectID][0] = self.objects[objectID][0] + (
+                self.lastValidMovement[objectID][0] * self.time_between_frames
+            )
             self.continuedMovement[objectID] = True
 
     def _isInsideDeregistrationZone(self, centroid):
-        if (centroid[1] < self.LANE_SEPARATOR \
-                and centroid[0] < self.DEREGISTRATION_ZONE) \
-            or (centroid[1] > self.LANE_SEPARATOR \
-                and centroid[0] > (self.FRAME_WIDTH - self.DEREGISTRATION_ZONE)):
-                    return True
+        if (
+            centroid[1] < self.LANE_SEPARATOR and centroid[0] < self.DEREGISTRATION_ZONE
+        ) or (
+            centroid[1] > self.LANE_SEPARATOR
+            and centroid[0] > (self.FRAME_WIDTH - self.DEREGISTRATION_ZONE)
+        ):
+            return True
         else:
-                    return False
+            return False
 
     def _isNotInsideDeregistrationZone(self, centroid):
-        if (centroid[1] < self.LANE_SEPARATOR \
-                and centroid[0] >= self.DEREGISTRATION_ZONE) \
-            or (centroid[1] > self.LANE_SEPARATOR \
-                and centroid[0] <= (self.FRAME_WIDTH - self.DEREGISTRATION_ZONE)) \
-            or self.IGNORE_REGISTRATION_ZONES:
-                    return True
+        if (
+            (
+                centroid[1] < self.LANE_SEPARATOR
+                and centroid[0] >= self.DEREGISTRATION_ZONE
+            )
+            or (
+                centroid[1] > self.LANE_SEPARATOR
+                and centroid[0] <= (self.FRAME_WIDTH - self.DEREGISTRATION_ZONE)
+            )
+            or self.IGNORE_REGISTRATION_ZONES
+        ):
+            return True
         else:
-                    return False
+            return False
 
     def _register(self, centroid, bbox, conf):
         # when registering an object we use the next available object
@@ -123,11 +140,13 @@ class CentroidTracker(BaseTracker):
         del self.previousPos[objectID]
         del self.continuedMovement[objectID]
         del self.lastValidMovement[objectID]
-    
-    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
+
+    def update(
+        self, det: Type[torch.Tensor], img: Type[np.ndarray]
+    ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
         self.l.debug("UPDATE CENTROID TRACKER")
         bbox_xyxy, conf, _ = self.transform_detections(det)
-        
+
         # Previous Group
         # create current timestamp in ms
         frame_timestamp = int(round(time.time() * 1000))
@@ -150,9 +169,12 @@ class CentroidTracker(BaseTracker):
                 # frames where a given object has been marked as
                 # missing, deregister it
                 # Or if the object is inside the deregistration zone
-                if (self.disappeared[objectID] > self.MAX_DISAPPEARED
-                    or self._isInsideDeregistrationZone(self.objects[objectID])):
-                        self._deregister(objectID)
+                if self.disappeared[
+                    objectID
+                ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    self.objects[objectID]
+                ):
+                    self._deregister(objectID)
             # return early as there are no centroids or tracking info
             # to update
             self.previous_timestamp = frame_timestamp
@@ -169,8 +191,8 @@ class CentroidTracker(BaseTracker):
             inputBBOX[i] = bb
             inputConfidence[i] = conf[i]
 
-        #print("INPUTS:")
-        #print(inputCentroids, inputBBOX, inputConfidence)
+        # print("INPUTS:")
+        # print(inputCentroids, inputBBOX, inputConfidence)
 
         # if we are currently not tracking any objects take the input
         # centroids and register each of them
@@ -179,7 +201,7 @@ class CentroidTracker(BaseTracker):
                 # only register when not in deregistration zone
                 if self._isNotInsideDeregistrationZone(inputCentroids[i]):
                     self._register(inputCentroids[i], inputBBOX[i], inputConfidence[i])
-        
+
         # otherwise, are are currently tracking objects so we need to
         # try to match the input centroids to existing object
         # centroids
@@ -215,32 +237,46 @@ class CentroidTracker(BaseTracker):
                 # set its new centroid, and reset the disappeared
                 # counter
                 # But only if inside a maximum distance
-                if (distance < self.DISTANCE_TOLERANCE) and \
-                    (abs(self.objects[objectIDs[row]][1] - inputCentroids[col][1]) < self.VERTICAL_TOLERANCE):
-                        objectID = objectIDs[row]
-                        self.objects[objectID] = inputCentroids[col]
-                        self.bbox[objectID] = inputBBOX[col]
-                        self.confidence[objectID] = inputConfidence[col]
-                        self.disappeared[objectID] = 0
-                        # Previous Group
-                        self.continuedMovement[objectID] = False
+                if (distance < self.DISTANCE_TOLERANCE) and (
+                    abs(self.objects[objectIDs[row]][1] - inputCentroids[col][1])
+                    < self.VERTICAL_TOLERANCE
+                ):
+                    objectID = objectIDs[row]
+                    self.objects[objectID] = inputCentroids[col]
+                    self.bbox[objectID] = inputBBOX[col]
+                    self.confidence[objectID] = inputConfidence[col]
+                    self.disappeared[objectID] = 0
+                    # Previous Group
+                    self.continuedMovement[objectID] = False
 
-                        # Previous Group
-                        # save the movement between the last two frames (only, if it is "forward")
-                        if self.previousPos[objectID] is not None:
-                            if (self.objects[objectID][1] < self.LANE_SEPARATOR \
-                                    and (self.objects[objectID][0] - self.previousPos[objectID][0]) < 0) \
-                                or (self.objects[objectID][1] > self.LANE_SEPARATOR \
-                                    and (self.objects[objectID][0] - self.previousPos[objectID][0]) > 0):
-                                
-                                self.lastValidMovement[objectID] = (self.objects[objectID] - self.previousPos[
-                                    objectID]) / self.time_between_frames
-                            self.previousPos[objectID] = self.objects[objectID]
+                    # Previous Group
+                    # save the movement between the last two frames (only, if it is "forward")
+                    if self.previousPos[objectID] is not None:
+                        if (
+                            self.objects[objectID][1] < self.LANE_SEPARATOR
+                            and (
+                                self.objects[objectID][0]
+                                - self.previousPos[objectID][0]
+                            )
+                            < 0
+                        ) or (
+                            self.objects[objectID][1] > self.LANE_SEPARATOR
+                            and (
+                                self.objects[objectID][0]
+                                - self.previousPos[objectID][0]
+                            )
+                            > 0
+                        ):
 
-                        # indicate that we have examined each of the row and
-                        # column indexes, respectively
-                        usedRows.add(row)
-                        usedCols.add(col)
+                            self.lastValidMovement[objectID] = (
+                                self.objects[objectID] - self.previousPos[objectID]
+                            ) / self.time_between_frames
+                        self.previousPos[objectID] = self.objects[objectID]
+
+                    # indicate that we have examined each of the row and
+                    # column indexes, respectively
+                    usedRows.add(row)
+                    usedCols.add(col)
 
             # compute both the row and column index we have NOT yet
             # examined
@@ -266,9 +302,12 @@ class CentroidTracker(BaseTracker):
                     # frames the object has been marked "disappeared"
                     # for warrants deregistering the object
                     # Or if object is inside deregistration zone
-                    if (self.disappeared[objectID] > self.MAX_DISAPPEARED
-                        or self._isInsideDeregistrationZone(objectCentroids[row])):
-                            self._deregister(objectID)
+                    if self.disappeared[
+                        objectID
+                    ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                        objectCentroids[row]
+                    ):
+                        self._deregister(objectID)
 
             # otherwise, if the number of input centroids is greater
             # than the number of existing object centroids we need to
@@ -276,12 +315,13 @@ class CentroidTracker(BaseTracker):
             else:
                 for col in unusedCols:
                     if self._isNotInsideDeregistrationZone(inputCentroids[col]):
-                        self._register(inputCentroids[col], inputBBOX[col], inputConfidence[col])
-        
+                        self._register(
+                            inputCentroids[col], inputBBOX[col], inputConfidence[col]
+                        )
+
         # return the set of trackable objects
         self.previous_timestamp = frame_timestamp
         return self._return()
-
 
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):

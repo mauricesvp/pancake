@@ -393,7 +393,7 @@ class DetectWrapper:
                     [pts],
                     True,
                     (255, 0, 0),
-                    1,
+                    5,
                 )
             else:
                 tlx, tly, brx, bry = obj[:4]
@@ -402,7 +402,7 @@ class DetectWrapper:
                     (tlx, tly),
                     (brx, bry),
                     (255, 0, 0),
-                    1,
+                    5,
                 )
         return img
 

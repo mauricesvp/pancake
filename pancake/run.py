@@ -77,7 +77,7 @@ def main(cfg_path: str = None):
                 track_history = []
             if len(tracks) and vis_cfg.SHOW_TRACK_HIST:
                 track_history.append(tracks)
-                
+
             frame = draw_boxes(
                 show_det=vis_cfg.SHOW_DET,
                 show_tracks=vis_cfg.SHOW_TRACKS,
