@@ -7,6 +7,7 @@ import cv2
 import torch
 
 from .detector import Detector
+from ..models.tensorrt.yolov5_tensorrt import Yolov5TRT
 import pancake.models as m
 from pancake.logger import setup_logger
 from pancake.utils.common import fix_path
@@ -23,6 +24,8 @@ class YOLOCustomDetector(Detector):
         weights = config["weights"]
         weights_cfg = fix_path(weights) if type(weights) is str else weights
         model = config["model"]
+        trt = config["trt"]
+
         conf_thres = float(config["conf_thres"])
         iou_thres = float(config["iou_thres"])
         classes = None if "None" == config["classes"] else config["classes"]
@@ -34,14 +37,30 @@ class YOLOCustomDetector(Detector):
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
         )
 
+        self.model = Yolov5TRT() if trt else self.model
+
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)
 
-    def detect(self, imgs: list) -> list:
+    def detect(
+        self, 
+        imgs: list
+        ) -> list:
         """
         :param imgs (list): list of images, images as np.array in BGR
         :return res (list): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         """
+        prep = self._preprocess(imgs)
+        pr_imgs, img_sizes = prep[0], prep[1]
+
+        # Inference
+        l.info(f"Inference on: {pr_imgs.shape}")
+        det, _ = self.model.infer(pr_imgs)
+
+        res = self._postprocess(det, pr_imgs, img_sizes)
+        return res
+
+    def _preprocess(self, imgs: list) -> np.array:
         if type(imgs) is not list:
             imgs = [imgs]
 
@@ -61,13 +80,17 @@ class YOLOCustomDetector(Detector):
         pr_imgs = pr_imgs[:, :, :, ::-1].transpose(
             0, 3, 1, 2
         )  # BGR to RGB, to bsx3x416x416
+
         pr_imgs = np.ascontiguousarray(pr_imgs)
+        return pr_imgs, img_sizes
+    
 
-        l.info(f"Inference on: {pr_imgs.shape}")
-
-        # Inference
-        det, _ = self.model.infer(pr_imgs)
-
+    def _postprocess(
+        self, 
+        det: torch.Tensor, 
+        pr_imgs: np.array, 
+        img_sizes: list
+        ) -> list:
         # Rescale images from preprocessed to original
         res = [None] * len(det)
         for i, x in enumerate(det):
