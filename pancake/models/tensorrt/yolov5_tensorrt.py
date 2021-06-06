@@ -33,21 +33,19 @@ class Yolov5TRT(BaseModel):
 
         # initialize model for export
         tmp_model = Yolov5TRT._init_export(
-            self.yolov5.model
+            self.yolov5.model.float()
         )
 
         # TRT currently only supports non-batch inference
         batch_size = 1
         # input size (x, x)
         x = self.yolov5._required_img_size
-        # whether half precision is supported
+        # half precision if supported
         input_tensor = (
-            torch.zeros(batch_size, 3, x, x).float() 
-            if not self.yolov5._half
-            else torch.zeros(batch_size, 3, x, x).half()
+            torch.zeros(batch_size, 3, x, x).float().to(self.yolov5._device)
+            # if not self.yolov5._half
+            # else torch.zeros(batch_size, 3, x, x).half().to(self.yolov5._device)
         )
-        # on cpu/gpu
-        input_tensor = input_tensor.to(self.yolov5._device)
 
         onnx_path = (
             weights_path.replace(".pt", ".onnx")
@@ -59,15 +57,15 @@ class Yolov5TRT(BaseModel):
         
         l.info(f"Converting PyTorch model from weights {weights_name} to ONNX")
         export_onnx(tmp_model, onnx_path, input_tensor)
-        
+
         if not os.path.isfile(onnx_path):
-            l.info("Couldn't convert to ONNX, returning standard Yolov5")
+            l.info("Couldn't convert to ONNX, using standard Yolov5")
             return self.yolov5
         
     
     @staticmethod
     def _init_export(model):
-        from ...utils.activations import Hardswish, SiLU
+        from pancake.utils.activations import Hardswish, SiLU
         from ..yolo import Detect
         from ..common import Conv
 
@@ -100,7 +98,7 @@ class Yolov5TRT(BaseModel):
         :param img: padded and resized image
         :return prep_img: preprocessed image
         """
-        pass
+        return super(Yolov5Model, self).prep_image_infer(img)
 
 
     def infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
