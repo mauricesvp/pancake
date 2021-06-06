@@ -37,7 +37,7 @@ class YOLOCustomDetector(Detector):
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
         )
 
-        self.model = Yolov5TRT() if trt else self.model
+        self.model = Yolov5TRT(self.model, weights_cfg) if trt else self.model
 
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)
