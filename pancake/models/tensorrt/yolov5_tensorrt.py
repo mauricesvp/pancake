@@ -6,7 +6,7 @@ import torch.nn as nn
 from typing import Type
 
 from pancake.logger import setup_logger
-from ..base_class import BaseModel
+from pancake.models.base_class import BaseModel
 from .trt_utils import export_onnx
 
 l = setup_logger(__name__)
@@ -27,6 +27,7 @@ class Yolov5TRT(BaseModel):
     def __init__(self, yolov5, weights_path):
         # if trt not available return standard yolov5 model
         if not trt_installed:
+            l.info("TensorRT not installed, using standard Yolov5..")
             return yolov5
 
         self.yolov5 = yolov5
@@ -38,13 +39,10 @@ class Yolov5TRT(BaseModel):
 
         # TRT currently only supports non-batch inference
         batch_size = 1
-        # input size (x, x)
         x = self.yolov5._required_img_size
-        # half precision if supported
+
         input_tensor = (
             torch.zeros(batch_size, 3, x, x).float().to(self.yolov5._device)
-            # if not self.yolov5._half
-            # else torch.zeros(batch_size, 3, x, x).half().to(self.yolov5._device)
         )
 
         onnx_path = (
@@ -56,18 +54,16 @@ class Yolov5TRT(BaseModel):
         weights_name = onnx_path.split("/")[-1].split(".")[0]
         
         l.info(f"Converting PyTorch model from weights {weights_name} to ONNX")
-        export_onnx(tmp_model, onnx_path, input_tensor)
-
-        if not os.path.isfile(onnx_path):
-            l.info("Couldn't convert to ONNX, using standard Yolov5")
+        if not export_onnx(tmp_model, onnx_path, input_tensor):
+            l.info("Couldn't convert to ONNX, using standard Yolov5..")
             return self.yolov5
         
     
     @staticmethod
     def _init_export(model):
         from pancake.utils.activations import Hardswish, SiLU
-        from ..yolo import Detect
-        from ..common import Conv
+        from pancake.models.yolo import Detect
+        from pancake.models.common import Conv
 
         for k, m in model.named_modules():
             m._non_persistent_buffers_set = set()  # pytorch 1.6.0 compatibility
@@ -79,7 +75,6 @@ class Yolov5TRT(BaseModel):
             elif isinstance(m, Detect):
                 m.inplace = opt.inplace
                 m.onnx_dynamic = opt.dynamic
-            # m.forward = m.forward_export  # assign forward (optional)
         return model
 
     def _init_infer(self, img_size):

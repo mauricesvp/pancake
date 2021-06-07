@@ -44,7 +44,8 @@ def export_onnx(
                 model_onnx, check = onnxsim.simplify(
                     model_onnx,
                     dynamic_input_shape=dynamic_axes,
-                    input_shapes={'input': list(input_tensor.shape)} if dynamic_axes else None)
+                    input_shapes={'input': list(input_tensor.shape)} 
+                    if dynamic_axes else None)
                 assert check, 'assert check failed'
                 onnx.save(model_onnx, onnx_path)
             except Exception as e:
@@ -52,5 +53,7 @@ def export_onnx(
                 return
 
         l.info(f'Export success, saved as {onnx_path} ({file_size(onnx_path):.1f} MB)')
+        return True
     except Exception as e:
         l.critical(f'Export failure: {e}')
+        return False
