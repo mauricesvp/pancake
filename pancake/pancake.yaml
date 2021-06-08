@@ -42,7 +42,7 @@ PANCAKE:
   DETECTOR:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
-    
+
     BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
 
@@ -52,7 +52,7 @@ PANCAKE:
     YOLO_CUSTOM:
       model: "yolov5"
       weights:
-        - "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+        - "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       img_size: 640
       conf_thres: 0.65
       iou_thres: 0.6
@@ -68,10 +68,10 @@ PANCAKE:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
   VISUALIZATION:
-    VIEW_IMG: True
+    VIEW_IMG: False
     SHOW_DET: True
     SHOW_TRACKS: True
-    SHOW_TRACK_HIST: True
+    SHOW_TRACK_HIST: False
     MAX_TRACK_HIST_LEN: 1000
 
     HIDE_LABELS: False
