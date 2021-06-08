@@ -11,7 +11,7 @@ from typing import Type
 
 from pancake.logger import setup_logger
 from pancake.models.base_class import BaseModel
-from pancake.utils.general import export_onnx
+from pancake.utils.general import export_onnx, check_requirements
 
 l = setup_logger(__name__)
 
@@ -38,12 +38,16 @@ class Yolov5TRT(BaseModel):
             return yolov5
 
         self.yolov5 = yolov5
+        self._required_img_size = self.yolov5._required_img_size
+        self._stride = self.yolov5._stride
 
         # TRT currently only supports non-batch inference
-        batch_size = 1
-        x = self.yolov5._required_img_size
+        self._batch_size = 1
+        x = self._required_img_size
 
-        input_tensor = torch.zeros(batch_size, 3, x, x).float().to(self.yolov5._device)
+        input_tensor = (
+            torch.zeros(self._batch_size, 3, x, x).float().to(self.yolov5._device)
+        )
 
         onnx_path = (
             weights_path.replace(".pt", ".onnx")
@@ -54,6 +58,7 @@ class Yolov5TRT(BaseModel):
         weights_name = onnx_path.split("/")[-1].split(".")[0]
 
         l.info(f"Converting PyTorch model from weights {weights_name} to ONNX")
+
         if not export_onnx(
             self._init_export(), onnx_path, input_tensor, dynamic_axes=False
         ):
@@ -67,7 +72,18 @@ class Yolov5TRT(BaseModel):
         self._topK = 512
         self._keepTopK = 300  # max detections on nms
 
+        check_requirements(["pycuda"])
+
         self.build_engine(onnx_path)
+        self.allocate_buffers()
+
+        # warm up
+        img = Yolov5TRT.prep_image_infer(input_tensor)
+        import time
+        for _ in range(10):
+            t1 = time.time()
+            self.infer(img)
+            print(f"Inf time: {time.time()-t1:.2f}")
 
     def _init_export(self):
         from pancake.utils.activations import Hardswish, SiLU
@@ -91,31 +107,73 @@ class Yolov5TRT(BaseModel):
         return model
 
     def _init_infer(self, img_size):
-        """
-        Does one forward pass on the network for initialization on gpu
-
-        :param img_size: padded, resized image size
-        """
         pass
 
-    def prep_image_infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
+    @staticmethod
+    def prep_image_infer(img: Type[np.array]) -> Type[np.array]:
         """
-        Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
+        Preprocesses images for inference (expanded dim (,4), half precision (fp16), normalized)
 
         :param img: padded and resized image
         :return prep_img: preprocessed image
         """
-        return super(Yolov5Model, self).prep_image_infer(img)
+        if type(img) is torch.Tensor:
+            img = img.cpu().numpy()
+        img = img.astype(np.float32)
+        img /= 255.0
+        if len(img.shape) < 4:
+            img = np.expand_dims(img, axis=0)
+        img = np.ascontiguousarray(img)
+        return img
 
-    def infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
+    def infer(self, img: Type[np.array]) -> Type[np.array]:
         """
-        :param img (np.array): resized and padded image [R, G, B] or [, R, G, B]
+        :param img (np.array): resized and padded image [bs, 3, width, height]
 
         :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
                 img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
                               expanded dim (,4), half precision (fp16))
         """
-        pass
+        # Prepare img for inference
+        img = Yolov5TRT.prep_image_infer(img)
+        # img = torch.from_numpy(img).float().numpy()
+
+        assert self.engine, "TRT engine hasn't been initialized yet!"
+
+        stream = cuda.Stream()
+        with self.engine.create_execution_context() as context:
+            self.inputs[0].host = img
+
+            [  # put data on gpu
+                cuda.memcpy_htod_async(inp.device, inp.host, stream)
+                for inp in self.inputs
+            ]
+            stream.synchronize()
+
+            # actual inference
+            context.execute_async_v2(
+                bindings=self.bindings, stream_handle=stream.handle
+            )
+            stream.synchronize()
+
+            [  # retrieve results
+                cuda.memcpy_dtoh_async(out.host, out.device, stream)
+                for out in self.outputs
+            ]
+            stream.synchronize()
+
+            num_det = int(self.outputs[0].host[0, ...])
+            boxes = np.array(self.outputs[1].host).reshape(self._batch_size, -1, 4)[
+                0, 0:num_det, 0:4
+            ]
+            scores = np.array(self.outputs[2].host).reshape(self._batch_size, -1, 1)[
+                0, 0:num_det, 0:1
+            ]
+            classes = np.array(self.outputs[3].host).reshape(self._batch_size, -1, 1)[
+                0, 0:num_det, 0:1
+            ]
+
+            return [np.concatenate([boxes, scores, classes], -1)], img
 
     def build_engine(self, onnx_path, using_half: bool = True):
         trt.init_libnvinfer_plugins(None, "")
@@ -129,7 +187,7 @@ class Yolov5TRT(BaseModel):
             with open(engine_file, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
                 self.engine = runtime.deserialize_cuda_engine(f.read())
                 return
-                
+
         with trt.Builder(TRT_LOGGER) as builder, builder.create_network(
             EXPLICIT_BATCH
         ) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
@@ -138,6 +196,7 @@ class Yolov5TRT(BaseModel):
             config.max_workspace_size = 1 * 1 << 30
             if using_half:
                 config.set_flag(trt.BuilderFlag.FP16)
+
             # Load the Onnx model and parse it in order to populate the TensorRT network.
             with open(onnx_path, "rb") as model:
                 if not parser.parse(model.read()):
@@ -272,14 +331,15 @@ class Yolov5TRT(BaseModel):
                 f.write(self.engine.serialize())
 
                 from pancake.utils.general import file_size
+
                 l.info(
                     f"TRT engine export success, saved as {engine_file} ({file_size(engine_file):.1f} MB)"
                 )
 
-    def allocate_buffers(self, engine, is_explicit_batch=False, dynamic_shapes=[]):
-        inputs = []
-        outputs = []
-        bindings = []
+    def allocate_buffers(self, is_explicit_batch=True, dynamic_shapes=[]):
+        self.inputs = []
+        self.outputs = []
+        self.bindings = []
 
         class HostDeviceMem(object):
             def __init__(self, host_mem, device_mem):
@@ -292,22 +352,21 @@ class Yolov5TRT(BaseModel):
             def __repr__(self):
                 return self.__str__()
 
-        for binding in engine:
-            dims = engine.get_binding_shape(binding)
-            print(dims)
+        for binding in self.engine:
+            dims = self.engine.get_binding_shape(binding)
+            l.debug(f"Layer '{binding}' dim: {dims}")
             if dims[0] == -1:
                 assert len(dynamic_shapes) > 0
                 dims[0] = dynamic_shapes[0]
-            size = trt.volume(dims) * engine.max_batch_size
-            dtype = trt.nptype(engine.get_binding_dtype(binding))
+            size = trt.volume(dims) * self.engine.max_batch_size
+            dtype = trt.nptype(self.engine.get_binding_dtype(binding))
             # Allocate host and device buffers
             host_mem = cuda.pagelocked_empty(size, dtype)
             device_mem = cuda.mem_alloc(host_mem.nbytes)
             # Append the device buffer to device bindings.
-            bindings.append(int(device_mem))
+            self.bindings.append(int(device_mem))
             # Append to the appropriate list.
-            if engine.binding_is_input(binding):
-                inputs.append(HostDeviceMem(host_mem, device_mem))
+            if self.engine.binding_is_input(binding):
+                self.inputs.append(HostDeviceMem(host_mem, device_mem))
             else:
-                outputs.append(HostDeviceMem(host_mem, device_mem))
-        return inputs, outputs, bindings
+                self.outputs.append(HostDeviceMem(host_mem, device_mem))
