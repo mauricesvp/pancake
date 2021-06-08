@@ -8,6 +8,7 @@ TODOs:
 
 """
 import math
+import time
 
 import cv2
 import imutils
@@ -40,9 +41,136 @@ def locate(subframes, x0, y0, x1, y1) -> list:
     locations = []
     for i, subframe in enumerate(subframes):
         tlx, tly, brx, bry = subframe[:4]
-        if x0 >= tlx and y0 >= tly and x1 <= brx and y1 <= bry:
+        # Check if any corner is in the subframe
+        if x0 >= tlx and x0 <= brx and y0 >= tly and y0 <= bry:  # tl
             locations.append(i)
+            continue
+        if x1 >= tlx and x1 <= brx and y0 >= tly and y0 <= bry:  # tr
+            locations.append(i)
+            continue
+        if x1 >= tlx and x1 <= brx and y1 >= tly and y1 <= bry:  # br
+            locations.append(i)
+            continue
+        if y1 >= tly and y1 <= bry and x0 >= tlx and x0 <= brx:  # bl
+            locations.append(i)
+            continue
     return locations
+
+
+def hconcat(source):
+    """Concat images horizontally"""
+    if type(source) != list:
+        source = [source]
+    return cv2.hconcat(source)
+
+
+def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -> list:
+    h, w, _ = img.shape
+    center = (w // 2, h // 2)
+
+    x0, y0, x1, y1, cf, cl = result
+    # Reverse rotation using rotation matrix
+    # Note that we will from this point on use all four corners!
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    ntl = M.dot([x0, y0, 1])
+    nbr = M.dot([x1, y1, 1])
+    ntr = M.dot([x1, y0, 1])
+    nbl = M.dot([x0, y1, 1])
+
+    points = [*ntl, *nbr, *ntr, *nbl]
+    xmax = max(list(points[:8:2]))
+    xmin = min(list(points[:8:2]))
+    ymax = max(list(points[1:8:2]))
+    ymin = min(list(points[1:8:2]))
+
+    diff = (w - side) // 2
+
+    tlx, tly = int(xmin - diff), int(ymin - diff)
+    brx, bry = int(xmax - diff), int(ymax - diff)
+
+    return (tlx, tly, brx, bry, cf, cl)
+
+
+def rotate(image, angle):
+    # grab the dimensions of the image
+    (h, w) = image.shape[:2]
+
+    center = (w // 2, h // 2)
+
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h))
+
+    return rotated
+
+
+def rotate_gpu(image, angle):
+    # grab the dimensions of the image
+    (h, w) = image.shape[:2]
+
+    center = (w // 2, h // 2)
+
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.cuda.warpAffine(image, M, (w, h))
+
+    return rotated
+
+
+def rotate_bound(img, angle):
+    """
+    Source:
+        github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+    """
+    # grab the dimensions of the image and then determine the
+    # center
+    (h, w) = img.shape[:2]
+    (cX, cY) = (w / 2, h / 2)
+
+    # grab the rotation matrix (applying the negative of the
+    # angle to rotate clockwise), then grab the sine and cosine
+    # (i.e., the rotation components of the matrix)
+    M = cv2.getRotationMatrix2D((cX, cY), -angle, 1.0)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
+
+    # compute the new bounding dimensions of the image
+    nW = int((h * sin) + (w * cos))
+    nH = int((h * cos) + (w * sin))
+
+    # adjust the rotation matrix to take into account translation
+    M[0, 2] += (nW / 2) - cX
+    M[1, 2] += (nH / 2) - cY
+
+    # perform the actual rotation and return the image
+    return cv2.warpAffine(img, M, (nW, nH))
+
+
+def rotate_bound_gpu(img, angle):
+    """
+    Source:
+        github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+    """
+    # grab the dimensions of the image and then determine the
+    # center
+    (h, w) = img.shape[:2]
+    (cX, cY) = (w / 2, h / 2)
+
+    # grab the rotation matrix (applying the negative of the
+    # angle to rotate clockwise), then grab the sine and cosine
+    # (i.e., the rotation components of the matrix)
+    M = cv2.getRotationMatrix2D((cX, cY), -angle, 1.0)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
+
+    # compute the new bounding dimensions of the image
+    nW = int((h * sin) + (w * cos))
+    nH = int((h * cos) + (w * sin))
+
+    # adjust the rotation matrix to take into account translation
+    M[0, 2] += (nW / 2) - cX
+    M[1, 2] += (nH / 2) - cY
+
+    # perform the actual rotation and return the image
+    return cv2.cuda.warpAffine(img, M, (nW, nH))
 
 
 def res2int(res):
@@ -76,6 +204,31 @@ def f_l(x):
     return int((310 / 441 * x) + (171316 / 441))
 
 
+def f(x) -> (int, int):
+    """Returns y value, angle of rotation, width for x along centre strip."""
+    if x < 3840:
+        y = int(-0.047 * x + 1100)
+        angle = int(-0.015 * x + 57)
+        w = int(0.216 * x + 172)
+    elif x < 7627:
+        y = 920
+        angle = 0
+        w = 1000
+    else:
+        y = int(0.054 * x + 510.8)
+        angle = 360 - int(0.013 * x - 100.3)
+        w = int(-0.213 * x + 2626)
+    return y, angle, w // 2
+
+
+CONST = {
+    "START_X": 1280,
+    "END_X": 10515,
+    "STEPS": 21,
+    "F": f,
+}
+
+
 L_CONST = {
     "ANGLE": 38,
     "SIDE": 448 // 2,
@@ -102,7 +255,13 @@ class DEI(Backend):
     printed: np.ndarray  # Stitched image with detection results
 
     def __init__(
-        self, detector, roi: list = None, write_partials: bool = False, *args, **kwargs
+        self,
+        detector,
+        roi: list = None,
+        write_partials: bool = False,
+        new: bool = False,
+        *args,
+        **kwargs,
     ) -> None:
         """
 
@@ -114,14 +273,96 @@ class DEI(Backend):
         self.write_partials = write_partials
         if roi:
             self.roi = roi
+        self.detect = self.detect_new if new else self.detect_old
 
-    def detect(
+        # TODO: Do gpu check here
+
+    def detect(self):
+        pass
+
+    def detect_new(
+        self,
+        source,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = "partial_interim.jpg",
+    ) -> list:
+        """
+        Right now the mid crop is unfixed.
+        (Use cropped version for tracking too (?))
+        """
+        start = time.time()
+        assert all(x.shape == source[0].shape for x in source[1:])
+
+        # Crop center (fix overlapping)
+        h, w, _ = source[1].shape
+        crop = round(0.007 * w)  # Width to remove left and right
+        source[1] = source[1][0:h, crop : w - crop]
+        img = hconcat(source)
+
+        x = CONST["START_X"]
+        y, angle, side = f(x)
+        subframes = []
+        while x < (CONST["END_X"] + side):
+            tlx, tly, brx, bry = x - side, y - side, x + side, y + side
+            subframe = img[tly:bry, tlx:brx]
+            rot = rotate_bound(subframe, angle)
+            subframes.append((rot, tlx, tly, brx, bry, angle, side))
+            x = x + int(1.5 * side)
+            y, angle, side = f(x)
+
+        imgs = [x[0] for x in subframes]
+
+        result = self.detector.detect(imgs)
+
+        objs = []
+        for i, sub in enumerate(result):
+            tlx, tly = subframes[i][1:3]
+            for obj in sub:
+                if subframes[i][5] != 0:  # angle
+                    obj = rev_rotate_bound(
+                        subframes[i][0], obj, subframes[i][5], subframes[i][6] * 2
+                    )
+                x0, y0, x1, y1, conf, classid = obj
+                x0, y0, x1, y1, conf, classid = (
+                    int(x0),
+                    int(y0),
+                    int(x1),
+                    int(y1),
+                    float(conf),
+                    int(classid),
+                )
+                # top left
+                rtlx, rtly = tlx + x0, tly + y0
+                # bottom right
+                rbrx, rbry = tlx + x1, tly + y1
+                # save coords, conf, class
+                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+
+        subcoords = [x[1:5] for x in subframes]
+        results = self.merge(objs, subcoords)
+
+        if True:
+            for obj in results:
+                x0, y0, x1, y1, conf, classid = obj
+                cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
+            cv2.imwrite("stuff.jpg", img)
+
+        for i, x in enumerate(results):
+            results[i] = torch.FloatTensor(list(x))
+        results = torch.stack(results, dim=0)
+
+        end = time.time()
+        print(end - start)
+        return results
+
+    def detect_old(
         self,
         source,
         imwrite_interim: bool = False,
         imwrite_interim_filename: str = "partial_interim.jpg",
     ) -> list:
         """Detect objects on Panorama images."""
+        start = time.time()
         assert len(source) == 3
         imgl = self.get_img(source[0])
         imgc = self.get_img(source[1])
@@ -130,7 +371,6 @@ class DEI(Backend):
         self.shape = imgl.shape
         objs = []
         objs += self.partial(
-            # objs += self.partial_non_batch(
             imgl,
             side="l",
             imwrite=self.write_partials,
@@ -138,7 +378,6 @@ class DEI(Backend):
             imwrite_interim_filename=imwrite_interim_filename,
         )
         rights = self.partial(
-            # rights = self.partial_non_batch(
             imgr,
             side="r",
             imwrite=self.write_partials,
@@ -177,146 +416,13 @@ class DEI(Backend):
         self.result = objs
         self.imgs = [imgl, imgc, imgr]
         self.set_full_img()  # set self.img
+        end = time.time()
+        print(end - start)
         return objs
 
     def detect_mid(self, imgc) -> list:
         res = self.detector.detect(imgc)[0]
         return res2int(res)
-
-    def partial_non_batch(
-        self,
-        source,
-        side: str = "",
-        imshow: bool = False,
-        imwrite: bool = False,
-        imwrite_filename: str = "partial.jpg",
-        imwrite_interim: bool = False,
-        imwrite_interim_filename: str = "partial_interim.jpg",
-    ) -> list:
-        """Detect objects on image by splitting and merging.
-
-        :param source: filename or np.ndarray
-        :param side: right or left side
-
-        :param imshow: show image of results
-
-        :param imwrite: write image of results to disk
-        :param imwrite_filename: filename of image of results
-
-        :return objs: list of tuples with objects and their coordinates
-
-        The tuples of the return list have 6 values:
-        x0: x-value top left corner
-        y0: y-value top left corner
-        x1: x-value bottom right corner
-        y1: y-value bottom right corner
-        conf: Confidence of detection, values between 0 and 1
-        class id: Integer indicating the detected object type
-
-        Modus operandi:
-        * Rotate image (without cropping, i.e. adding padding)
-        * Divide image into subframes
-        * Detect objects on each subframe, saving classes and coordinates
-        * Filter and merge objects
-        * Calculate coordinates on original frame
-        """
-        img = self.get_img(source)
-
-        valid_side = ["l", "left", "r", "right"]
-        if not side or side not in valid_side:
-            raise ValueError(f"param side needs to be one of {valid_side}")
-        if side.startswith("l"):
-            CONST = L_CONST
-        else:
-            CONST = R_CONST
-
-        orig_img = img.copy()
-        img = imutils.rotate_bound(img, CONST["ANGLE"])
-
-        # Divide image into subframes
-        res = []
-        objs = []
-        subframes = []
-        subframes_imgs = []
-        const_tmp = CONST["SIDE"]
-        for x in range(
-            CONST["START_X"],
-            CONST["END_X"],
-            -((CONST["START_X"] - CONST["END_X"]) // CONST["STEPS"]),
-        ):
-            y = CONST["F"](x)
-            const_tmp = int(1.1 * const_tmp)
-            # top left
-            tlx, tly = x - const_tmp, y - const_tmp
-            # bottom right
-            brx, bry = x + const_tmp, y + const_tmp
-            subframe = img[
-                tly:bry,
-                tlx:brx,
-            ]
-            subframes.append((tlx, tly, brx, bry))
-            subframes_imgs.append((subframe, tlx, tly))
-            cv2.rectangle(
-                img,
-                (tlx, tly),
-                (brx, bry),
-                (0, 0, 255),
-                5,
-            )
-
-            res += self.detector.detect(subframe)
-
-        # Get real points
-        for i, sub in enumerate(res):
-            tlx, tly = subframes_imgs[i][1:]
-            for obj in sub:
-                x0, y0, x1, y1, conf, classid = obj
-                x0, y0, x1, y1, conf, classid = (
-                    int(x0),
-                    int(y0),
-                    int(x1),
-                    int(y1),
-                    float(conf),
-                    int(classid),
-                )
-                # top left
-                rtlx, rtly = tlx + x0, tly + y0
-                # bottom right
-                rbrx, rbry = tlx + x1, tly + y1
-                # save coords, conf, class
-                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
-
-        if imwrite_interim:
-            img_interim = self.draw(img, objs)
-            # Also draw center point for good measure
-            for obj in subframes:
-                center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
-                center = (int(center[0]), int(center[1]))
-                cv2.circle(img_interim, center, 2, (255, 0, 0))
-            cv2.imwrite(side + imwrite_interim_filename, img_interim)
-
-        # Merge objects on subframes
-        results = self.merge(objs, subframes)
-
-        # Reverse rotation
-        # All object tuples now have all 4 corners!
-        results = self.rev_rotate(img, results, CONST["ANGLE"])
-
-        # Draw results on image
-        if imshow or imwrite:
-            orig_img = self.draw(orig_img, results)
-
-        if imshow:
-            cv2.namedWindow("results", cv2.WINDOW_NORMAL)
-            cv2.imshow("results", orig_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        if imwrite:
-            if imwrite_filename == "partial.jpg":
-                imwrite_filename = f"partial_{side}.jpg"
-            cv2.imwrite(imwrite_filename, orig_img)
-
-        return results
 
     def partial(
         self,
@@ -355,7 +461,8 @@ class DEI(Backend):
         * Filter and merge objects
         * Calculate coordinates on original frame
         """
-        img = self.get_img(source)
+        # img = self.get_img(source)
+        img = source
 
         valid_side = ["l", "left", "r", "right"]
         if not side or side not in valid_side:
@@ -471,8 +578,6 @@ class DEI(Backend):
 
         for i, obj in enumerate(results):
             x0, y0, x1, y1, cf, cl = obj
-            area = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]).area
-            ar = (x1 - x0) // (y1 - y0)  # aspect ratio
             # Reverse rotation using rotation matrix
             # Note that we will from this point on use all four corners!
             ntl = M.dot([x0, y0, 1])
@@ -492,10 +597,20 @@ class DEI(Backend):
         return results
 
     def merge(self, objs: list, subframes: list = None, ratio=0.8) -> list:
-        """Merge all detected objects of subframes.
+        """
+        Merge all detected objects of subframes.
 
         Right now we use a single heuristic:
         If obj is embedded in another object with 90% or more of its area, discard it.
+
+        TODO:
+            This simple heuristic is by no means perfect yet.
+            Especially when an object is right at the border of a subframe,
+            the results can get inaccurate.
+            Further filtering has to be done here
+            Example:
+            * If obj is at the border of a subframe, check if it is in the middle
+              of another one (and discard if so)
         """
         results = []
         while objs:
@@ -506,6 +621,7 @@ class DEI(Backend):
                 locations = locate(subframes, *obj[:4])
                 if len(locations) == 0:  # This should _never_ happen
                     l.warn("Object not located in any subframe!")
+                    continue
                 if len(locations) == 1:
                     results.append(obj)
                     continue
@@ -527,13 +643,6 @@ class DEI(Backend):
             if not skip:
                 results.append(obj)
 
-            # TODO: This simple heuristic is by no means perfect yet.
-            # Especially when an object is right at the border of a subframe,
-            # the results can get inaccurate.
-            # Further filtering has to be done here
-            # Example:
-            # * If obj is at the border of a subframe, check if it is in the middle
-            #   of another one (and discard if so)
         return results
 
     def get_img(self, source) -> np.ndarray:
