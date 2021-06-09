@@ -91,7 +91,7 @@ def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -> l
     return (tlx, tly, brx, bry, cf, cl)
 
 
-def rotate(image, angle):
+def rotate_cpu(image, angle):
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -103,19 +103,21 @@ def rotate(image, angle):
     return rotated
 
 
-def rotate_gpu(image, angle):
+def rotate(image, angle):
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
     center = (w // 2, h // 2)
 
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.cuda.warpAffine(image, M, (w, h))
+    img_cuda = cv2.cuda_GpuMat()
+    img_cuda.upload(image)
 
-    return rotated
+    rotated = cv2.cuda.warpAffine(img_cuda, M, (w, h))
+    return rotated.download()
 
 
-def rotate_bound(img, angle):
+def rotate_bound_cpu(img, angle):
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -144,7 +146,7 @@ def rotate_bound(img, angle):
     return cv2.warpAffine(img, M, (nW, nH))
 
 
-def rotate_bound_gpu(img, angle):
+def rotate_bound(img, angle):
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -170,7 +172,11 @@ def rotate_bound_gpu(img, angle):
     M[1, 2] += (nH / 2) - cY
 
     # perform the actual rotation and return the image
-    return cv2.cuda.warpAffine(img, M, (nW, nH))
+    img_cuda = cv2.cuda_GpuMat()
+    img_cuda.upload(img)
+
+    res = cv2.cuda.warpAffine(img_cuda, M, (nW, nH))
+    return res.download()
 
 
 def res2int(res):
@@ -259,7 +265,7 @@ class DEI(Backend):
         detector,
         roi: list = None,
         write_partials: bool = False,
-        new: bool = False,
+        new: bool = True,
         *args,
         **kwargs,
     ) -> None:
@@ -274,6 +280,7 @@ class DEI(Backend):
         if roi:
             self.roi = roi
         self.detect = self.detect_new if new else self.detect_old
+        l.debug(f"Using new dei: {new}")
 
         # TODO: Do gpu check here
 
@@ -283,8 +290,6 @@ class DEI(Backend):
     def detect_new(
         self,
         source,
-        imwrite_interim: bool = False,
-        imwrite_interim_filename: str = "partial_interim.jpg",
     ) -> list:
         """
         Right now the mid crop is unfixed.
@@ -341,7 +346,7 @@ class DEI(Backend):
         subcoords = [x[1:5] for x in subframes]
         results = self.merge(objs, subcoords)
 
-        if True:
+        if False:
             for obj in results:
                 x0, y0, x1, y1, conf, classid = obj
                 cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
@@ -352,7 +357,7 @@ class DEI(Backend):
         results = torch.stack(results, dim=0)
 
         end = time.time()
-        print(end - start)
+        print("total:", end - start)
         return results
 
     def detect_old(
