@@ -27,7 +27,12 @@ def setup_logging(config):
     l.debug(f"Log level set to {log_level}.")
 
 
-def main(cfg_path: str = None):
+def main(cfg_path: str = None, n: int = 0):
+    """
+
+    :param cfg_path (str): Alternative config path
+    :param n (int): Maximum number of iterations (0 means infinite)
+    """
     l.debug("Starting pancake.")
 
     config = pancake_config(cfg_path)
@@ -64,12 +69,8 @@ def main(cfg_path: str = None):
         l.debug(f"Iteration {iteration}")
         iteration += 1
 
-        detections = BACKEND.detect(im0s)
+        detections, frame = BACKEND.detect(im0s)
 
-        if not type(im0s) is list:
-            frame = im0s
-        else:
-            frame = cv2.hconcat([*im0s])
         tracks = TRACKER.update(detections, frame)
 
         if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:
@@ -103,6 +104,8 @@ def main(cfg_path: str = None):
                     mode=save_cfg.MODE,
                     path=save_dir,
                 )
+        if n and iteration >= n:
+            return
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ class SIMPLE(Backend):
         else:
             self.roi = None
 
-    def detect(self, source) -> list:
+    def detect(self, source) -> (list, list):
         """Detect objects on image(s).
 
         :param source: Image or list of images.
@@ -62,4 +62,7 @@ class SIMPLE(Backend):
                     x[0] += w * (i + 1)
                     x[2] += w * (i + 1)
                 res = torch.cat((res, det), dim=0)
-        return res
+        if not type(source) is list:
+            source = [source]
+        frame = cv2.hconcat([*source])
+        return res, frame
