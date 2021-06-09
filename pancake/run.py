@@ -69,12 +69,8 @@ def main(cfg_path: str = None, n: int = 0):
         l.debug(f"Iteration {iteration}")
         iteration += 1
 
-        detections = BACKEND.detect(im0s)
+        detections, frame = BACKEND.detect(im0s)
 
-        if not type(im0s) is list:
-            frame = im0s
-        else:
-            frame = cv2.hconcat([*im0s])
         tracks = TRACKER.update(detections, frame)
 
         if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:

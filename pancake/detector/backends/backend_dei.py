@@ -303,7 +303,7 @@ class DEI(Backend):
     def detect_new(
         self,
         source,
-    ) -> list:
+    ) -> (list, np.ndarray):
         """
         Right now the mid crop is unfixed.
         (Use cropped version for tracking too (?))
@@ -359,7 +359,7 @@ class DEI(Backend):
         subcoords = [x[1:5] for x in subframes]
         results = self.merge(objs, subcoords)
 
-        if False:
+        if False:  # Debugging
             for obj in results:
                 x0, y0, x1, y1, conf, classid = obj
                 cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
@@ -371,7 +371,7 @@ class DEI(Backend):
 
         end = time.time()
         print("total:", end - start)
-        return results
+        return results, img
 
     def detect_old(
         self,
