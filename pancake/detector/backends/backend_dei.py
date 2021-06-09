@@ -36,9 +36,9 @@ def locate(subframes, x0, y0, x1, y1) -> list:
        |               |
         ------------ x1, y1
     """
-    if not (x0 > 0 and y0 > 0):
-        return []
     locations = []
+    if not (x0 > 0 and y0 > 0):
+        return locations
     for i, subframe in enumerate(subframes):
         tlx, tly, brx, bry = subframe[:4]
         # Check if any corner is in the subframe
@@ -117,7 +117,7 @@ def rotate(image, angle):
     return rotated.download()
 
 
-def rotate_bound_cpu(img, angle):
+def rotate_bound_cpu(img: np.ndarray, angle: int):
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -146,7 +146,7 @@ def rotate_bound_cpu(img, angle):
     return cv2.warpAffine(img, M, (nW, nH))
 
 
-def rotate_bound(img, angle):
+def rotate_bound(img: np.ndarray, angle: int):
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -210,7 +210,7 @@ def f_l(x):
     return int((310 / 441 * x) + (171316 / 441))
 
 
-def f(x) -> (int, int):
+def f(x: int) -> (int, int):
     """Returns y value, angle of rotation, width for x along centre strip."""
     if x < 3840:
         y = int(-0.047 * x + 1100)
@@ -645,18 +645,27 @@ class DEI(Backend):
                     continue
             # If yes, we need to do some filtering
 
-            # Check if object is embedded in other object (with >80% of its area)
-            x0, y0, x1, y1 = obj[:4]
-            rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
-            skip = False
-            for objtemp in objs + results:
-                xt0, yt0, xt1, yt1 = objtemp[:4]
-                rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
-                intersection = rect1.intersection(rect2)
-                if intersection.area >= (ratio * rect1.area):
-                    # Our current obj is embedded, skip
-                    skip = True
-                    break
+            def intersect_area(a: tuple, b: tuple):
+                dx = np.minimum(a[2], b[2]) - np.maximum(a[0], b[0])
+                dy = np.minimum(a[3], b[3]) - np.maximum(a[1], b[1])
+                if dx >= 0 and dy >= 0:
+                    return np.maximum(0, dx * dy)
+                return 0
+
+            def embedded(obj: tuple, objs: list, results: list):
+                # Check if object is embedded in other object (with >80% of its area)
+                x0, y0, x1, y1 = obj[:4]
+                rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+                objarea = (x1 - x0) * (y1 - y0)
+                skip = False
+                for objtemp in objs + results:
+                    ia = intersect_area(obj[:4], objtemp[:4])
+                    if ia >= (ratio * objarea):
+                        # Our current obj is embedded, skip
+                        return True
+                return False
+
+            skip = embedded(obj, objs, results)
 
             if not skip:
                 results.append(obj)
