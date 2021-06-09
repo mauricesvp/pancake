@@ -27,7 +27,12 @@ def setup_logging(config):
     l.debug(f"Log level set to {log_level}.")
 
 
-def main(cfg_path: str = None):
+def main(cfg_path: str = None, n: int = 0):
+    """
+
+    :param cfg_path (str): Alternative config path
+    :param n (int): Maximum number of iterations (0 means infinite)
+    """
     l.debug("Starting pancake.")
 
     config = pancake_config(cfg_path)
@@ -103,6 +108,8 @@ def main(cfg_path: str = None):
                     mode=save_cfg.MODE,
                     path=save_dir,
                 )
+        if n and iteration >= n:
+            return
 
 
 if __name__ == "__main__":
