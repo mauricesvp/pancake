@@ -282,7 +282,20 @@ class DEI(Backend):
         self.detect = self.detect_new if new else self.detect_old
         l.debug(f"Using new dei: {new}")
 
-        # TODO: Do gpu check here
+        # Check if we can use cv2.cuda
+        if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+            self.rotate = rotate
+            self.rotate_bound = rotate_bound
+        else:
+            self.rotate = rotate_cpu
+            self.rotate_bound = rotate_bound_cpu
+        # Note that rotate(_cpu) is not used as of now
+
+    def rotate(self):
+        pass
+
+    def rotate_bound(self):
+        pass
 
     def detect(self):
         pass
@@ -310,7 +323,7 @@ class DEI(Backend):
         while x < (CONST["END_X"] + side):
             tlx, tly, brx, bry = x - side, y - side, x + side, y + side
             subframe = img[tly:bry, tlx:brx]
-            rot = rotate_bound(subframe, angle)
+            rot = self.rotate_bound(subframe, angle)
             subframes.append((rot, tlx, tly, brx, bry, angle, side))
             x = x + int(1.5 * side)
             y, angle, side = f(x)
