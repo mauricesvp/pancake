@@ -308,7 +308,6 @@ class DEI(Backend):
         Right now the mid crop is unfixed.
         (Use cropped version for tracking too (?))
         """
-        start = time.time()
         assert all(x.shape == source[0].shape for x in source[1:])
 
         # Crop center (fix overlapping)
@@ -369,8 +368,6 @@ class DEI(Backend):
             results[i] = torch.FloatTensor(list(x))
         results = torch.stack(results, dim=0)
 
-        end = time.time()
-        print("total:", end - start)
         return results, img
 
     def detect_old(
@@ -435,7 +432,7 @@ class DEI(Backend):
         self.imgs = [imgl, imgc, imgr]
         self.set_full_img()  # set self.img
         end = time.time()
-        print(end - start)
+        # print(end - start)
         return objs
 
     def detect_mid(self, imgc) -> list:
