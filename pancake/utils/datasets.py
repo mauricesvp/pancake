@@ -254,8 +254,9 @@ class LoadImages:  # for inference
 
 
 class LoadImageDirs:  # for inference
-    def __init__(self, dirs):
+    def __init__(self, dirs, queue_size: int = 64, thread_sleep: float = 0.1):
         n = len(dirs)
+        self.num_dirs = n
         self.files = [None] * n
         self.nf = [None] * n
         self.video_flag = [None] * n
@@ -299,72 +300,119 @@ class LoadImageDirs:  # for inference
             same_datatypes
         ), "Given directories possess different type of sources!"
 
+        # loader mode
         self.mode = "image" if not any(same_datatypes) else "video"
-
         if self.mode == "video":
             # currently only one video per directory is supported
             assert all(
                 [nf == 1 for nf in self.nf]
             ), "Currently only one video per directory is supported"
-            self.new_video([files[0] for files in self.files])  # new video
+            self.new_videos([files[0] for files in self.files])  # init videos
         else:
             self.cap = None
 
+        # for each directory create queue that threads use for storing the loaded frames
+        from queue import Queue
+        self.Qs = [Queue(maxsize=queue_size) for _ in range(self.num_dirs)]
+        # stop flag for threads
+        self.stopped = False
+        self.thread_sleep = thread_sleep  
+        # start threads
+        for index in range(self.num_dirs):
+            self.start_threads(index)
+        # wait for the last thread to retrieve first frame
+        time.sleep(0.5)
+        
     def __iter__(self):
         self.count = 0
         return self
 
     def __next__(self):
         # stop when last image/video was reached
-        if self.count == min(self.nf):
+        if self.count == min(self.nf) or not all(
+            [self.more_queue(idx) for idx in range(self.num_dirs)]
+        ):
+            # stop threads
+            self.stopped = True
+            # release video capture objects
+            if self.mode == "video":
+                for cap in self.caps:
+                    cap.release()
             raise StopIteration
 
-        paths = [dir[self.count] for dir in self.files]
+        # take images from queues
+        img0 = [self.read_queue(idx) for idx in range(self.num_dirs)]  # BGR
 
-        if self.mode == "video":
-            returns = [cap.read() for cap in self.cap]
-
-            ret_val = [ret[0] for ret in returns]
-            img0 = [ret[1] for ret in returns]
-
-            # one video ended (for now stop tracking from here)
-            if not all(ret_val):
-                for cap in self.cap:
-                    cap.release()
-                raise StopIteration
-
-            self.frame += 1
-
-            if l.level == 10:
-                s = ""
-                num_dirs = len(self.cap)
-                for i in range(num_dirs):
-                    s += f"Video {i+1}/{num_dirs}: ({self.frame}/{self.nframes[i]})"
-                    if i < num_dirs - 1:
-                        s += ", "
-                l.debug(f"{s}")
-        else:
-            # Read images
-            self.count += 1
-            img0 = [cv2.imread(path) for path in paths]  # BGR
-
+        if l.level <= 20:
             s = ""
-            for i, img in enumerate(img0):
-                assert img is not None, "Image Not Found " + paths[i]
+            for i in range(self.num_dirs):
+                s += f"{self.mode} {i+1}/{self.num_dirs}: ({self.count}/{self.nf[i]})"
+                if i < self.num_dirs - 1:
+                    s += ", "
+            l.info(f"{s}")
 
-                if l.level == 10:
-                    s += f"Image {i+1}/{len(img0)}: {self.count}/{self.nf[i]}"
-                    if i < len(img0) - 1:
-                        s += ", "
+        self.count += 1
+        return None, img0, None
 
-            l.debug(f"{s}")
+    def start_threads(self, index: int):
+        # start a thread to read frames from the file system
+        t = Thread(target=self.update, args=(index,))
+        t.daemon = True
+        t.start()
+        return self
 
-        return paths, img0, None
+    def update(self, index: int):
+        img_idx = 0
 
-    def new_video(self, paths: list):
+        # keep looping infinitely
+        while True:
+            # if the thread indicator variable is set, stop the thread
+            if self.stopped:
+                return
+
+            # otherwise, ensure the queue has room in it
+            if not self.Qs[index].full():
+                if self.mode == "video":
+                    # read the next frame from the file
+                    (grabbed, frame) = self.cap[index].read()
+                    # if the `grabbed` boolean is `False`, then we have
+                    # reached the end of the video file
+                    if not grabbed:
+                        self.stop()
+                        l.debug(f"Finished reading video with idx {index}")
+                        return
+                else:
+                    # read image from the file
+                    frame = cv2.imread(self.files[index][img_idx])
+                    img_idx += 1
+
+                    if frame is None:
+                        l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
+                        continue
+
+                # add the frame to the queue
+                self.Qs[index].put(frame)
+                time.sleep(self.thread_sleep)
+            else:
+                # when queue is full, sleep for a prolonged period
+                time.sleep(5)
+
+    def new_videos(self, paths: list):
         self.frame = 0
         self.cap = [cv2.VideoCapture(path) for path in paths]
-        self.nframes = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+        self.nf = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+
+    def read_queue(self, index):
+        # return next frame in the queue with given index
+        return self.Qs[index].get()
+
+    def more_queue(self, index):
+        # return True if there are still frames in the queue
+        return self.Qs[index].qsize() > 0
+
+    def stop_threads(self):
+        # indicate that the threads should be stopped
+        self.stopped = True
 
     def __len__(self):
         return self.nf  # number of files

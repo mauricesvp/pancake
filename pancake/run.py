@@ -50,7 +50,7 @@ def main(cfg_path: str = None, n: int = 0):
     source = config.PANCAKE.DATA.SOURCE
     source_path = fix_path(source)
 
-    DATA, is_webcam = load_data(source_path)
+    DATA, _ = load_data(source_path)
 
     # Visualization and save configs
     vis_cfg = config.PANCAKE.VISUALIZATION
