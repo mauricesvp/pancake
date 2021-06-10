@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "GPU"
+  DEVICE: "CPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -57,6 +57,7 @@ PANCAKE:
       trt: True
       trt_engine_path: "weights/detector/yolov5/yolov5s.engine"
       trt_plugin_library: "/home/tuananhroman/dcaiti/trt/tensorrtx/yolov5/build/libmyplugins.so"
+      nms_gpu: False
 
       img_size: 640
       conf_thres: 0.65

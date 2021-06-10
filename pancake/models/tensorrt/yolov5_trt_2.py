@@ -8,10 +8,11 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 import torch
 import torch.nn as nn
+import torchvision
 
 from pancake.logger import setup_logger
 from pancake.models.base_class import BaseModel
-from pancake.utils.general import export_onnx, check_requirements
+from pancake.utils.general import export_onnx, check_requirements, non_max_suppression
 
 l = setup_logger(__name__)
 
@@ -28,9 +29,11 @@ for package in ["tensorrt"]:
 
 
 class Yolov5TRT(BaseModel):
-    def __init__(self, yolov5, engine_path: str, plugin_path: str, *args, **kwargs):
+    def __init__(
+        self, yolov5, engine_path: str, plugin_path: str, nms_gpu: bool, *args, **kwargs
+    ):
         # if trt not available return standard yolov5 model
-        check_requirements(["pycuda"])
+        check_requirements(["pycuda", "torchvision"])
         if not trt_installed:
             l.info("TensorRT not installed, using standard Yolov5..")
             return yolov5
@@ -43,6 +46,7 @@ class Yolov5TRT(BaseModel):
         # get trt engine- and plugin path
         self._engine_path = engine_path
         self._plugin_path = plugin_path
+        self._nms_gpu = nms_gpu
 
         # --- TRT init ---
         # create a context on this device
@@ -136,7 +140,23 @@ class Yolov5TRT(BaseModel):
         img = np.ascontiguousarray(img)
         return img
 
-    def infer(self, img: Type[np.array]) -> Type[np.array]:
+
+    def prep_batches(self, imgs) -> Type[list]:
+        """
+        Divide imgs ndarray into batches which sizes are compatible with the 
+        TRT enging. 
+        """
+        modulo = imgs.shape[0] % self.batch_size
+
+        # fill imgs array in order to be divisible by engine batch size
+        if modulo != 0:
+            img_size = imgs.shape[2:]
+            fills = np.zeros((modulo, 3, img_size), dtype=np.uint8)
+
+        return np.vsplit(imgs, imgs.shape[0]/self.batch_size), modulo
+
+
+    def infer(self, imgs: Type[np.array]) -> Type[np.array]:
         """
         :param img (np.array): resized and padded image [bs, 3, width, height]
 
@@ -144,13 +164,38 @@ class Yolov5TRT(BaseModel):
                 img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
                               expanded dim (,4), half precision (fp16))
         """
-        # prepare img for inference
-        img = Yolov5TRT.prep_image_infer(img)
+        # prepare imgs for inference
+        imgs = Yolov5TRT.prep_image_infer(imgs)
 
-        # Make self the active context, pushing it on top of the context stack.
+        # prepare batches according to engine batch size
+        img_batches, fills = self.prep_batches(imgs)
+
+        # infer on batches
+        pred = [self.infer_on_batch(batch) for batch in img_batches]
+
+        return pred[:-fills], None
+
+
+    def infer_on_batch(self, img: Type[np.array]) -> Type[list]:
+        """
+        :param img (np.array): resized and padded image [bs, 3, width, height]
+
+        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
+                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
+                              expanded dim (,4), half precision (fp16))
+        """
+        assert (
+            img.shape[0] == self.batch_size
+        ), (f"Provided batch size ({img.shape[0]}) doesn't allign with " 
+            f"the engines batch size ({self.batch_size})")
+
+        # prepare img for inference
+        img_sizes = img.shape[2:]
+
+        # make self the active context, pushing it on top of the context stack.
         self.ctx.push()
 
-        # Restore essential components
+        # restore essential components
         stream, context, engine, bindings = (
             self.stream,
             self.context,
@@ -164,40 +209,47 @@ class Yolov5TRT(BaseModel):
             self.cuda_outputs,
         )
 
-        # Copy input image to host buffer
+        # copy input image to host buffer
         np.copyto(host_inputs[0], img.ravel())
         start = time.time()
 
-        # Transfer input data  to the GPU.
+        # transfer input data to the GPU.
         cuda.memcpy_htod_async(cuda_inputs[0], host_inputs[0], stream)
 
-        # Run inference.
+        # run inference.
         context.execute_async(
             batch_size=self.batch_size, bindings=bindings, stream_handle=stream.handle
         )
 
-        # Transfer predictions back from the GPU.
+        # transfer predictions back from the GPU.
         cuda.memcpy_dtoh_async(host_outputs[0], cuda_outputs[0], stream)
 
-        # Synchronize the stream
+        # synchronize the stream
         stream.synchronize()
         end = time.time()
-        l.debug(f"Inf (pure) time: {end-start:.2f}")
+        l.debug(f"Inf (pure) time: {end-start:.4f}")
 
-        # Remove any context from the top of the context stack, deactivating it.
+        # remove any context from the top of the context stack, deactivating it.
         self.ctx.pop()
 
-        # Here we use the first row of output in that batch_size = 1
+        # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
-        boxes, scores, ids = self.postp_image_infer(output)
 
-        return None, None
+        # do postprocess
+        pred = [
+            self.postp_image_infer(
+                output[i * 6001 : (i + 1) * 6001], img_sizes[0], img_sizes[1]
+            )
+            for i in range(self.batch_size)
+        ]
 
-    def postp_image_infer(self, output):
+        return pred
+
+    def postp_image_infer(self, output, origin_h, origin_w):
         """
         description: postprocess the prediction
         param:
-            output:     A tensor likes [num_boxes,cx,cy,w,h,conf,cls_id, cx,cy,w,h,conf,cls_id, ...]
+            output:     A tensor like [num_boxes,cx,cy,w,h,conf,cls_id]
             origin_h:   height of original image
             origin_w:   width of original image
         return:
@@ -205,30 +257,88 @@ class Yolov5TRT(BaseModel):
             result_scores: finally scores, a tensor, each element is the score correspoing to box
             result_classid: finally classid, a tensor, each element is the classid correspoing to box
         """
-        # Get the num of boxes detected
-        num = int(output[0])
+        # get the num of boxes detected
+        num = int(output[0]) if int(output[0]) != 0 else 1
 
-        # Reshape to a two dimentional ndarray
+        # reshape to a two dimentional ndarray
         pred = np.reshape(output[1:], (-1, 6))[:num, :]
 
-        # to a torch Tensor
-        pred = torch.Tensor(pred).cuda()
+        # to a torch Tensor (GPU)
+        pred = torch.Tensor(pred).cuda() if self._nms_gpu else torch.Tensor(pred)
 
-        # Get the boxes, scores, classid
+        # get the boxes, scores, classid
         boxes, scores, classid = pred[:, :4], pred[:, 4], pred[:, 5]
 
-        # Choose those boxes that score > CONF_THRESH
-        si = scores > self._yolov5._conf_thres
-        boxes = boxes[si, :]
-        scores = scores[si]
-        classid = classid[si]
+        if self._nms_gpu:
+            # choose those boxes that score > CONF_THRESH
+            si = scores > self._yolov5._conf_thres
+            boxes = boxes[si, :]
+            scores = scores[si]
+            classid = classid[si]
 
-        # Trandform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
-        # boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
-        # Do nms
-        indices = torchvision.ops.nms(boxes, scores, iou_threshold=IOU_THRESHOLD).cpu()
-        result_boxes = boxes[indices, :].cpu()
-        result_scores = scores[indices].cpu()
-        result_classid = classid[indices].cpu()
+        # no detections found, return list with empty tensor
+        if not boxes.shape[0]:
+            return [torch.Tensor([])]
 
-        return result_boxes, result_scores, result_classid
+        # transform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
+        boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
+
+        if self._nms_gpu:
+            # do nms (GPU)
+            indices = torchvision.ops.nms(
+                boxes, scores, iou_threshold=self._yolov5._iou_thres
+            ).cpu()
+
+            result_boxes = boxes[indices, :].cpu()
+            result_scores = scores[indices].cpu()
+            result_classid = classid[indices].cpu()
+
+            result_scores = torch.unsqueeze(result_scores, 0)
+            result_classid = torch.unsqueeze(result_classid, 0)
+
+            result = torch.cat((result_boxes, result_scores, result_classid), 1)
+        else:
+            scores = torch.unsqueeze(scores, 0)
+            classid = torch.unsqueeze(classid, 0)
+
+            pred = torch.cat((boxes, scores, classid), 1)
+            pred = torch.unsqueeze(pred, 0)
+
+            # do nms (CPU)
+            result = non_max_suppression(
+                pred,
+                self._yolov5._conf_thres,
+                self._yolov5._iou_thres,
+                self._yolov5._classes,
+                self._yolov5._agnostic_nms,
+            )[0]
+
+        return result
+
+    def xywh2xyxy(self, origin_h, origin_w, x):
+        """
+        description:    Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+        param:
+            origin_h:   height of original image
+            origin_w:   width of original image
+            x:          A boxes tensor, each row is a box [center_x, center_y, w, h]
+        return:
+            y:          A boxes tensor, each row is a box [x1, y1, x2, y2]
+        """
+        y = torch.zeros_like(x) if isinstance(x, torch.Tensor) else np.zeros_like(x)
+        r_w = self.input_w / origin_w
+        r_h = self.input_h / origin_h
+        if r_h > r_w:
+            y[:, 0] = x[:, 0] - x[:, 2] / 2
+            y[:, 2] = x[:, 0] + x[:, 2] / 2
+            y[:, 1] = x[:, 1] - x[:, 3] / 2 - (self.input_h - r_w * origin_h) / 2
+            y[:, 3] = x[:, 1] + x[:, 3] / 2 - (self.input_h - r_w * origin_h) / 2
+            y /= r_w
+        else:
+            y[:, 0] = x[:, 0] - x[:, 2] / 2 - (self.input_w - r_h * origin_w) / 2
+            y[:, 2] = x[:, 0] + x[:, 2] / 2 - (self.input_w - r_h * origin_w) / 2
+            y[:, 1] = x[:, 1] - x[:, 3] / 2
+            y[:, 3] = x[:, 1] + x[:, 3] / 2
+            y /= r_h
+
+        return y
