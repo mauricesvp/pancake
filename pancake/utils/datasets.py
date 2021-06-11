@@ -260,6 +260,7 @@ class LoadImageDirs:
         self.files = [None] * n
         self.nf = [None] * n
         self.video_flag = [None] * n
+        self.queue_size = queue_size
 
         for i, path in enumerate(dirs):
             p = str(Path(path).absolute())  # os-agnostic absolute path
