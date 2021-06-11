@@ -253,8 +253,8 @@ class LoadImages:  # for inference
         return self.nf  # number of files
 
 
-class LoadImageDirs:  # for inference
-    def __init__(self, dirs, queue_size: int = 64, thread_sleep: float = 0.1):
+class LoadImageDirs: 
+    def __init__(self, dirs, queue_size: int = 64, read_fps: float = 15):
         n = len(dirs)
         self.num_dirs = n
         self.files = [None] * n
@@ -295,13 +295,13 @@ class LoadImageDirs:  # for inference
             self.video_flag[i] = [False] * ni + [True] * nv
 
         # check if different source types are provided for each dir
-        same_datatypes = [all(flags) for flags in self.video_flag]
-        assert all(same_datatypes) or not any(
-            same_datatypes
+        all_videos = [all(flags) for flags in self.video_flag]
+        assert all(all_videos) or not any(
+            all_videos
         ), "Given directories possess different type of sources!"
 
         # loader mode
-        self.mode = "image" if not any(same_datatypes) else "video"
+        self.mode = "image" if not any(all_videos) else "video"
         if self.mode == "video":
             # currently only one video per directory is supported
             assert all(
@@ -311,33 +311,30 @@ class LoadImageDirs:  # for inference
         else:
             self.cap = None
 
-        # for each directory create queue that threads use for storing the loaded frames
+        # for each directory create queue threads use for storing the loaded frames
         from queue import Queue
         self.Qs = [Queue(maxsize=queue_size) for _ in range(self.num_dirs)]
+
         # stop flag for threads
         self.stopped = False
-        self.thread_sleep = thread_sleep  
+        self.read_fps = read_fps  # retrieve frames at this rate
+
         # start threads
         for index in range(self.num_dirs):
             self.start_threads(index)
+
         # wait for the last thread to retrieve first frame
-        time.sleep(0.5)
-        
+        time.sleep(0.2)
+
     def __iter__(self):
         self.count = 0
         return self
 
     def __next__(self):
         # stop when last image/video was reached
-        if self.count == min(self.nf) or not all(
-            [self.more_queue(idx) for idx in range(self.num_dirs)]
-        ):
+        if not all([self.more_queue(idx) for idx in range(self.num_dirs)]):
             # stop threads
-            self.stopped = True
-            # release video capture objects
-            if self.mode == "video":
-                for cap in self.caps:
-                    cap.release()
+            self.stop_threads()
             raise StopIteration
 
         # take images from queues
@@ -355,7 +352,7 @@ class LoadImageDirs:  # for inference
         return None, img0, None
 
     def start_threads(self, index: int):
-        # start a thread to read frames from the file system
+        # start a thread to read frames from the source
         t = Thread(target=self.update, args=(index,))
         t.daemon = True
         t.start()
@@ -389,13 +386,13 @@ class LoadImageDirs:  # for inference
                     if frame is None:
                         l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
                         continue
-
+                    
                 # add the frame to the queue
                 self.Qs[index].put(frame)
-                time.sleep(self.thread_sleep)
+                time.sleep(1 / self.read_fps)
             else:
                 # when queue is full, sleep for a prolonged period
-                time.sleep(5)
+                time.sleep(self.queue_size / self.read_fps * 0.9)
 
     def new_videos(self, paths: list):
         self.frame = 0
@@ -413,6 +410,10 @@ class LoadImageDirs:  # for inference
     def stop_threads(self):
         # indicate that the threads should be stopped
         self.stopped = True
+        # release video capture objects
+        if self.mode == "video":
+            for cap in self.caps:
+                cap.release()
 
     def __len__(self):
         return self.nf  # number of files
