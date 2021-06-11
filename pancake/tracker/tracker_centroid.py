@@ -144,7 +144,7 @@ class CentroidTracker(BaseTracker):
     def update(
         self, det: Type[torch.Tensor], img: Type[np.ndarray]
     ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
-        self.l.debug("UPDATE CENTROID TRACKER")
+        # self.l.debug("UPDATE CENTROID TRACKER")
         bbox_xyxy, conf, _ = self.transform_detections(det)
 
         # Previous Group
