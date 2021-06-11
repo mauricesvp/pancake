@@ -17,6 +17,7 @@ class DEEPSORT(BaseTracker):
         # We need to jump through some hoops here to allow relative paths
         path = os.path.join(os.path.dirname(__file__), "..", cfg.DEEPSORT.REID_CKPT)
         path_resolved = os.path.abspath(path)
+        device = kwargs["device"]
         self.DS = DeepSort(
             path_resolved,
             device=device,
@@ -28,7 +29,7 @@ class DEEPSORT(BaseTracker):
             n_init=cfg.DEEPSORT.N_INIT,
             nn_budget=cfg.DEEPSORT.NN_BUDGET,
             max_id=cfg.DEEPSORT.MAX_ID,
-            use_cuda=True if kwargs["device"] != "CPU" else False,
+            use_cuda=True if device != "CPU" else False,
         )
 
     def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:
