@@ -15,7 +15,7 @@ class DeepSort(object):
     def __init__(
         self,
         model_path,
-        device=device,
+        device="CPU",
         max_dist=0.2,
         min_confidence=0.3,
         nms_max_overlap=1.0,
