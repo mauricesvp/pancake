@@ -75,7 +75,7 @@ class CentroidTracker(BaseTracker):
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
 
-        self.l.debug(outputs)
+        # self.l.debug(outputs)
 
         return outputs
 
