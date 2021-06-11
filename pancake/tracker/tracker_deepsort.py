@@ -19,6 +19,7 @@ class DEEPSORT(BaseTracker):
         path_resolved = os.path.abspath(path)
         self.DS = DeepSort(
             path_resolved,
+            device=device,
             max_dist=cfg.DEEPSORT.MAX_DIST,
             min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
             nms_max_overlap=cfg.DEEPSORT.NMS_MAX_OVERLAP,

@@ -15,6 +15,7 @@ class DeepSort(object):
     def __init__(
         self,
         model_path,
+        device=device,
         max_dist=0.2,
         min_confidence=0.3,
         nms_max_overlap=1.0,
@@ -28,7 +29,7 @@ class DeepSort(object):
         self.min_confidence = min_confidence
         self.nms_max_overlap = nms_max_overlap
 
-        self.extractor = Extractor(model_path, use_cuda=use_cuda)
+        self.extractor = Extractor(model_path, device=device, use_cuda=use_cuda)
 
         max_cosine_distance = max_dist
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
