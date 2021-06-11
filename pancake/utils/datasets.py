@@ -253,7 +253,7 @@ class LoadImages:  # for inference
         return self.nf  # number of files
 
 
-class LoadImageDirs: 
+class LoadImageDirs:
     def __init__(self, dirs, queue_size: int = 64, read_fps: float = 15):
         n = len(dirs)
         self.num_dirs = n
@@ -313,6 +313,7 @@ class LoadImageDirs:
 
         # for each directory create queue threads use for storing the loaded frames
         from queue import Queue
+
         self.Qs = [Queue(maxsize=queue_size) for _ in range(self.num_dirs)]
 
         # stop flag for threads
@@ -386,7 +387,7 @@ class LoadImageDirs:
                     if frame is None:
                         l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
                         continue
-                    
+
                 # add the frame to the queue
                 self.Qs[index].put(frame)
                 time.sleep(1 / self.read_fps)
