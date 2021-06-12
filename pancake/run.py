@@ -12,8 +12,7 @@ from .detector import backends as be
 
 from .config import pancake_config
 from .logger import setup_logger
-from .utils.common import fix_path, load_data, draw_boxes, visualize, save
-from .utils.general import increment_path
+from .utils.common import fix_path, load_data, ResultProcessor
 
 l = setup_logger(__name__)
 
@@ -53,16 +52,26 @@ def main(cfg_path: str = None, n: int = 0):
     DATA, _ = load_data(source_path)
 
     # Visualization and save configs
-    vis_cfg = config.PANCAKE.VISUALIZATION
-    save_cfg = config.PANCAKE.SAVE_RESULT
+    res_cfg = config.PANCAKE.RESULT_PROCESSING
 
-    if save_cfg.SAVE_RES:
-        save_dir = increment_path(
-            Path(save_cfg.PATH) / save_cfg.SUBDIR, exist_ok=save_cfg.EXIST_OK
-        )  # increment run
-        save_dir.mkdir(parents=True, exist_ok=True)
-
-    track_history = []
+    RESULT_PROC = ResultProcessor(
+        show_res=res_cfg.VIEW_IMG,
+        save_res=res_cfg.SAVE_RES,
+        draw_det=res_cfg.DRAW_DET,
+        draw_tracks=res_cfg.DRAW_TRACKS,
+        draw_track_hist=res_cfg.DRAW_TRACK_HIST,
+        track_hist_size=res_cfg.MAX_TRACK_HIST_LEN,
+        labels=DETECTOR.model.names,
+        hide_labels=res_cfg.HIDE_LABELS,
+        hide_conf=res_cfg.HIDE_CONF,
+        line_thickness=res_cfg.LINE_THICKNESS,
+        save_mode=res_cfg.MODE,
+        path=res_cfg.PATH,
+        subdir=res_cfg.SUBDIR,
+        exist_ok=res_cfg.EXIST_OK,
+        vid_fps=res_cfg.VID_FPS,
+        debug=res_cfg.DEBUG,
+    )
 
     iteration = 0
     for path, im0s, vid_cap in DATA:
@@ -73,37 +82,8 @@ def main(cfg_path: str = None, n: int = 0):
 
         tracks = TRACKER.update(detections, frame)
 
-        if vis_cfg.VIEW_IMG or save_cfg.SAVE_RES:
-            if len(track_history) > vis_cfg.MAX_TRACK_HIST_LEN:
-                track_history = []
-            if len(tracks) and vis_cfg.SHOW_TRACK_HIST:
-                track_history.append(tracks)
+        RESULT_PROC.update(detections, tracks, frame, vid_cap)
 
-            frame = draw_boxes(
-                show_det=vis_cfg.SHOW_DET,
-                show_tracks=vis_cfg.SHOW_TRACKS,
-                det=detections,
-                tracks=tracks,
-                im0=frame,
-                labels=DETECTOR.model.names,
-                hide_labels=vis_cfg.HIDE_LABELS,
-                hide_conf=vis_cfg.HIDE_CONF,
-                line_thickness=vis_cfg.LINE_THICKNESS,
-                track_history=track_history,
-                show_track_history=vis_cfg.SHOW_TRACK_HIST,
-            )
-
-            if vis_cfg.VIEW_IMG:
-                visualize(im0=frame, debug=vis_cfg.DEBUG)
-
-            if save_cfg.SAVE_RES:
-                save(
-                    im0=frame,
-                    vid_cap=vid_cap,
-                    vid_fps=save_cfg.VID_FPS,
-                    mode=save_cfg.MODE,
-                    path=save_dir,
-                )
         if n and iteration >= n:
             return
 
