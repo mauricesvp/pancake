@@ -51,8 +51,7 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights:
-        - "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       img_size: 640
       conf_thres: 0.65
       iou_thres: 0.6
