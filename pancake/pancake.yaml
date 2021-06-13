@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "CPU"
+  DEVICE: "GPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -51,7 +51,8 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights:  "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+      weights:  
+        - "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       img_size: 640
       conf_thres: 0.65
       iou_thres: 0.6
@@ -68,10 +69,11 @@ PANCAKE:
 
   RESULT_PROCESSING:
     # GENERAL 
-    VIEW_IMG: False           # visualize results (not available )
-    DEBUG: False              # manual frame stepping
+    VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
     SAVE_RES: True           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
+    DEBUG: False              # manual frame stepping (only available when VIEW_RES)
+    
     
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
@@ -90,5 +92,5 @@ PANCAKE:
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
     VID_FPS: 20               # fps of the merged video, when mode = "video"
-    EXIST_OK: False            # save in already existing dir, 
+    EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically

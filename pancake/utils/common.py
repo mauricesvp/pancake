@@ -8,7 +8,8 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from ..models.base_class import BaseModel
+from pancake.models.base_class import BaseModel
+
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
 from .general import (
     check_img_size,
@@ -96,6 +97,9 @@ class ResultProcessor:
                                        seperate slave process
         :param debug (bool): manual skipping when visualizing results
         """
+        from pancake.run import setup_logger
+        self.l = setup_logger(__name__)
+
         # GENERAL
         self._show_res, self._save_res, self._debug, self._async = (
             show_res,
@@ -114,6 +118,10 @@ class ResultProcessor:
         self._line_thickness = line_thickness
         # CLASS LABELS
         self._labels = labels
+
+        if not self._show_res and not self._save_res:
+            self.l.info("No result processing procedure will be taking place")
+            pass
 
         # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
@@ -164,7 +172,6 @@ class ResultProcessor:
         # INIT ASYNC RES PROCESSING
         if self._async:
             import multiprocessing
-
             check_requirements(["pathos"])
             from pathos.helpers import mp
 
@@ -181,6 +188,7 @@ class ResultProcessor:
             )  # (receiving end, sending end)
 
             # init and start worker process
+            self.l.info("Starting slave process to work on the results")
             self.worker_process = mp.Process(target=self.async_update_worker, args=())
             self.worker_process.start()
 
@@ -197,6 +205,9 @@ class ResultProcessor:
         :param im0 (array): image in BGR (,3) [3, px, px]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
+        if not self._show_res and not self._save_res:
+            pass
+
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
             self.parent_pipe.send([det, tracks, im0, vid_cap])

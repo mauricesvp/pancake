@@ -55,7 +55,7 @@ def main(cfg_path: str = None, n: int = 0):
     res_cfg = config.PANCAKE.RESULT_PROCESSING
 
     RESULT_PROC = ResultProcessor(
-        show_res=res_cfg.VIEW_IMG,
+        show_res=res_cfg.VIEW_RES,
         save_res=res_cfg.SAVE_RES,
         draw_det=res_cfg.DRAW_DET,
         draw_tracks=res_cfg.DRAW_TRACKS,
