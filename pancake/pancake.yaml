@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "GPU"
+  DEVICE: "CPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
