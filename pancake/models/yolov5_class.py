@@ -37,9 +37,9 @@ class Yolov5Model(BaseModel):
         super(Yolov5Model, self).__init__(device)
         # load model
         self.model = attempt_load(weights, map_location=self._device)
+        self.model.eval()
         if self._half:
             self.model.half()  # to FP16
-
         self._stride = int(self.model.stride.max())  # model stride
         self.names = (
             self.model.module.names

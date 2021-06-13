@@ -1170,6 +1170,8 @@ def letterbox(
 ):
     if not new_shape:
         return img, 0, (0, 0)
+    if not stride:
+        stride = 32
     # Resize and pad image while meeting stride-multiple constraints
     shape = img.shape[:2]  # current shape [height, width]
     if isinstance(new_shape, int):

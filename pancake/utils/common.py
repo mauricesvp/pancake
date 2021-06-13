@@ -3,7 +3,6 @@ import sys
 from datetime import datetime
 from typing import Type, List, Union
 
-
 import cv2
 import numpy as np
 import torch
@@ -11,7 +10,13 @@ import torch.backends.cudnn as cudnn
 
 from ..models.base_class import BaseModel
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
-from .general import check_img_size, scale_coords, check_imshow, resize_aspectratio
+from .general import (
+    check_img_size,
+    scale_coords,
+    check_imshow,
+    resize_aspectratio,
+    check_requirements,
+)
 from .plots import colors, plot_one_box
 from .torch_utils import time_synchronized
 
@@ -66,6 +71,7 @@ class ResultProcessor:
         path: str,
         subdir: str,
         exist_ok: bool,
+        async_processing: bool,
         debug: bool,
         *args,
         **kwargs,
@@ -86,22 +92,32 @@ class ResultProcessor:
         :param subdir (str): target subdirectory
         :param exist_ok (str): save in results in already existing dir
                                do not increment automatically
+        :param async_processing (str): (non-blocking) asynchronous result processing in a
+                                       seperate slave process
         :param debug (bool): manual skipping when visualizing results
         """
-        self._show_res, self._save_res, self._debug = show_res, save_res, debug
-
+        # GENERAL
+        self._show_res, self._save_res, self._debug, self._async = (
+            show_res,
+            save_res,
+            debug,
+            async_processing,
+        )
+        # DRAW OPTIONS
         self._show_det, self._show_tracks, self._show_track_hist = (
             draw_det,
             draw_tracks,
             draw_track_hist,
         )
-
+        # DRAW DETAILS
         self._hide_labels, self._hide_conf = hide_labels, hide_conf
-
-        self._labels = labels
         self._line_thickness = line_thickness
+        # CLASS LABELS
+        self._labels = labels
 
+        # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
+
             class TrackHistory:
                 def __init__(self, max_hist_len: int):
                     self.tracks = []
@@ -123,17 +139,18 @@ class ResultProcessor:
                         else:
                             self.ids[id].append((x, y))
 
-                    if len(tracks) > 0: 
+                    if len(tracks) > 0:
                         self.init = False
 
             self.track_history = TrackHistory(max_hist_len=track_hist_size)
 
+        # INIT SAVING
         if self._save_res:
             assert save_mode == "video" or save_mode == "image"
-            self._mode = save_mode
-
             from .general import increment_path
             from pathlib import Path
+
+            self._mode = save_mode
 
             self._save_dir = increment_path(Path(path) / subdir, exist_ok)
             self._save_dir.mkdir(parents=True, exist_ok=True)
@@ -143,6 +160,48 @@ class ResultProcessor:
                 None,
                 kwargs["vid_fps"] if "vid_fps" in kwargs.keys() else None,
             )
+
+        # INIT ASYNC RES PROCESSING
+        if self._async:
+            import multiprocessing
+
+            check_requirements(["pathos"])
+            from pathos.helpers import mp
+
+            assert (
+                not self._show_res and self._async
+            ), "Results can't be visualized from slave process, diable 'VIEW_IMG' or 'ASYNC_PROC'!"
+            assert (
+                multiprocessing.cpu_count() > 1
+            ), "Only 1 CPU core available, might not be able to leverage multiprocessing module!"
+
+            # setup 1-way communication channel
+            self.child_pipe, self.parent_pipe = mp.Pipe(
+                duplex=False
+            )  # (receiving end, sending end)
+
+            # init and start worker process
+            self.worker_process = mp.Process(target=self.async_update_worker, args=())
+            self.worker_process.start()
+
+    def process(
+        self,
+        det: Type[torch.Tensor],
+        tracks: Type[np.array],
+        im0: Type[np.array],
+        vid_cap: Type[cv2.VideoCapture],
+    ):
+        """
+        :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
+        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
+        :param im0 (array): image in BGR (,3) [3, px, px]
+        :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
+        """
+        if self._async:
+            assert self.worker_process.is_alive(), "Worker process died!"
+            self.parent_pipe.send([det, tracks, im0, vid_cap])
+        else:
+            self.update(det, tracks, im0, vid_cap)
 
     def update(
         self,
@@ -172,6 +231,28 @@ class ResultProcessor:
                 self.save_img(im0)
             else:
                 self.save_vid(im0, vid_cap)
+
+    def async_update_worker(self):
+        assert (
+            self.child_pipe and self.parent_pipe
+        ), "Communication pipelines are not initialized!"
+
+        while 1:
+            try:
+                data = self.child_pipe.recv()
+            except EOFError:
+                self.reset_vid_writer()
+                self.child_pipe.close()
+                break
+
+            # deserialize data, data: list, [detections, tracks, image, vid cap]
+            det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+
+            self.update(det, tracks, im0, vid_cap)
+
+    def kill_worker(self):
+        self.child_pipe.close(), self.parent_pipe.close()
+        self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: Type[torch.Tensor], im0: Type[np.array]):
         """
@@ -224,7 +305,7 @@ class ResultProcessor:
         """
         assert self.track_history, "No track history object initialized!"
         self.track_history.update(tracks)
-        
+
         for id in self.track_history.ids:
             points = self.track_history.ids[id]
             x0, y0 = points.pop(0)

@@ -70,6 +70,7 @@ def main(cfg_path: str = None, n: int = 0):
         subdir=res_cfg.SUBDIR,
         exist_ok=res_cfg.EXIST_OK,
         vid_fps=res_cfg.VID_FPS,
+        async_processing=res_cfg.ASYNC_PROC,
         debug=res_cfg.DEBUG,
     )
 
@@ -82,7 +83,7 @@ def main(cfg_path: str = None, n: int = 0):
 
         tracks = TRACKER.update(detections, frame)
 
-        RESULT_PROC.update(detections, tracks, frame, vid_cap)
+        RESULT_PROC.process(detections, tracks, frame, vid_cap)
 
         if n and iteration >= n:
             return
