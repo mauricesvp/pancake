@@ -54,6 +54,26 @@ def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
                 False,
             )
 
+def setup_result_processor(config: dict, labels: list):
+    return ResultProcessor(
+        show_res=config.VIEW_RES,
+        save_res=config.SAVE_RES,
+        draw_det=config.DRAW_DET,
+        draw_tracks=config.DRAW_TRACKS,
+        draw_track_hist=config.DRAW_TRACK_HIST,
+        track_hist_size=config.MAX_TRACK_HIST_LEN,
+        labels=labels,
+        hide_labels=config.HIDE_LABELS,
+        hide_conf=config.HIDE_CONF,
+        line_thickness=config.LINE_THICKNESS,
+        save_mode=config.MODE,
+        path=config.PATH,
+        subdir=config.SUBDIR,
+        exist_ok=config.EXIST_OK,
+        vid_fps=config.VID_FPS,
+        async_processing=config.ASYNC_PROC,
+        debug=config.DEBUG,
+    )
 
 class ResultProcessor:
     def __init__(

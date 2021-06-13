@@ -67,7 +67,7 @@ PANCAKE:
     DEEPSORT:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
-  RESULT_PROCESSING:
+  RESULT_PROCESSOR:
     # GENERAL 
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
     SAVE_RES: False           # save results
