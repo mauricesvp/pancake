@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "CPU"
+  DEVICE: "GPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -66,13 +66,13 @@ PANCAKE:
     DEEPSORT:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
-  RESULT_PROCESSING:
-    # GENERAL
-    VIEW_IMG: False           # visualize results (not available )
-    DEBUG: False              # manual frame stepping
-    SAVE_RES: True           # save results
+  RESULT_PROCESSOR:
+    # GENERAL 
+    VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
+    SAVE_RES: False           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
-
+    DEBUG: False              # manual frame stepping (only available when VIEW_RES)
+    
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
@@ -90,5 +90,5 @@ PANCAKE:
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
     VID_FPS: 20               # fps of the merged video, when mode = "video"
-    EXIST_OK: False           # save in already existing dir,
+    EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically

@@ -12,7 +12,7 @@ from .detector import backends as be
 
 from .config import pancake_config
 from .logger import setup_logger
-from .utils.common import fix_path, load_data, ResultProcessor
+from .utils.common import fix_path, load_data, setup_result_processor
 
 l = setup_logger(__name__)
 
@@ -51,27 +51,9 @@ def main(cfg_path: str = None, n: int = 0):
 
     DATA, _ = load_data(source_path)
 
-    # Visualization and save configs
-    res_cfg = config.PANCAKE.RESULT_PROCESSING
-
-    RESULT_PROC = ResultProcessor(
-        show_res=res_cfg.VIEW_IMG,
-        save_res=res_cfg.SAVE_RES,
-        draw_det=res_cfg.DRAW_DET,
-        draw_tracks=res_cfg.DRAW_TRACKS,
-        draw_track_hist=res_cfg.DRAW_TRACK_HIST,
-        track_hist_size=res_cfg.MAX_TRACK_HIST_LEN,
-        labels=DETECTOR.model.names,
-        hide_labels=res_cfg.HIDE_LABELS,
-        hide_conf=res_cfg.HIDE_CONF,
-        line_thickness=res_cfg.LINE_THICKNESS,
-        save_mode=res_cfg.MODE,
-        path=res_cfg.PATH,
-        subdir=res_cfg.SUBDIR,
-        exist_ok=res_cfg.EXIST_OK,
-        vid_fps=res_cfg.VID_FPS,
-        async_processing=res_cfg.ASYNC_PROC,
-        debug=res_cfg.DEBUG,
+    # Result processor setup
+    RESULT_PROC = setup_result_processor(
+        config.PANCAKE.RESULT_PROCESSOR, DETECTOR.model.names
     )
 
     iteration = 0

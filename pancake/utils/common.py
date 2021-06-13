@@ -8,7 +8,8 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from ..models.base_class import BaseModel
+from pancake.models.base_class import BaseModel
+
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
 from .general import (
     check_img_size,
@@ -53,6 +54,26 @@ def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
                 False,
             )
 
+def setup_result_processor(config: dict, labels: list):
+    return ResultProcessor(
+        show_res=config.VIEW_RES,
+        save_res=config.SAVE_RES,
+        draw_det=config.DRAW_DET,
+        draw_tracks=config.DRAW_TRACKS,
+        draw_track_hist=config.DRAW_TRACK_HIST,
+        track_hist_size=config.MAX_TRACK_HIST_LEN,
+        labels=labels,
+        hide_labels=config.HIDE_LABELS,
+        hide_conf=config.HIDE_CONF,
+        line_thickness=config.LINE_THICKNESS,
+        save_mode=config.MODE,
+        path=config.PATH,
+        subdir=config.SUBDIR,
+        exist_ok=config.EXIST_OK,
+        vid_fps=config.VID_FPS,
+        async_processing=config.ASYNC_PROC,
+        debug=config.DEBUG,
+    )
 
 class ResultProcessor:
     def __init__(
@@ -96,6 +117,9 @@ class ResultProcessor:
                                        seperate slave process
         :param debug (bool): manual skipping when visualizing results
         """
+        from pancake.run import setup_logger
+        self.l = setup_logger(__name__)
+
         # GENERAL
         self._show_res, self._save_res, self._debug, self._async = (
             show_res,
@@ -115,10 +139,18 @@ class ResultProcessor:
         # CLASS LABELS
         self._labels = labels
 
+        # NEITHER SHOW RES OR SAVE RES IS ENABLED
+        if not self._show_res and not self._save_res:
+            self.l.info("No result processing procedure will be taking place")
+            return
+
         # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
-
             class TrackHistory:
+                """ Track History Wrapper
+                    - store the latest tracking results
+                    - assign each tracked ID its center positions (x, y)
+                """
                 def __init__(self, max_hist_len: int):
                     self.tracks = []
                     self.ids = {}
@@ -164,7 +196,6 @@ class ResultProcessor:
         # INIT ASYNC RES PROCESSING
         if self._async:
             import multiprocessing
-
             check_requirements(["pathos"])
             from pathos.helpers import mp
 
@@ -181,6 +212,7 @@ class ResultProcessor:
             )  # (receiving end, sending end)
 
             # init and start worker process
+            self.l.info("Starting slave process to work on the results")
             self.worker_process = mp.Process(target=self.async_update_worker, args=())
             self.worker_process.start()
 
@@ -192,11 +224,16 @@ class ResultProcessor:
         vid_cap: Type[cv2.VideoCapture],
     ):
         """
+        Wraps the procedure for asynchronous and synchronous result processing.
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR (,3) [3, px, px]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
+        if not self._show_res and not self._save_res:
+            return
+
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
             self.parent_pipe.send([det, tracks, im0, vid_cap])
@@ -211,6 +248,10 @@ class ResultProcessor:
         vid_cap: Type[cv2.VideoCapture],
     ):
         """
+        Takes the provided results from a detector and tracker in order to visualize
+        them according to user config. Subsequently, visualizes and/or stores the 
+        enriched image/video. 
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR (,3) [3, px, px]
@@ -233,6 +274,9 @@ class ResultProcessor:
                 self.save_vid(im0, vid_cap)
 
     def async_update_worker(self):
+        """ 
+        Main loop of the worker process
+        """
         assert (
             self.child_pipe and self.parent_pipe
         ), "Communication pipelines are not initialized!"
@@ -251,14 +295,20 @@ class ResultProcessor:
             self.update(det, tracks, im0, vid_cap)
 
     def kill_worker(self):
+        """
+        Procedure for cleanly closing the communication pipes and terminating 
+        the worker process.
+        """
         self.child_pipe.close(), self.parent_pipe.close()
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: Type[torch.Tensor], im0: Type[np.array]):
         """
+        Draws bounding boxes, class labels and confidences according to a 
+        detection matix on the provided image.
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param im0 (ndarray): image in BGR [3, px, px]
-
         """
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
@@ -284,6 +334,8 @@ class ResultProcessor:
 
     def draw_track_boxes(self, tracks: Type[np.array], im0: Type[np.array]):
         """
+        Draws bounding boxes, tracking ids according to a tracks matix on the provided image.
+
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]
         """
@@ -300,6 +352,8 @@ class ResultProcessor:
 
     def draw_track_hist(self, tracks: Type[np.array], im0: Type[np.array]):
         """
+        Draws a line for each tracked ID according to the stored history.
+
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]
         """
