@@ -310,7 +310,7 @@ class LoadImageDirs:
             ), "Currently only one video per directory is supported"
             self.new_videos([files[0] for files in self.files])  # init videos
         else:
-            self.cap = None
+            self.cap = [None]
 
         # for each directory create queue threads use for storing the loaded frames
         from queue import Queue
@@ -351,7 +351,8 @@ class LoadImageDirs:
             l.info(f"{s}")
 
         self.count += 1
-        return None, img0, None
+
+        return None, img0, self.cap[0]
 
     def start_threads(self, index: int):
         # start a thread to read frames from the source

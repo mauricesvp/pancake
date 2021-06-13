@@ -201,14 +201,14 @@ class ResultProcessor:
 
             assert (
                 not self._show_res and self._async
-            ), "Results can't be visualized from slave process, diable 'VIEW_IMG' or 'ASYNC_PROC'!"
+            ), "Results can't be visualized from slave process, disable 'VIEW_IMG' or 'ASYNC_PROC'!"
             assert (
                 multiprocessing.cpu_count() > 1
             ), "Only 1 CPU core available, might not be able to leverage multiprocessing module!"
 
             # setup 1-way communication channel
             self.child_pipe, self.parent_pipe = mp.Pipe(
-                duplex=False
+                duplex=True
             )  # (receiving end, sending end)
 
             # init and start worker process
