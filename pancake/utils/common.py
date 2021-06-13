@@ -139,14 +139,18 @@ class ResultProcessor:
         # CLASS LABELS
         self._labels = labels
 
+        # NEITHER SHOW RES OR SAVE RES IS ENABLED
         if not self._show_res and not self._save_res:
             self.l.info("No result processing procedure will be taking place")
             return
 
         # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
-
             class TrackHistory:
+                """ Track History Wrapper
+                    - store the latest tracking results
+                    - assign each tracked ID its center positions (x, y)
+                """
                 def __init__(self, max_hist_len: int):
                     self.tracks = []
                     self.ids = {}
@@ -220,6 +224,8 @@ class ResultProcessor:
         vid_cap: Type[cv2.VideoCapture],
     ):
         """
+        Wraps the procedure for asynchronous and synchronous result processing.
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR (,3) [3, px, px]
@@ -242,6 +248,10 @@ class ResultProcessor:
         vid_cap: Type[cv2.VideoCapture],
     ):
         """
+        Takes the provided results from a detector and tracker in order to visualize
+        them according to user config. Subsequently, visualizes and/or stores the 
+        enriched image/video. 
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR (,3) [3, px, px]
@@ -264,6 +274,9 @@ class ResultProcessor:
                 self.save_vid(im0, vid_cap)
 
     def async_update_worker(self):
+        """ 
+        Main loop of the worker process
+        """
         assert (
             self.child_pipe and self.parent_pipe
         ), "Communication pipelines are not initialized!"
@@ -282,14 +295,20 @@ class ResultProcessor:
             self.update(det, tracks, im0, vid_cap)
 
     def kill_worker(self):
+        """
+        Procedure for cleanly closing the communication pipes and terminating 
+        the worker process.
+        """
         self.child_pipe.close(), self.parent_pipe.close()
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: Type[torch.Tensor], im0: Type[np.array]):
         """
+        Draws bounding boxes, class labels and confidences according to a 
+        detection matix on the provided image.
+
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param im0 (ndarray): image in BGR [3, px, px]
-
         """
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
@@ -315,6 +334,8 @@ class ResultProcessor:
 
     def draw_track_boxes(self, tracks: Type[np.array], im0: Type[np.array]):
         """
+        Draws bounding boxes, tracking ids according to a tracks matix on the provided image.
+
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]
         """
@@ -331,6 +352,8 @@ class ResultProcessor:
 
     def draw_track_hist(self, tracks: Type[np.array], im0: Type[np.array]):
         """
+        Draws a line for each tracked ID according to the stored history.
+
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]
         """
