@@ -51,7 +51,7 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights:  "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+      weights:  "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       img_size: 640
       conf_thres: 0.65
       iou_thres: 0.6
@@ -67,12 +67,12 @@ PANCAKE:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
   RESULT_PROCESSING:
-    # GENERAL 
+    # GENERAL
     VIEW_IMG: False           # visualize results (not available )
     DEBUG: False              # manual frame stepping
     SAVE_RES: True           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
-    
+
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
@@ -90,5 +90,5 @@ PANCAKE:
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
     VID_FPS: 20               # fps of the merged video, when mode = "video"
-    EXIST_OK: False            # save in already existing dir, 
+    EXIST_OK: False           # save in already existing dir,
                               # do not increment automatically
