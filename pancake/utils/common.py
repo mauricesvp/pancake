@@ -10,7 +10,13 @@ import torch.backends.cudnn as cudnn
 
 from ..models.base_class import BaseModel
 from .datasets import LoadStreams, LoadImages, LoadWebcam, LoadImageDirs
-from .general import check_img_size, scale_coords, check_imshow, resize_aspectratio, check_requirements
+from .general import (
+    check_img_size,
+    scale_coords,
+    check_imshow,
+    resize_aspectratio,
+    check_requirements,
+)
 from .plots import colors, plot_one_box
 from .torch_utils import time_synchronized
 
@@ -158,7 +164,8 @@ class ResultProcessor:
         # INIT ASYNC RES PROCESSING
         if self._async:
             import multiprocessing
-            check_requirements(['pathos'])
+
+            check_requirements(["pathos"])
             from pathos.helpers import mp
 
             assert (
