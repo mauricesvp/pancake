@@ -121,7 +121,7 @@ class ResultProcessor:
 
         if not self._show_res and not self._save_res:
             self.l.info("No result processing procedure will be taking place")
-            pass
+            return
 
         # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
@@ -206,7 +206,7 @@ class ResultProcessor:
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
         if not self._show_res and not self._save_res:
-            pass
+            return
 
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"

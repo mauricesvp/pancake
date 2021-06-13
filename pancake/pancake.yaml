@@ -70,10 +70,9 @@ PANCAKE:
   RESULT_PROCESSING:
     # GENERAL 
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: True           # save results
+    SAVE_RES: False           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
-    
     
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
