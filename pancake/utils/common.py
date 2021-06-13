@@ -280,19 +280,24 @@ class ResultProcessor:
         assert (
             self.child_pipe and self.parent_pipe
         ), "Communication pipelines are not initialized!"
+        import traceback
 
-        while 1:
-            try:
-                data = self.child_pipe.recv()
-            except EOFError:
-                self.reset_vid_writer()
-                self.child_pipe.close()
-                break
+        try:
+            while 1:
+                try:
+                    data = self.child_pipe.recv()
+                except EOFError:
+                    self.reset_vid_writer()
+                    self.child_pipe.close()
+                    break
 
-            # deserialize data, data: list, [detections, tracks, image, vid cap]
-            det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+                # deserialize data, data: list, [detections, tracks, image, vid cap]
+                det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
 
-            self.update(det, tracks, im0, vid_cap)
+                self.update(det, tracks, im0, vid_cap)
+        except:
+            self.l.fatal("Exception in subprocess occured!")
+            traceback.print_exc()
 
     def kill_worker(self):
         """
