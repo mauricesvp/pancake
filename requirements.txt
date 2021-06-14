@@ -1,7 +1,7 @@
 easydict
 Shapely
 requests
-
+pathos
 # YOLOv5
 
 # base ----------------------------------------
@@ -31,3 +31,4 @@ pandas
 # extras --------------------------------------
 thop  # FLOPS computation
 pycocotools>=2.0  # COCO mAP
+imutils>=0.5.4

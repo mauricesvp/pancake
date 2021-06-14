@@ -401,6 +401,9 @@ class LoadImageDirs:
         self.frame = 0
         self.cap = [cv2.VideoCapture(path) for path in paths]
         self.nf = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+        # check if all videos have same frame rate
+        fps = [vid_cap.get(cv2.CAP_PROP_FPS) for vid_cap in self.cap]
+        assert fps.count(fps[0]) == len(fps), "Given videos have different fps rates"
 
     def read_queue(self, index):
         # return next frame in the queue with given index
@@ -415,7 +418,7 @@ class LoadImageDirs:
         self.stopped = True
         # release video capture objects
         if self.mode == "video":
-            for cap in self.caps:
+            for cap in self.cap:
                 cap.release()
 
     def __len__(self):

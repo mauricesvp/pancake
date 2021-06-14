@@ -65,7 +65,7 @@ def main(cfg_path: str = None, n: int = 0):
 
         tracks = TRACKER.update(detections, frame)
 
-        RESULT_PROC.process(detections, tracks, frame, vid_cap)
+        RESULT_PROC.process(detections, tracks, frame)
 
         if n and iteration >= n:
             return

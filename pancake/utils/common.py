@@ -221,7 +221,7 @@ class ResultProcessor:
         det: Type[torch.Tensor],
         tracks: Type[np.array],
         im0: Type[np.array],
-        vid_cap: Type[cv2.VideoCapture],
+        vid_cap: Type[cv2.VideoCapture]=None,
     ):
         """
         Wraps the procedure for asynchronous and synchronous result processing.
@@ -236,16 +236,18 @@ class ResultProcessor:
 
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
-            self.parent_pipe.send([det, tracks, im0, vid_cap])
+            # self.parent_pipe.send([det, tracks, im0, vid_cap])
+            self.parent_pipe.send([det, tracks, im0])
         else:
-            self.update(det, tracks, im0, vid_cap)
+            # self.update(det, tracks, im0, vid_cap)
+            self.update(det, tracks, im0)
 
     def update(
         self,
         det: Type[torch.Tensor],
         tracks: Type[np.array],
         im0: Type[np.array],
-        vid_cap: Type[cv2.VideoCapture],
+        vid_cap: Type[cv2.VideoCapture]=None,
     ):
         """
         Takes the provided results from a detector and tracker in order to visualize
@@ -271,7 +273,7 @@ class ResultProcessor:
             if self._mode == "image":
                 self.save_img(im0)
             else:
-                self.save_vid(im0, vid_cap)
+                self.save_vid(im0)
 
     def async_update_worker(self):
         """ 
@@ -292,9 +294,10 @@ class ResultProcessor:
                     break
 
                 # deserialize data, data: list, [detections, tracks, image, vid cap]
-                det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+                # det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+                det, tracks, im0 = data[0], data[1], data[2]
 
-                self.update(det, tracks, im0, vid_cap)
+                self.update(det, tracks, im0)
         except:
             self.l.fatal("Exception in subprocess occured!")
             traceback.print_exc()
@@ -385,7 +388,7 @@ class ResultProcessor:
 
         cv2.imwrite(save_path, im0)
 
-    def save_vid(self, im0: Type[np.array], vid_cap: Type[cv2.VideoCapture]):
+    def save_vid(self, im0: Type[np.array], vid_cap: Type[cv2.VideoCapture]=None):
         """
         :param im0 (ndarray): image in BGR [3, px, px]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
@@ -401,13 +404,16 @@ class ResultProcessor:
             if isinstance(self.vid_writer, cv2.VideoWriter):
                 self.vid_writer.release()  # release previous video writer
 
-            if vid_cap:  # video
-                fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            else:  # images, stream
-                fps, w, h = self._fps, im0.shape[1], im0.shape[0]
-                self.vid_path += ".avi"
+            # take w, h from input video
+            # if vid_cap:  # video
+            #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+            #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            # else:  # images, stream
+            
+            # take user defined fps
+            fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+            self.vid_path += ".avi"
 
             self.vid_writer = cv2.VideoWriter(
                 self.vid_path, cv2.VideoWriter_fourcc(*"XVID"), fps, (w, h)
