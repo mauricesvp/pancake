@@ -6,7 +6,6 @@ from typing import Type, List, Union
 import cv2
 import numpy as np
 import torch
-import torch.backends.cudnn as cudnn
 
 from pancake.models.base_class import BaseModel
 
@@ -37,8 +36,6 @@ def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
 
     finally:
         if is_webcam:
-            view_img = check_imshow()
-            cudnn.benchmark = True  # set True to speed up constant image size inference
             return (
                 LoadStreams(source),
                 True,
@@ -133,11 +130,16 @@ class ResultProcessor:
 
         # GENERAL
         self._show_res, self._save_res, self._debug, self._async = (
-            show_res,
+            (
+                show_res 
+                if check_imshow() and show_res
+                else False
+            ),
             save_res,
             debug,
             async_processing,
         )
+        
         # DRAW OPTIONS
         self._show_det, self._show_tracks, self._show_track_hist = (
             draw_det,
