@@ -46,6 +46,9 @@ PANCAKE:
     BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
 
+    DEI:
+      SIMPLE: True
+
     YOLO_SIMPLE:
       size: "s"
 
@@ -72,7 +75,7 @@ PANCAKE:
     SAVE_RES: True           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
-    
+
     # ASYNC QUEUE
     Q_SIZE: 10000             # queue size for results sent from main loop to result processor
     PUT_BLOCKED: True         # block main loop until free slot available to put in queue, otherwise skip this frame
@@ -85,7 +88,7 @@ PANCAKE:
     MAX_TRACK_HIST_LEN: 1000  # max track history length
 
     # DRAW DETAILS
-    HIDE_LABELS: False        # hide class labels and track ids
+    HIDE_LABELS: True        # hide class labels and track ids
     HIDE_CONF: False          # hide detection confidences
 
     LINE_THICKNESS: 3         # general line thickness

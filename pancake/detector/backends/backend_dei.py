@@ -255,17 +255,13 @@ R_CONST = {
 
 
 class DEI(Backend):
-    result: list  # List of tuples, intended for tracker
-    imgs: list  # List of image parts
-    img: np.ndarray  # Stitched panorama image
-    printed: np.ndarray  # Stitched image with detection results
-
     def __init__(
         self,
         detector,
         roi: list = None,
-        write_partials: bool = False,
         new: bool = True,
+        simple: bool = False,
+        config: dict = {},
         *args,
         **kwargs,
     ) -> None:
@@ -273,10 +269,12 @@ class DEI(Backend):
 
         :param detector: Detector which provides 'detect' method,
                          which can take one or multiple images.
+        :param simple (bool): Use less subframes
 
         """
         self.detector = detector
-        self.write_partials = write_partials
+        self.simple = simple
+
         if roi:
             self.roi = roi
         self.detect = self.detect_new if new else self.detect_old
@@ -290,6 +288,9 @@ class DEI(Backend):
             self.rotate = rotate_cpu
             self.rotate_bound = rotate_bound_cpu
         # Note that rotate(_cpu) is not used as of now
+
+        if config:
+            self.simple = config["SIMPLE"]
 
     def rotate(self):
         pass
@@ -340,6 +341,8 @@ class DEI(Backend):
         y, angle, side = f(x)
         subframes = []
         while x < (CONST["END_X"] + side):
+            if self.simple:
+                side = int(1.7 * side)
             tlx, tly, brx, bry = x - side, y - side, x + side, y + side
             subframe = img[tly:bry, tlx:brx]
             rot = self.rotate_bound(subframe, angle)
@@ -385,251 +388,10 @@ class DEI(Backend):
             cv2.imwrite("stuff.jpg", img)
 
         for i, x in enumerate(results):
-            results[i] = torch.FloatTensor(list(x))
+            results[i] = torch.FloatTensor(list(x[:-1]))
         results = torch.stack(results, dim=0)
 
         return results, img
-
-    def detect_old(
-        self,
-        source,
-        imwrite_interim: bool = False,
-        imwrite_interim_filename: str = "partial_interim.jpg",
-    ) -> list:
-        """Detect objects on Panorama images."""
-        start = time.time()
-        assert len(source) == 3
-        imgl = self.get_img(source[0])
-        imgc = self.get_img(source[1])
-        imgr = self.get_img(source[2])
-        assert imgl.shape == imgc.shape == imgr.shape
-        self.shape = imgl.shape
-        objs = []
-        objs += self.partial(
-            imgl,
-            side="l",
-            imwrite=self.write_partials,
-            imwrite_interim=imwrite_interim,
-            imwrite_interim_filename=imwrite_interim_filename,
-        )
-        rights = self.partial(
-            imgr,
-            side="r",
-            imwrite=self.write_partials,
-            imwrite_interim=imwrite_interim,
-            imwrite_interim_filename=imwrite_interim_filename,
-        )
-        mids = self.detect_mid(imgc)
-        # Add offsets to mid/right
-        h, w, _ = imgc.shape
-        mids = [
-            (a + w, b, c + w, b, c + w, d, a + w, d, e, f) for a, b, c, d, e, f in mids
-        ]
-        rights = [
-            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
-            for a, b, c, d, e, f, g, h, i, j in rights
-        ]
-        objs += mids + rights
-
-        # Un-rotate left/right
-        for i, x in enumerate(objs):
-            if len(x) == 10:
-                xs = list(x[:8:2])
-                ys = list(x[1:8:2])
-                tlx = min(xs)
-                tly = min(ys)
-                brx = max(xs)
-                bry = max(ys)
-                objs[i] = (tlx, tly, brx, bry, x[8], x[9])
-
-        # TODO: Apply ROIs here
-
-        for i, x in enumerate(objs):
-            objs[i] = torch.FloatTensor(list(x))
-        objs = torch.stack(objs, dim=0)
-
-        self.result = objs
-        self.imgs = [imgl, imgc, imgr]
-        self.set_full_img()  # set self.img
-        end = time.time()
-        # print(end - start)
-        return objs
-
-    def detect_mid(self, imgc) -> list:
-        res = self.detector.detect(imgc)[0]
-        return res2int(res)
-
-    def partial(
-        self,
-        source,
-        side: str = "",
-        imshow: bool = False,
-        imwrite: bool = False,
-        imwrite_filename: str = "partial.jpg",
-        imwrite_interim: bool = False,
-        imwrite_interim_filename: str = "partial_interim.jpg",
-    ) -> list:
-        """Detect objects on image by splitting and merging.
-
-        :param source: filename or np.ndarray
-        :param side: right or left side
-
-        :param imshow: show image of results
-
-        :param imwrite: write image of results to disk
-        :param imwrite_filename: filename of image of results
-
-        :return objs: list of tuples with objects and their coordinates
-
-        The tuples of the return list have 6 values:
-        x0: x-value top left corner
-        y0: y-value top left corner
-        x1: x-value bottom right corner
-        y1: y-value bottom right corner
-        conf: Confidence of detection, values between 0 and 1
-        class id: Integer indicating the detected object type
-
-        Modus operandi:
-        * Rotate image (without cropping, i.e. adding padding)
-        * Divide image into subframes
-        * Detect objects on each subframe, saving classes and coordinates
-        * Filter and merge objects
-        * Calculate coordinates on original frame
-        """
-        # img = self.get_img(source)
-        img = source
-
-        valid_side = ["l", "left", "r", "right"]
-        if not side or side not in valid_side:
-            raise ValueError(f"param side needs to be one of {valid_side}")
-        if side.startswith("l"):
-            CONST = L_CONST
-        else:
-            CONST = R_CONST
-
-        orig_img = img.copy()
-        img = imutils.rotate_bound(img, CONST["ANGLE"])
-
-        # Divide image into subframes
-        objs = []
-        subframes = []
-        subframes_imgs = []
-        const_tmp = CONST["SIDE"]
-        for x in range(
-            CONST["START_X"],
-            CONST["END_X"],
-            -((CONST["START_X"] - CONST["END_X"]) // CONST["STEPS"]),
-        ):
-            y = CONST["F"](x)
-            const_tmp = int(1.1 * const_tmp)
-            # top left
-            tlx, tly = x - const_tmp, y - const_tmp
-            # bottom right
-            brx, bry = x + const_tmp, y + const_tmp
-            subframe = img[
-                tly:bry,
-                tlx:brx,
-            ]
-            subframes.append((tlx, tly, brx, bry))
-            subframes_imgs.append((subframe, tlx, tly))
-            cv2.rectangle(
-                img,
-                (tlx, tly),
-                (brx, bry),
-                (0, 0, 255),
-                5,
-            )
-
-        # Run batch detection on subframes
-        imgs = [x[0] for x in subframes_imgs]
-        # imgs = np.array([np.array(x[0]).astype("int64") for x in subframes_imgs])
-        # imgs = np.stack(imgs, axis=0)
-        # for i, x in enumerate(subframes_imgs):
-        # subframes_imgs[i] = torch.FloatTensor(list(x[0]))
-        res = self.detector.detect(imgs)
-
-        # Get real points
-        for i, sub in enumerate(res):
-            tlx, tly = subframes_imgs[i][1:]
-            for obj in sub:
-                x0, y0, x1, y1, conf, classid = obj
-                x0, y0, x1, y1, conf, classid = (
-                    int(x0),
-                    int(y0),
-                    int(x1),
-                    int(y1),
-                    float(conf),
-                    int(classid),
-                )
-                # top left
-                rtlx, rtly = tlx + x0, tly + y0
-                # bottom right
-                rbrx, rbry = tlx + x1, tly + y1
-                # save coords, conf, class
-                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
-
-        if imwrite_interim:
-            img_interim = self.draw(img, objs)
-            # Also draw center point for good measure
-            for obj in subframes:
-                center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
-                center = (int(center[0]), int(center[1]))
-                cv2.circle(img_interim, center, 2, (255, 0, 0))
-            cv2.imwrite(side + imwrite_interim_filename, img_interim)
-
-        # Merge objects on subframes
-        results = self.merge(objs, subframes)
-
-        # Reverse rotation
-        # All object tuples now have all 4 corners!
-        results = self.rev_rotate(img, results, CONST["ANGLE"])
-
-        # Draw results on image
-        if imshow or imwrite:
-            orig_img = self.draw(orig_img, results)
-
-        if imshow:
-            cv2.namedWindow("results", cv2.WINDOW_NORMAL)
-            cv2.imshow("results", orig_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        if imwrite:
-            if imwrite_filename == "partial.jpg":
-                imwrite_filename = f"partial_{side}.jpg"
-            cv2.imwrite(imwrite_filename, orig_img)
-
-        return results
-
-    def rev_rotate(self, img: np.ndarray, results: list, angle: int) -> list:
-        h, w, _ = img.shape
-        center = (w // 2, h // 2)
-        M = cv2.getRotationMatrix2D(center, angle, 1.0)
-        tmpimg = imutils.rotate(img, angle)
-        htmp, wtmp, _ = tmpimg.shape
-        # original image(s) shape
-        h, w, _ = self.shape
-        xdiff = (wtmp - w) // 2
-        ydiff = (htmp - h) // 2
-
-        for i, obj in enumerate(results):
-            x0, y0, x1, y1, cf, cl = obj
-            # Reverse rotation using rotation matrix
-            # Note that we will from this point on use all four corners!
-            ntl = M.dot([x0, y0, 1])
-            nbr = M.dot([x1, y1, 1])
-            ntr = M.dot([x1, y0, 1])
-            nbl = M.dot([x0, y1, 1])
-
-            allcords = [ntl] + [ntr] + [nbr] + [nbl]
-            allcords = [[int(a), int(b)] for a, b in allcords]
-            allrebased = []
-            for point in allcords:
-                point[0] -= xdiff
-                point[1] -= ydiff
-                allrebased += point
-
-            results[i] = (*allrebased, cf, cl)
-        return results
 
     def merge(self, objs: list, subframes: list = None, ratio=0.8) -> list:
         """
@@ -691,62 +453,3 @@ class DEI(Backend):
                 results.append(obj)
 
         return results
-
-    def get_img(self, source) -> np.ndarray:
-        if type(source) is str:
-            img = cv2.imread(source)
-            if img is None:
-                raise ValueError("File does not seem to exist")
-        elif type(source) is not np.ndarray:
-            raise ValueError("Source needs to be str or np.ndarray")
-        else:
-            img = source
-        return img
-
-    def draw(self, img: np.ndarray, results: list) -> np.ndarray:
-        """Draw results on image."""
-        for obj in results:
-            if len(obj) > 8:
-                tlx, tly, trx, try_, brx, bry, blx, bly = obj[:8]
-                pts = np.array(
-                    [[x, y] for x, y in zip(obj[:8:2], obj[1:8:2])], dtype=np.int32
-                )
-                pts = pts.reshape((-1, 1, 2))
-                cv2.polylines(
-                    img,
-                    [pts],
-                    True,
-                    (255, 0, 0),
-                    1,
-                )
-            else:
-                tlx, tly, brx, bry = obj[:4]
-                cv2.rectangle(
-                    img,
-                    (int(tlx), int(tly)),
-                    (int(brx), int(bry)),
-                    (255, 0, 0),
-                    1,
-                )
-        return img
-
-    def show(self) -> None:
-        """Show concat of images."""
-        if not len(self.printed):
-            self.printed = self.draw(self.img, self.results)
-        cv2.namedWindow("results", cv2.WINDOW_NORMAL)
-        cv2.imshow("results", self.printed)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-    def write(self, filename="result.jpg") -> None:
-        """Write results to disk."""
-        if not len(self.printed):
-            self.printed = self.draw(self.img, self.result)
-        cv2.imwrite(filename, self.printed)
-
-    def set_full_img(self):
-        imgs = []
-        for img in self.imgs:
-            imgs.append(self.get_img(img))
-        self.img = cv2.hconcat(imgs)
