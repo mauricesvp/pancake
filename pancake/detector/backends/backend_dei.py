@@ -305,8 +305,28 @@ class DEI(Backend):
         source,
     ) -> (list, np.ndarray):
         """
-        Right now the mid crop is unfixed.
-        (Use cropped version for tracking too (?))
+        Detect objects on image by splitting and merging.
+
+        :param source: filename or np.ndarray
+
+        :return (objs, img): list of tuples with objects and their coordinates,
+                             stitched panorama image
+
+        The tuples of the return list have 6 values:
+        x0: x-value top left corner
+        y0: y-value top left corner
+        x1: x-value bottom right corner
+        y1: y-value bottom right corner
+        conf: Confidence of detection, values between 0 and 1
+        class id: Integer indicating the detected object type
+
+        Modus operandi:
+        * Stitch images
+        * Divide image into subframes
+        * Rotate subframes (without cropping, i.e. adding padding)
+        * Detect objects on each subframe, saving classes and coordinates
+        * Calculate coordinates on original frame
+        * Filter and merge objects
         """
         assert all(x.shape == source[0].shape for x in source[1:])
 
@@ -353,7 +373,7 @@ class DEI(Backend):
                 # bottom right
                 rbrx, rbry = tlx + x1, tly + y1
                 # save coords, conf, class
-                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+                objs.append((rtlx, rtly, rbrx, rbry, conf, classid, i))
 
         subcoords = [x[1:5] for x in subframes]
         results = self.merge(objs, subcoords)
@@ -652,10 +672,13 @@ class DEI(Backend):
             def embedded(obj: tuple, objs: list, results: list):
                 # Check if object is embedded in other object (with >80% of its area)
                 x0, y0, x1, y1 = obj[:4]
+                subframe = obj[6]
                 rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
                 objarea = (x1 - x0) * (y1 - y0)
                 skip = False
                 for objtemp in objs + results:
+                    if np.abs(objtemp[6] - subframe) > 1:
+                        continue
                     ia = intersect_area(obj[:4], objtemp[:4])
                     if ia >= (ratio * objarea):
                         # Our current obj is embedded, skip

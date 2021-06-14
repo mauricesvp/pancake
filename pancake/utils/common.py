@@ -51,6 +51,7 @@ def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
                 False,
             )
 
+
 def setup_result_processor(config: dict, labels: list):
     return ResultProcessor(
         show_res=config.VIEW_RES,
@@ -74,6 +75,7 @@ def setup_result_processor(config: dict, labels: list):
         async_put_timeout=config.PUT_TIMEOUT,
         debug=config.DEBUG,
     )
+
 
 class ResultProcessor:
     def __init__(
@@ -119,13 +121,14 @@ class ResultProcessor:
         :param async_processing (str): (non-blocking) asynchronous result processing in a
                                        seperate slave process
         :param async_queue_size (int): queue size for results sent by .process() to subprocess
-        :param async_put_blocked (bool): blocks .process() for timeout sec until free slot 
-                                         available, if False skip the current frame without 
+        :param async_put_blocked (bool): blocks .process() for timeout sec until free slot
+                                         available, if False skip the current frame without
                                          blocking
         :param async_put_timeout (float): raise exception after timeout s waiting for free slot
         :param debug (bool): manual skipping when visualizing results
         """
         from pancake.run import setup_logger
+
         self.l = setup_logger(__name__)
 
         # GENERAL
@@ -135,9 +138,8 @@ class ResultProcessor:
             debug,
             async_processing,
         )
-        
         if show_res:
-            self._show_res =  True if check_imshow() else False
+            self._show_res = True if check_imshow() else False
 
         # DRAW OPTIONS
         self._show_det, self._show_tracks, self._show_track_hist = (
@@ -154,15 +156,23 @@ class ResultProcessor:
         # NEITHER SHOW RES OR SAVE RES IS ENABLED
         if not self._show_res and not self._save_res:
             self.l.info("No result processing procedure will be taking place")
+
+            def nop(*args, **kwargs):
+                return
+
+            self.process = nop
+            self.kill_worker = nop
             return
 
         # INITIALIZE TRACK HISTORY
         if self._show_track_hist:
+
             class TrackHistory:
-                """ Track History Wrapper
-                    - store the latest tracking results
-                    - assign each tracked ID its center positions (x, y)
+                """Track History Wrapper
+                - store the latest tracking results
+                - assign each tracked ID its center positions (x, y)
                 """
+
                 def __init__(self, max_hist_len: int):
                     self.tracks = []
                     self.ids = {}
@@ -208,6 +218,7 @@ class ResultProcessor:
         # INIT ASYNC RES PROCESSING
         if self._async:
             import multiprocessing
+
             check_requirements(["pathos"])
             from pathos.helpers import mp
 
@@ -222,7 +233,7 @@ class ResultProcessor:
             self._put_blocked = async_put_blocked
             self._put_timeout = async_put_timeout
 
-             # Queue to put and pull results
+            # Queue to put and pull results
             self.queue = mp.Queue(maxsize=self._queue_size)
 
             # init and start worker process
@@ -235,7 +246,7 @@ class ResultProcessor:
         det: Type[torch.Tensor],
         tracks: Type[np.array],
         im0: Type[np.array],
-        vid_cap: Type[cv2.VideoCapture]=None,
+        vid_cap: Type[cv2.VideoCapture] = None,
     ):
         """
         Wraps the procedure for asynchronous and synchronous result processing.
@@ -245,24 +256,21 @@ class ResultProcessor:
         :param im0 (array): image in BGR (,3) [3, px, px]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
-        if not self._show_res and not self._save_res:
-            return
-
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
 
-            if round(self.queue.qsize()/self._queue_size, 1) == 0.9:
-                self.l.warn("Queue size capacity almost full.. " 
-                f"({(self.queue.qsize()/self._queue_size) * 100:.2f})")
-                
+            if round(self.queue.qsize() / self._queue_size, 1) == 0.9:
+                self.l.warn(
+                    "Queue size capacity almost full.. "
+                    f"({(self.queue.qsize()/self._queue_size) * 100:.2f})"
+                )
+
             if not self._put_blocked and self.queue.full():
                 return
 
             # self.queue.put([det, tracks, im0, vid_cap])
             self.queue.put(
-                [det, tracks, im0], 
-                block=self._put_blocked, 
-                timeout=self._put_timeout
+                [det, tracks, im0], block=self._put_blocked, timeout=self._put_timeout
             )
         else:
             # self.update(det, tracks, im0, vid_cap)
@@ -273,12 +281,12 @@ class ResultProcessor:
         det: Type[torch.Tensor],
         tracks: Type[np.array],
         im0: Type[np.array],
-        vid_cap: Type[cv2.VideoCapture]=None,
+        vid_cap: Type[cv2.VideoCapture] = None,
     ):
         """
         Takes the provided results from a detector and tracker in order to visualize
-        them according to user config. Subsequently, visualizes and/or stores the 
-        enriched image/video. 
+        them according to user config. Subsequently, visualizes and/or stores the
+        enriched image/video.
 
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
@@ -302,7 +310,7 @@ class ResultProcessor:
                 self.save_vid(im0)
 
     def async_update_worker(self):
-        """ 
+        """
         Main loop of the worker process
         """
         assert self.queue, "Queue is not initialized!"
@@ -328,7 +336,7 @@ class ResultProcessor:
 
     def kill_worker(self):
         """
-        Procedure for cleanly closing the communication pipes and terminating 
+        Procedure for cleanly closing the communication pipes and terminating
         the worker process.
         """
         self.queue.close()
@@ -336,7 +344,7 @@ class ResultProcessor:
 
     def draw_detec_boxes(self, det: Type[torch.Tensor], im0: Type[np.array]):
         """
-        Draws bounding boxes, class labels and confidences according to a 
+        Draws bounding boxes, class labels and confidences according to a
         detection matix on the provided image.
 
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
@@ -412,7 +420,7 @@ class ResultProcessor:
 
         cv2.imwrite(save_path, im0)
 
-    def save_vid(self, im0: Type[np.array], vid_cap: Type[cv2.VideoCapture]=None):
+    def save_vid(self, im0: Type[np.array], vid_cap: Type[cv2.VideoCapture] = None):
         """
         :param im0 (ndarray): image in BGR [3, px, px]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
@@ -434,7 +442,7 @@ class ResultProcessor:
             #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             # else:  # images, stream
-            
+
             # take user defined fps
             fps, w, h = self._fps, im0.shape[1], im0.shape[0]
             self.vid_path += ".avi"

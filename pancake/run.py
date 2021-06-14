@@ -68,7 +68,10 @@ def main(cfg_path: str = None, n: int = 0):
         RESULT_PROC.process(detections, tracks, frame)
 
         if n and iteration >= n:
-            return
+            break
+
+    DATA.stop_threads()
+    RESULT_PROC.kill_worker()
 
 
 if __name__ == "__main__":

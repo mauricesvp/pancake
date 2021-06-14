@@ -26,7 +26,6 @@ class BaseModel(ABC):
 
         cudnn.benchmark = True  # set True to speed up constant image size inference
 
-
     @classmethod
     def get_subclasses(cls):
         return dict(cls._subclasses)

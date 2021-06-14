@@ -388,7 +388,9 @@ class LoadImageDirs:
                         img_idx += 1
 
                         if frame is None:
-                            l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
+                            l.warn(
+                                f"Couldn't find image at {self.files[index][img_idx]}"
+                            )
                             continue
 
                     # add the frame to the queue
