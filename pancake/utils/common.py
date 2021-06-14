@@ -72,6 +72,9 @@ def setup_result_processor(config: dict, labels: list):
         exist_ok=config.EXIST_OK,
         vid_fps=config.VID_FPS,
         async_processing=config.ASYNC_PROC,
+        async_queue_size=config.Q_SIZE,
+        async_put_blocked=config.PUT_BLOCKED,
+        async_put_timeout=config.PUT_TIMEOUT,
         debug=config.DEBUG,
     )
 
@@ -93,6 +96,9 @@ class ResultProcessor:
         subdir: str,
         exist_ok: bool,
         async_processing: bool,
+        async_queue_size: int,
+        async_put_blocked: bool,
+        async_put_timeout: float,
         debug: bool,
         *args,
         **kwargs,
@@ -115,6 +121,11 @@ class ResultProcessor:
                                do not increment automatically
         :param async_processing (str): (non-blocking) asynchronous result processing in a
                                        seperate slave process
+        :param async_queue_size (int): queue size for results sent by .process() to subprocess
+        :param async_put_blocked (bool): blocks .process() for timeout sec until free slot 
+                                         available, if False skip the current frame without 
+                                         blocking
+        :param async_put_timeout (float): raise exception after timeout s waiting for free slot
         :param debug (bool): manual skipping when visualizing results
         """
         from pancake.run import setup_logger
@@ -206,10 +217,12 @@ class ResultProcessor:
                 multiprocessing.cpu_count() > 1
             ), "Only 1 CPU core available, might not be able to leverage multiprocessing module!"
 
-            # setup 1-way communication channel
-            self.child_pipe, self.parent_pipe = mp.Pipe(
-                duplex=True
-            )  # (receiving end, sending end)
+            self._queue_size = async_queue_size
+            self._put_blocked = async_put_blocked
+            self._put_timeout = async_put_timeout
+
+             # Queue to put and pull results
+            self.queue = mp.Queue(maxsize=self._queue_size)
 
             # init and start worker process
             self.l.info("Starting slave process to work on the results")
@@ -236,8 +249,20 @@ class ResultProcessor:
 
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
-            # self.parent_pipe.send([det, tracks, im0, vid_cap])
-            self.parent_pipe.send([det, tracks, im0])
+
+            if round(self.queue.qsize()/self._queue_size, 1) == 0.9:
+                self.l.warn("Queue size capacity almost full.. " 
+                f"({(self.queue.qsize()/self._queue_size) * 100:.2f})")
+                
+            if not self._put_blocked and self.queue.full():
+                return
+
+            # self.queue.put([det, tracks, im0, vid_cap])
+            self.queue.put(
+                [det, tracks, im0], 
+                block=self._put_blocked, 
+                timeout=self._put_timeout
+            )
         else:
             # self.update(det, tracks, im0, vid_cap)
             self.update(det, tracks, im0)
@@ -279,18 +304,16 @@ class ResultProcessor:
         """ 
         Main loop of the worker process
         """
-        assert (
-            self.child_pipe and self.parent_pipe
-        ), "Communication pipelines are not initialized!"
+        assert self.queue, "Queue is not initialized!"
         import traceback
 
         try:
             while 1:
                 try:
-                    data = self.child_pipe.recv()
-                except EOFError:
+                    data = self.queue.get()
+                except:
                     self.reset_vid_writer()
-                    self.child_pipe.close()
+                    self.queue.close()
                     break
 
                 # deserialize data, data: list, [detections, tracks, image, vid cap]
@@ -307,7 +330,7 @@ class ResultProcessor:
         Procedure for cleanly closing the communication pipes and terminating 
         the worker process.
         """
-        self.child_pipe.close(), self.parent_pipe.close()
+        self.queue.close()
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: Type[torch.Tensor], im0: Type[np.array]):

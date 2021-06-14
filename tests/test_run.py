@@ -20,7 +20,7 @@ def test_run(n: int = 0, profile: bool = False):
     s = io.StringIO()
     sortby = SortKey.CUMULATIVE
     ps = Stats(pr, stream=s).sort_stats(sortby)
-    ps.print_stats()
+    ps.print_stats(15)
     print(s.getvalue())
 
 

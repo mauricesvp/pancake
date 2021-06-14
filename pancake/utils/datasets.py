@@ -364,38 +364,41 @@ class LoadImageDirs:
     def update(self, index: int):
         img_idx = 0
 
-        # keep looping infinitely
-        while True:
-            # if the thread indicator variable is set, stop the thread
-            if self.stopped:
-                return
+        try:
+            # keep looping infinitely
+            while True:
+                # if the thread indicator variable is set, stop the thread
+                if self.stopped:
+                    return
 
-            # otherwise, ensure the queue has room in it
-            if not self.Qs[index].full():
-                if self.mode == "video":
-                    # read the next frame from the file
-                    (grabbed, frame) = self.cap[index].read()
-                    # if the `grabbed` boolean is `False`, then we have
-                    # reached the end of the video file
-                    if not grabbed:
-                        self.stop()
-                        l.debug(f"Finished reading video with idx {index}")
-                        return
+                # otherwise, ensure the queue has room in it
+                if not self.Qs[index].full():
+                    if self.mode == "video":
+                        # read the next frame from the file
+                        (grabbed, frame) = self.cap[index].read()
+                        # if the `grabbed` boolean is `False`, then we have
+                        # reached the end of the video file
+                        if not grabbed:
+                            self.stop()
+                            l.debug(f"Finished reading video with idx {index}")
+                            return
+                    else:
+                        # read image from the file
+                        frame = cv2.imread(self.files[index][img_idx])
+                        img_idx += 1
+
+                        if frame is None:
+                            l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
+                            continue
+
+                    # add the frame to the queue
+                    self.Qs[index].put(frame)
+                    time.sleep(1 / self.read_fps)
                 else:
-                    # read image from the file
-                    frame = cv2.imread(self.files[index][img_idx])
-                    img_idx += 1
-
-                    if frame is None:
-                        l.warn(f"Couldn't find image at {self.files[index][img_idx]}")
-                        continue
-
-                # add the frame to the queue
-                self.Qs[index].put(frame)
-                time.sleep(1 / self.read_fps)
-            else:
-                # when queue is full, sleep for a prolonged period
-                time.sleep(self.queue_size / self.read_fps * 0.9)
+                    # when queue is full, sleep for a prolonged period
+                    time.sleep(self.queue_size / self.read_fps * 0.9)
+        except:
+            self.cap[index].release()
 
     def new_videos(self, paths: list):
         self.frame = 0
