@@ -1,3 +1,3 @@
-https://www.youtube.com/watch?v=KIXWAPXSLyU
-https://www.youtube.com/watch?v=1EiC9bvVGnk&ab_channel=SeeJacksonHoleSeeJacksonHole
-https://www.youtube.com/watch?v=X4JcFsxBfU0
+https://media.dcaiti.tu-berlin.de/tccams/1l/axis-cgi/mjpg/video.cgi?camera=1&compression=50
+https://media.dcaiti.tu-berlin.de/tccams/1c/axis-cgi/mjpg/video.cgi?camera=1&compression=50
+https://media.dcaiti.tu-berlin.de/tccams/1r/axis-cgi/mjpg/video.cgi?camera=1&compression=50

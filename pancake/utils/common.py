@@ -130,16 +130,15 @@ class ResultProcessor:
 
         # GENERAL
         self._show_res, self._save_res, self._debug, self._async = (
-            (
-                show_res 
-                if check_imshow() and show_res
-                else False
-            ),
+            False,
             save_res,
             debug,
             async_processing,
         )
         
+        if show_res:
+            self._show_res =  True if check_imshow() else False
+
         # DRAW OPTIONS
         self._show_det, self._show_tracks, self._show_track_hist = (
             draw_det,
