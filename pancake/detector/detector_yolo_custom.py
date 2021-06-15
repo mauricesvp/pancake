@@ -53,7 +53,7 @@ class YOLOCustomDetector(Detector):
 
     def detect(self, imgs: list) -> list:
         """
-        Wrapper for detection calculation. 
+        Wrapper for detection calculation.
         - pads and resizes the images to conform with the model
         - calls the infer method of underlying model in order to retrieve detections
         - rescales the detections
@@ -65,14 +65,14 @@ class YOLOCustomDetector(Detector):
         img_sizes = [img.shape for img in imgs]
 
         # Inference
-        l.debug(f"Inference on: {pr_imgs.shape}")
+        # l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
         res = self._postprocess(det, pr_imgs, img_sizes)
         return res
 
     def _preprocess(self, imgs: list) -> np.array:
-        """ 
+        """
         Pads and resizes the images, converts the images to RGB.
 
         :param imgs (list): list of ndarrays, images in BGR [bs, 3, w, h]
@@ -86,15 +86,12 @@ class YOLOCustomDetector(Detector):
             letterbox(x, self.model._required_img_size, stride=self.model._stride)[0]
             for x in imgs
         ]
-
         # Stack
         pr_imgs = np.stack(pr_imgs, 0)
-
         # Convert
         pr_imgs = pr_imgs[:, :, :, ::-1].transpose(
             0, 3, 1, 2
         )  # BGR to RGB, to bsx3x416x416
-
         pr_imgs = np.ascontiguousarray(pr_imgs)
         return pr_imgs
 

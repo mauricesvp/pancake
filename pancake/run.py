@@ -1,5 +1,6 @@
 import argparse
 import logging
+import time
 
 import cv2
 import numpy as np
@@ -56,6 +57,7 @@ def main(cfg_path: str = None, n: int = 0):
         config.PANCAKE.RESULT_PROCESSOR, DETECTOR.model.names
     )
 
+    t1, t2 = 0, 0
     iteration = 0
     for path, im0s, vid_cap in DATA:
         l.debug(f"Iteration {iteration}")
@@ -70,6 +72,9 @@ def main(cfg_path: str = None, n: int = 0):
         if n and iteration >= n:
             return
 
+        t1 = time.time()
+        l.info(f"RUN FPS: {int(1/(t1-t2))}")
+        t2 = t1
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

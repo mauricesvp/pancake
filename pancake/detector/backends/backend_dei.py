@@ -366,8 +366,12 @@ class DEI(Backend):
 
         for i, x in enumerate(results):
             results[i] = torch.FloatTensor(list(x))
-        results = torch.stack(results, dim=0)
-
+        
+        results = (
+            torch.stack(results, dim=0) 
+            if results 
+            else torch.empty((0, 6)) 
+        )
         return results, img
 
     def detect_old(
