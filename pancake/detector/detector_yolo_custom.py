@@ -54,7 +54,12 @@ class YOLOCustomDetector(Detector):
 
     def detect(self, imgs: list) -> list:
         """
-        :param imgs (list): list of images, images as np.array in BGR
+        Wrapper for detection calculation. 
+        - pads and resizes the images to conform with the model
+        - calls the infer method of underlying model in order to retrieve detections
+        - rescales the detections
+
+        :param imgs (list): list of ndarrays, images in BGR [bs, 3, w, h]
         :return res (list): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         """
         pr_imgs = self._preprocess(imgs)
@@ -68,6 +73,12 @@ class YOLOCustomDetector(Detector):
         return res
 
     def _preprocess(self, imgs: list) -> np.array:
+        """ 
+        Pads and resizes the images, converts the images to RGB.
+
+        :param imgs (list): list of ndarrays, images in BGR [bs, 3, w, h]
+        :return (ndarray): padded and resized images in RGB [bs, 3, w, h]
+        """
         if type(imgs) is not list:
             imgs = [imgs]
 
@@ -91,6 +102,16 @@ class YOLOCustomDetector(Detector):
     def _postprocess(
         self, det: torch.Tensor, pr_imgs: np.array, img_sizes: list
     ) -> list:
+        """
+        Rescales the detection matrix from padded and resized to
+        the original size.
+
+        :param det (th.Tensor): tensor list of detections, on (,6) tensor [bs, xyxy, conf, cls]
+        :param pr_imgs (ndarray): preprocessed images [bs, 3, w, h]
+        :param img_sizes (list): list of original image sizes [bs, (w, h)]
+
+        :return tensor list of rescaled detections, on (,6) tensor [bs, xyxy, conf, cls]
+        """
         # Rescale images from preprocessed to original
         res = [None] * len(det)
         for i, x in enumerate(det):
