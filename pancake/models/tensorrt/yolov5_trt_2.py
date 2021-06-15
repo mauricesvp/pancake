@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 import os
 import pkg_resources
 import time
@@ -121,7 +122,7 @@ class Yolov5TRT(BaseModel):
         for _ in range(10):
             t1 = time.time()
             self.infer(np.zeros(img_size, dtype=np.uint8))
-            l.debug(f"Inf (func) time: {time.time()-t1:.2f}")
+            l.debug(f"Inf (func) time: {time.time()-t1:.3f}")
 
     @staticmethod
     def prep_image_infer(img: Type[np.array]) -> Type[np.array]:
@@ -140,11 +141,12 @@ class Yolov5TRT(BaseModel):
         img = np.ascontiguousarray(img)
         return img
 
-
-    def prep_batches(self, imgs) -> Type[list]:
+    def prep_batches(self, imgs: Type[np.array]) -> Type[list]:
         """
-        Divide imgs ndarray into batches which sizes are compatible with the 
-        TRT enging. 
+        Divide imgs ndarray into batches whose sizes are compatible with the
+        TRT engine input layer.
+
+        :param imgs: 
         """
         modulo = imgs.shape[0] % self.batch_size
 
@@ -153,12 +155,11 @@ class Yolov5TRT(BaseModel):
             img_size = imgs.shape[2:]
             fills = np.zeros((modulo, 3, img_size), dtype=np.uint8)
 
-        return np.vsplit(imgs, imgs.shape[0]/self.batch_size), modulo
-
+        return np.vsplit(imgs, imgs.shape[0] / self.batch_size), modulo
 
     def infer(self, imgs: Type[np.array]) -> Type[np.array]:
         """
-        :param img (np.array): resized and padded image [bs, 3, width, height]
+        :param img (np.array): resized and padded image [num img, 3, width, height]
 
         :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
                 img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
@@ -168,28 +169,34 @@ class Yolov5TRT(BaseModel):
         imgs = Yolov5TRT.prep_image_infer(imgs)
 
         # prepare batches according to engine batch size
+        # e.g. input [7, 3, 640, 640], engine bs = 4
+        # prep_batches(input) -> [[4, 3, 640, 640], [4, 3, 640, 640]]  
+        # (filled with one zero entry of [1, 3, 640, 640])
         img_batches, fills = self.prep_batches(imgs)
 
         # infer on batches
-        pred = [self.infer_on_batch(batch) for batch in img_batches]
+        batched_pred = [self.infer_on_batch(batch) for batch in img_batches]
 
-        return pred[:-fills], None
-
+        # from [num batches, batch size, 6] to [num batches x batch size, 6]
+        # (prediction per image)
+        pred = list(itertools.chain.from_iterable(batched_pred))
+        pred = pred[:-fills] if fills > 0 else pred # only return non-fills
+        return pred, None
 
     def infer_on_batch(self, img: Type[np.array]) -> Type[list]:
         """
         :param img (np.array): resized and padded image [bs, 3, width, height]
 
-        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
+        :return pred (tensor): (one batch) list of detections, on (bs,6) tensor [xyxy, conf, cls]
                 img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
                               expanded dim (,4), half precision (fp16))
         """
-        assert (
-            img.shape[0] == self.batch_size
-        ), (f"Provided batch size ({img.shape[0]}) doesn't allign with " 
-            f"the engines batch size ({self.batch_size})")
+        assert img.shape[0] == self.batch_size, (
+            f"Provided batch size ({img.shape[0]}) doesn't allign with "
+            f"the engines batch size ({self.batch_size})"
+        )
 
-        # prepare img for inference
+        # get img shapes
         img_sizes = img.shape[2:]
 
         # make self the active context, pushing it on top of the context stack.
@@ -276,9 +283,9 @@ class Yolov5TRT(BaseModel):
             scores = scores[si]
             classid = classid[si]
 
-        # no detections found, return list with empty tensor
+        # no detections found, return empty tensor
         if not boxes.shape[0]:
-            return [torch.Tensor([])]
+            return torch.zeros((1, 6))
 
         # transform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
         boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
@@ -293,8 +300,8 @@ class Yolov5TRT(BaseModel):
             result_scores = scores[indices].cpu()
             result_classid = classid[indices].cpu()
 
-            result_scores = torch.unsqueeze(result_scores, 0)
-            result_classid = torch.unsqueeze(result_classid, 0)
+            result_scores = torch.unsqueeze(result_scores, 1)
+            result_classid = torch.unsqueeze(result_classid, 1)
 
             result = torch.cat((result_boxes, result_scores, result_classid), 1)
         else:

@@ -51,20 +51,20 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"
-      weights:
-        - "weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
       
-      trt: True
-      trt_engine_path: "weights/detector/yolov5/yolov5s.engine"
-      trt_plugin_library: "/home/tuananhroman/dcaiti/trt/tensorrtx/yolov5/build/libmyplugins.so"
-      nms_gpu: False
-
+      # will only apply to standard model deployment
       img_size: 640
       conf_thres: 0.65
       iou_thres: 0.6
       classes: null
       agnostic_nms: True
 
+      trt: True
+      trt_engine_path: "tensorrtx/yolov5/build_5s6/yolov5s6.engine"
+      trt_plugin_library: "tensorrtx/yolov5/build_5s6/libmyplugins.so"
+      nms_gpu: True
+      
   TRACKER:
     NAME: "deepsort"
 
