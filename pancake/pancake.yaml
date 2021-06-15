@@ -43,7 +43,7 @@ PANCAKE:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
 
-    BACKEND: "dei"  # divide et impera
+    BACKEND: "simple"  # divide et impera
     # BACKEND: "simple"
 
     YOLO_SIMPLE:
@@ -61,8 +61,8 @@ PANCAKE:
       
       # TENSORRT
       trt: True              # use trt engine for inference
-      trt_engine_path: "tensorrtx/yolov5/build_5s6/yolov5s6.engine"     # path to locally compiled engine
-      trt_plugin_library: "tensorrtx/yolov5/build_5s6/libmyplugins.so"  # path to locally compiled lib
+      trt_engine_path: "tensorrtx/yolov5/build_5s6_bs17/yolov5s6.engine"     # path to locally compiled engine
+      trt_plugin_library: "tensorrtx/yolov5/build_5s6_bs17/libmyplugins.so"  # path to locally compiled lib
       
   TRACKER:
     NAME: "centroid"
@@ -97,9 +97,9 @@ PANCAKE:
     LINE_THICKNESS: 3         # general line thickness
 
     # SAVING
-    MODE: "image"             # "image" or "video"
+    MODE: "video"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
-    VID_FPS: 20               # fps of the merged video, when mode = "video"
+    VID_FPS: 10               # fps of the merged video, when mode = "video"
     EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically

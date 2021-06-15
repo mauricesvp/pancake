@@ -39,7 +39,7 @@ class Yolov5TRT(BaseModel):
         check_requirements(["pycuda", "torchvision"])
         if not trt_installed:
             l.info("TensorRT not installed, using standard Yolov5..")
-            return yolov5
+            raise ModuleNotFoundError
 
         # store standard model
         self._yolov5 = yolov5
@@ -52,14 +52,13 @@ class Yolov5TRT(BaseModel):
         self._plugin_path = plugin_path
 
         # create a context on this device
-        self.ctx = cuda.Device(0).make_context()
         self.stream = cuda.Stream()
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         self.runtime = trt.Runtime(TRT_LOGGER)
 
         # loard TRT engine
         if not self.load_engine():
-            return self._yolov5
+            raise ModuleNotFoundError
 
         # allocate buffers and warm up context
         self.allocate_buffers()
@@ -188,16 +187,21 @@ class Yolov5TRT(BaseModel):
                               expanded dim (,4), half precision (fp16))
         """
         # prepare imgs for inference
+        #t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
+        #l.debug(f"prep_image_infer: {time.time()-t1:.5f}")
 
         # prepare batches according to engine batch size
         # e.g. input [7, 3, 640, 640], engine bs = 4
         # prep_batches(input) -> [[4, 3, 640, 640], [4, 3, 640, 640]]
         # (filled with one zero entry of [1, 3, 640, 640])
         img_batches, fills = self.prep_batches(imgs)
+        
 
         # infer on batches
+        # t1 = time.time()
         batched_pred = [self.infer_on_batch(batch) for batch in img_batches]
+        # l.debug(f"infer_on_batch: {time.time()-t1:.5f}")
 
         # from [num batches, batch size, 6] to [num batches x batch size, 6]
         # (prediction per image)
@@ -221,9 +225,6 @@ class Yolov5TRT(BaseModel):
         # get img shapes
         img_sizes = img.shape[2:]
 
-        # make self the active context, pushing it on top of the context stack.
-        self.ctx.push()
-
         # restore essential components
         stream, context, engine, bindings = (
             self.stream,
@@ -239,8 +240,8 @@ class Yolov5TRT(BaseModel):
         )
 
         # copy input image to host buffer
-        np.copyto(host_inputs[0], img.ravel())
-
+        # np.copyto(host_inputs[0], img.ravel())
+        host_inputs[0] = img.ravel()
         # start = time.time()
 
         # transfer input data to the GPU.
@@ -260,9 +261,7 @@ class Yolov5TRT(BaseModel):
         # end = time.time()
         # l.debug(f"Inf (pure) time: {end-start:.4f}")
 
-        # remove any context from the top of the context stack, deactivating it.
-        self.ctx.pop()
-
+    
         # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
 
@@ -273,7 +272,6 @@ class Yolov5TRT(BaseModel):
             )
             for i in range(self.batch_size)
         ]
-
         return pred
 
     def postp_image_infer(self, output, origin_h, origin_w):
