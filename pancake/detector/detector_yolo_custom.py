@@ -30,7 +30,6 @@ class YOLOCustomDetector(Detector):
         trt = config["trt"]
         trt_engine_path = config["trt_engine_path"]
         trt_plugin_library = config["trt_plugin_library"]
-        nms_gpu = config["nms_gpu"]
 
         conf_thres = float(config["conf_thres"])
         iou_thres = float(config["iou_thres"])
@@ -44,7 +43,7 @@ class YOLOCustomDetector(Detector):
         )
 
         self.model = (
-            Yolov5TRT(self.model, trt_engine_path, trt_plugin_library, nms_gpu)
+            Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
             if trt
             else self.model
         )
@@ -66,7 +65,7 @@ class YOLOCustomDetector(Detector):
         img_sizes = [img.shape for img in imgs]
 
         # Inference
-        l.info(f"Inference on: {pr_imgs.shape}")
+        l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
         res = self._postprocess(det, pr_imgs, img_sizes)

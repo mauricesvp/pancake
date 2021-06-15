@@ -1,11 +1,11 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "CPU"
+  DEVICE: "GPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
     # For now this only changes the level in run.py
-    LEVEL: "DEBUG"
+    LEVEL: "INFO"
 
   DATA:
     #             SUPPORTED SOURCE TYPES
@@ -17,11 +17,11 @@ PANCAKE:
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
     SOURCE: 
-      # '../samples/streams.txt'
+      '../samples/streams.txt'
       # '../samples/output.avi'
-      - "../samples/r45/1l"
-      - "../samples/r45/1c"
-      - "../samples/r45/1r"
+      # - "../samples/r45/1l"
+      # - "../samples/r45/1c"
+      # - "../samples/r45/1r"
     ROI:
       A:
         - 1200  # x0
@@ -53,20 +53,19 @@ PANCAKE:
       model: "yolov5"         # yolo custom class from registry 
       weights: "yolov5s6.pt"  # weights to be loaded
       
-      img_size: 640           # applied on standard and trt
-      conf_thres: 0.65        # applied on standard and trt (when nms_gpu is off)
-      iou_thres: 0.6          # applied on standard and trt (when nms_gpu is off)
-      classes: null           # applied on standard and trt (when nms_gpu is off)
-      agnostic_nms: True      # applied on standard and trt (when nms_gpu is off)
+      img_size: 640           # applies on standard and trt
+      conf_thres: 0.65        # confidence threshold, applies on standard
+      iou_thres: 0.6          # iou threshold, applies on standard
+      classes: null           # filtered classes, applies on standard
+      agnostic_nms: True      # agnostic nms, applies on standard
       
       # TENSORRT
-      trt: False              # use trt engine for inference
+      trt: True              # use trt engine for inference
       trt_engine_path: "tensorrtx/yolov5/build_5s6/yolov5s6.engine"     # path to locally compiled engine
       trt_plugin_library: "tensorrtx/yolov5/build_5s6/libmyplugins.so"  # path to locally compiled lib
-      nms_gpu: False          # if True, faster but less precise
       
   TRACKER:
-    NAME: "deepsort"
+    NAME: "centroid"
 
     CENTROID:
       TRACKER_CFG_PATH: "../configs/tracker/centroid.yaml"

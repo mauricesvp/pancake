@@ -5,8 +5,6 @@ import pkg_resources
 import time
 from typing import Type
 
-import pycuda.driver as cuda
-import pycuda.autoinit
 import torch
 import torch.nn as nn
 import torchvision
@@ -14,6 +12,10 @@ import torchvision
 from pancake.logger import setup_logger
 from pancake.models.base_class import BaseModel
 from pancake.utils.general import export_onnx, check_requirements, non_max_suppression
+
+check_requirements(["pycuda", "torchvision"])
+import pycuda.driver as cuda
+import pycuda.autoinit
 
 l = setup_logger(__name__)
 
@@ -31,7 +33,7 @@ for package in ["tensorrt"]:
 
 class Yolov5TRT(BaseModel):
     def __init__(
-        self, yolov5, engine_path: str, plugin_path: str, nms_gpu: bool, *args, **kwargs
+        self, yolov5, engine_path: str, plugin_path: str, *args, **kwargs
     ):
         # if trt not available return standard yolov5 model
         check_requirements(["pycuda", "torchvision"])
@@ -48,9 +50,7 @@ class Yolov5TRT(BaseModel):
         # get trt engine- and plugin path
         self._engine_path = engine_path
         self._plugin_path = plugin_path
-        self._nms_gpu = nms_gpu
 
-        # --- TRT init ---
         # create a context on this device
         self.ctx = cuda.Device(0).make_context()
         self.stream = cuda.Stream()
@@ -60,7 +60,7 @@ class Yolov5TRT(BaseModel):
         # loard TRT engine
         if not self.load_engine():
             return self._yolov5
-        
+
         # allocate buffers and warm up context
         self.allocate_buffers()
         self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
@@ -115,6 +115,17 @@ class Yolov5TRT(BaseModel):
             if self.engine.binding_is_input(binding):
                 self.input_w = self.engine.get_binding_shape(binding)[-1]
                 self.input_h = self.engine.get_binding_shape(binding)[-2]
+
+                assert (
+                    self.input_w == self._required_img_size
+                    and self.input_h == self._required_img_size
+                ), (
+                    "Provided img_size in config "
+                    f"({self._required_img_size}x{self._required_img_size}) "
+                    f"doesn't match with the TRT engines input size "
+                    f"({self.input_h}x{self.input_w})!"
+                )
+
                 self.host_inputs.append(host_mem)
                 self.cuda_inputs.append(cuda_mem)
             else:
@@ -267,15 +278,13 @@ class Yolov5TRT(BaseModel):
 
     def postp_image_infer(self, output, origin_h, origin_w):
         """
-        description: postprocess the prediction
-        param:
-            output:     A tensor like [num_boxes,cx,cy,w,h,conf,cls_id]
-            origin_h:   height of original image
-            origin_w:   width of original image
-        return:
-            result_boxes: finally boxes, a boxes tensor, each row is a box [x1, y1, x2, y2]
-            result_scores: finally scores, a tensor, each element is the score correspoing to box
-            result_classid: finally classid, a tensor, each element is the classid correspoing to box
+        Postprocesses the prediction.
+
+        :param output:     A tensor like [num_boxes, cx, cy, w, h, conf, cls_id]
+        :param origin_h:   height of original image
+        :param origin_w:   width of original image
+
+        return: tensor with the prediction results [bs, xyxy, conf, cls]
         """
         # get the num of boxes detected
         num = int(output[0])
@@ -284,17 +293,16 @@ class Yolov5TRT(BaseModel):
         pred = np.reshape(output[1:], (-1, 6))[:num, :]
 
         # to a torch Tensor (GPU)
-        pred = torch.Tensor(pred).cuda() if self._nms_gpu else torch.Tensor(pred)
+        pred = torch.Tensor(pred).cuda()
 
         # get the boxes, scores, classid
         boxes, scores, classid = pred[:, :4], pred[:, 4], pred[:, 5]
 
-        if self._nms_gpu:
-            # choose those boxes that score > CONF_THRESH
-            si = scores > self._yolov5._conf_thres
-            boxes = boxes[si, :]
-            scores = scores[si]
-            classid = classid[si]
+        # choose those boxes that score > CONF_THRESH
+        si = scores > self._yolov5._conf_thres
+        boxes = boxes[si, :]
+        scores = scores[si]
+        classid = classid[si]
 
         # no detections found, return empty tensor
         if num == 0:
@@ -303,41 +311,26 @@ class Yolov5TRT(BaseModel):
         # transform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
         boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
 
-        if self._nms_gpu:
-            # do nms (GPU)
-            indices = torchvision.ops.nms(
-                boxes, scores, iou_threshold=self._yolov5._iou_thres
-            ).cpu()
+        # do nms (GPU)
+        indices = torchvision.ops.nms(
+            boxes, scores, iou_threshold=self._yolov5._iou_thres
+        ).cpu()
 
-            result_boxes = boxes[indices, :].cpu()
-            result_scores = scores[indices].cpu()
-            result_classid = classid[indices].cpu()
+        result_boxes = boxes[indices, :].cpu()
+        result_scores = scores[indices].cpu()
+        result_classid = classid[indices].cpu()
 
-            result_scores = torch.unsqueeze(result_scores, 1)
-            result_classid = torch.unsqueeze(result_classid, 1)
+        result_scores = torch.unsqueeze(result_scores, 1)
+        result_classid = torch.unsqueeze(result_classid, 1)
 
-            result = torch.cat((result_boxes, result_scores, result_classid), 1)
-        else:
-            scores = torch.unsqueeze(scores, 1)
-            classid = torch.unsqueeze(classid, 1)
-
-            pred = torch.cat((boxes, scores, classid), 1)
-            pred = torch.unsqueeze(pred, 0)
-
-            # do nms (CPU)
-            result = non_max_suppression(
-                pred,
-                self._yolov5._conf_thres,
-                self._yolov5._iou_thres,
-                self._yolov5._classes,
-                self._yolov5._agnostic_nms,
-            )[0]
+        result = torch.cat((result_boxes, result_scores, result_classid), 1)
 
         return result
 
     def xywh2xyxy(self, origin_h, origin_w, x):
         """
-        description:    Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+        Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+
         param:
             origin_h:   height of original image
             origin_w:   width of original image

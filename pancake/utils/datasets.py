@@ -488,12 +488,13 @@ class LoadStreams:  # multiple IP or RTSP cameras
         else:
             sources = [sources]
 
-        n = len(sources)
-        self.imgs = [None] * n
+        self.n = len(sources)
+        self.imgs = [None] * self.n
         self.sources = [clean_str(x) for x in sources]  # clean source names for later
+        self.live_fps = [None] * self.n
         for i, s in enumerate(sources):  # index, source
             # Start thread to read frames from video stream
-            print(f"{i + 1}/{n}: {s}... ", end="")
+            print(f"{i + 1}/{self.n}: {s}... ", end="")
             if "youtube.com/" in s or "youtu.be/" in s:  # if source is YouTube video
                 check_requirements(("pafy", "youtube_dl"))
                 import pafy
@@ -513,15 +514,17 @@ class LoadStreams:  # multiple IP or RTSP cameras
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
-        n = 0
+        t1, t2 = 0, 0 #
         while cap.isOpened():
-            n += 1
-            # _, self.imgs[index] = cap.read()
-            if n == 1:  # read every 4th frame
-                success, im = cap.read()
-                self.imgs[index] = im if success else self.imgs[index] * 0
-                n = 0
+            # read frame
+            success, im = cap.read()
+            self.imgs[index] = im if success else self.imgs[index] * 0
+
+            t1 = time.time()
             time.sleep(1 / self.fps)  # wait time
+
+            self.live_fps[index] = int(1/(t1-t2))
+            t2 = t1
 
     def __iter__(self):
         self.count = -1
@@ -533,6 +536,14 @@ class LoadStreams:  # multiple IP or RTSP cameras
         if cv2.waitKey(1) == ord("q"):  # q to quit
             cv2.destroyAllWindows()
             raise StopIteration
+
+        if l.level <= 20:
+            s = ""
+            for i in range(self.n):
+                s += f"{self.mode} {i+1}/{self.n}: ({self.live_fps[i]} FPS)"
+                if i < self.n - 1:
+                    s += ", "
+            l.info(f"{s}")
 
         return self.sources, img0, None
 
