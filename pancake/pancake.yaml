@@ -42,7 +42,7 @@ PANCAKE:
   DETECTOR:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
-    
+
     BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
 
@@ -50,20 +50,20 @@ PANCAKE:
       size: "s"
 
     YOLO_CUSTOM:
-      model: "yolov5"
-      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
+      model: "yolov5"         # yolo custom class from registry 
+      weights: "yolov5s6.pt"  # weights to be loaded
       
-      # will only apply to standard model deployment
-      img_size: 640
-      conf_thres: 0.65
-      iou_thres: 0.6
-      classes: null
-      agnostic_nms: True
-
-      trt: True
-      trt_engine_path: "tensorrtx/yolov5/build_5s6/yolov5s6.engine"
-      trt_plugin_library: "tensorrtx/yolov5/build_5s6/libmyplugins.so"
-      nms_gpu: True
+      img_size: 640           # applied on standard and trt
+      conf_thres: 0.65        # applied on standard and trt (when nms_gpu is off)
+      iou_thres: 0.6          # applied on standard and trt (when nms_gpu is off)
+      classes: null           # applied on standard and trt (when nms_gpu is off)
+      agnostic_nms: True      # applied on standard and trt (when nms_gpu is off)
+      
+      # TENSORRT
+      trt: False              # use trt engine for inference
+      trt_engine_path: "tensorrtx/yolov5/build_5s6/yolov5s6.engine"     # path to locally compiled engine
+      trt_plugin_library: "tensorrtx/yolov5/build_5s6/libmyplugins.so"  # path to locally compiled lib
+      nms_gpu: False          # if True, faster but less precise
       
   TRACKER:
     NAME: "deepsort"
@@ -73,25 +73,34 @@ PANCAKE:
     DEEPSORT:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
-  VISUALIZATION:
-    VIEW_IMG: True
-    SHOW_DET: True
-    SHOW_TRACKS: True
-    SHOW_TRACK_HIST: True
-    MAX_TRACK_HIST_LEN: 1000
+  RESULT_PROCESSOR:
+    # GENERAL 
+    VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
+    SAVE_RES: True           # save results
+    ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
+    DEBUG: False              # manual frame stepping (only available when VIEW_RES)
+    
+    # ASYNC QUEUE
+    Q_SIZE: 10000             # queue size for results sent from main loop to result processor
+    PUT_BLOCKED: True         # block main loop until free slot available to put in queue, otherwise skip this frame
+    PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
-    HIDE_LABELS: False
-    HIDE_CONF: False
+    # DRAW OPTIONS
+    DRAW_DET: True            # draw detection boxes
+    DRAW_TRACKS: True         # draw track boxes (with respective id)
+    DRAW_TRACK_HIST: False    # draw corresponding tracks
+    MAX_TRACK_HIST_LEN: 1000  # max track history length
 
-    LINE_THICKNESS: 3
+    # DRAW DETAILS
+    HIDE_LABELS: False        # hide class labels and track ids
+    HIDE_CONF: False          # hide detection confidences
 
-    DEBUG: False
+    LINE_THICKNESS: 3         # general line thickness
 
-  SAVE_RESULT:
-    SAVE_RES: False
-    PATH: "pancake_results"
-    SUBDIR: "yolov5m_100epochs_640px"
-    MODE: "image" # "image" or "video"
-    VID_FPS: 20 # fps of the merged video, when mode = "video"
-    EXIST_OK: True # save in already existing dir, 
-                   # do not increment automatically
+    # SAVING
+    MODE: "image"             # "image" or "video"
+    PATH: "pancake_results"   # parent save directory
+    SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
+    VID_FPS: 20               # fps of the merged video, when mode = "video"
+    EXIST_OK: True            # save in already existing dir, 
+                              # do not increment automatically

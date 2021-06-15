@@ -41,6 +41,7 @@ class Yolov5TRT(BaseModel):
 
         # store standard model
         self._yolov5 = yolov5
+        self.names = self._yolov5.names
         self._required_img_size = self._yolov5._required_img_size
         self._stride = None
 
@@ -56,8 +57,11 @@ class Yolov5TRT(BaseModel):
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         self.runtime = trt.Runtime(TRT_LOGGER)
 
+        # loard TRT engine
         if not self.load_engine():
             return self._yolov5
+        
+        # allocate buffers and warm up context
         self.allocate_buffers()
         self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
 
@@ -118,11 +122,18 @@ class Yolov5TRT(BaseModel):
                 self.cuda_outputs.append(cuda_mem)
 
     def _init_infer(self, img_size: None):
-        # warm up
-        for _ in range(10):
+        # Warm up
+        iterations = 20
+        sum_time = 0.0
+
+        for _ in range(iterations):
             t1 = time.time()
             self.infer(np.zeros(img_size, dtype=np.uint8))
-            l.debug(f"Inf (func) time: {time.time()-t1:.3f}")
+            sum_time += time.time() - t1
+
+        l.debug(
+            f"(WARM UP) avg. inference time on {img_size}: {sum_time/iterations:.5f}"
+        )
 
     @staticmethod
     def prep_image_infer(img: Type[np.array]) -> Type[np.array]:
@@ -146,7 +157,7 @@ class Yolov5TRT(BaseModel):
         Divide imgs ndarray into batches whose sizes are compatible with the
         TRT engine input layer.
 
-        :param imgs: 
+        :param imgs:
         """
         modulo = imgs.shape[0] % self.batch_size
 
@@ -170,7 +181,7 @@ class Yolov5TRT(BaseModel):
 
         # prepare batches according to engine batch size
         # e.g. input [7, 3, 640, 640], engine bs = 4
-        # prep_batches(input) -> [[4, 3, 640, 640], [4, 3, 640, 640]]  
+        # prep_batches(input) -> [[4, 3, 640, 640], [4, 3, 640, 640]]
         # (filled with one zero entry of [1, 3, 640, 640])
         img_batches, fills = self.prep_batches(imgs)
 
@@ -180,7 +191,7 @@ class Yolov5TRT(BaseModel):
         # from [num batches, batch size, 6] to [num batches x batch size, 6]
         # (prediction per image)
         pred = list(itertools.chain.from_iterable(batched_pred))
-        pred = pred[:-fills] if fills > 0 else pred # only return non-fills
+        pred = pred[:-fills] if fills > 0 else pred  # only return non-fills
         return pred, None
 
     def infer_on_batch(self, img: Type[np.array]) -> Type[list]:
@@ -218,7 +229,8 @@ class Yolov5TRT(BaseModel):
 
         # copy input image to host buffer
         np.copyto(host_inputs[0], img.ravel())
-        start = time.time()
+
+        # start = time.time()
 
         # transfer input data to the GPU.
         cuda.memcpy_htod_async(cuda_inputs[0], host_inputs[0], stream)
@@ -233,8 +245,9 @@ class Yolov5TRT(BaseModel):
 
         # synchronize the stream
         stream.synchronize()
-        end = time.time()
-        l.debug(f"Inf (pure) time: {end-start:.4f}")
+
+        # end = time.time()
+        # l.debug(f"Inf (pure) time: {end-start:.4f}")
 
         # remove any context from the top of the context stack, deactivating it.
         self.ctx.pop()
@@ -265,7 +278,7 @@ class Yolov5TRT(BaseModel):
             result_classid: finally classid, a tensor, each element is the classid correspoing to box
         """
         # get the num of boxes detected
-        num = int(output[0]) if int(output[0]) != 0 else 1
+        num = int(output[0])
 
         # reshape to a two dimentional ndarray
         pred = np.reshape(output[1:], (-1, 6))[:num, :]
@@ -284,8 +297,8 @@ class Yolov5TRT(BaseModel):
             classid = classid[si]
 
         # no detections found, return empty tensor
-        if not boxes.shape[0]:
-            return torch.zeros((1, 6))
+        if num == 0:
+            return torch.zeros((0, 6))
 
         # transform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
         boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
@@ -305,8 +318,8 @@ class Yolov5TRT(BaseModel):
 
             result = torch.cat((result_boxes, result_scores, result_classid), 1)
         else:
-            scores = torch.unsqueeze(scores, 0)
-            classid = torch.unsqueeze(classid, 0)
+            scores = torch.unsqueeze(scores, 1)
+            classid = torch.unsqueeze(classid, 1)
 
             pred = torch.cat((boxes, scores, classid), 1)
             pred = torch.unsqueeze(pred, 0)

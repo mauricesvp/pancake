@@ -57,8 +57,8 @@ class YOLOCustomDetector(Detector):
         :param imgs (list): list of images, images as np.array in BGR
         :return res (list): tensor list of detections, on (,6) tensor [xyxy, conf, cls]
         """
-        prep = self._preprocess(imgs)
-        pr_imgs, img_sizes = prep[0], prep[1]
+        pr_imgs = self._preprocess(imgs)
+        img_sizes = [img.shape for img in imgs]
 
         # Inference
         l.info(f"Inference on: {pr_imgs.shape}")
@@ -70,9 +70,6 @@ class YOLOCustomDetector(Detector):
     def _preprocess(self, imgs: list) -> np.array:
         if type(imgs) is not list:
             imgs = [imgs]
-
-        # Save initial sizes
-        img_sizes = [img.shape for img in imgs]
 
         # Padded resize
         pr_imgs = [
@@ -89,7 +86,7 @@ class YOLOCustomDetector(Detector):
         )  # BGR to RGB, to bsx3x416x416
 
         pr_imgs = np.ascontiguousarray(pr_imgs)
-        return pr_imgs, img_sizes
+        return pr_imgs
 
     def _postprocess(
         self, det: torch.Tensor, pr_imgs: np.array, img_sizes: list

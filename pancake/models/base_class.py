@@ -1,6 +1,8 @@
-import torch
 from abc import ABC, abstractmethod
 from typing import Type
+
+import torch
+import torch.backends.cudnn as cudnn
 
 from pancake.utils.torch_utils import select_device
 
@@ -21,6 +23,9 @@ class BaseModel(ABC):
 
         self._stride = None
         self._required_img_size = None
+
+        cudnn.benchmark = True  # set True to speed up constant image size inference
+
 
     @classmethod
     def get_subclasses(cls):

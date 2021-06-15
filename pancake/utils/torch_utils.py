@@ -96,7 +96,7 @@ def select_device(device="", batch_size=None):
     l.debug(
         s.encode().decode("ascii", "ignore") if platform.system() == "Windows" else s
     )  # emoji-safe
-    return torch.device("cuda:0" if cuda else "cpu")
+    return torch.device(f"cuda:{device}" if cuda else "cpu")
 
 
 def time_synchronized():
