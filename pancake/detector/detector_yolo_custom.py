@@ -15,6 +15,7 @@ from pancake.logger import setup_logger
 from pancake.utils.common import fix_path
 from pancake.utils.datasets import letterbox
 from pancake.utils.general import scale_coords
+from pancake.utils.function_profiler import profile
 
 l = setup_logger(__name__)
 

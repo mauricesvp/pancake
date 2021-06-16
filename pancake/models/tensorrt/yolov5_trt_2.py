@@ -59,7 +59,7 @@ class Yolov5TRT(BaseModel):
 
         # allocate buffers and warm up context
         self.allocate_buffers()
-        self._init_infer([self.batch_size + 1, 3, self.input_h, self.input_w])
+        self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
 
     def load_engine(self):
         l.info(f"Loading TRT engine from {self._engine_path}..")
@@ -144,7 +144,7 @@ class Yolov5TRT(BaseModel):
 
         for _ in range(iterations):
             t1 = time.time()
-            self.infer(np.zeros(img_size, dtype=np.uint8))
+            self.infer(np.zeros(img_size, dtype=np.float32))
             sum_time += time.time() - t1
 
         l.debug(
@@ -185,7 +185,8 @@ class Yolov5TRT(BaseModel):
             )
             imgs = np.concatenate((imgs, fills))
 
-        return np.vsplit(imgs, imgs.shape[0] / self.batch_size), modulo
+        batched_imgs = np.vsplit(imgs, imgs.shape[0] / self.batch_size)
+        return [np.ascontiguousarray(img) for img in batched_imgs], modulo
 
     def infer(self, imgs: Type[np.array]) -> Type[np.array]:
         """

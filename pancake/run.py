@@ -76,7 +76,6 @@ def main(cfg_path: str = None, n: int = 0):
         l.info(f"--> approx. RUN FPS: {int(1/(t1-t2))}")
         t2 = t1
         
-    RESULT_PROC.kill_worker()
 
         
 if __name__ == "__main__":
