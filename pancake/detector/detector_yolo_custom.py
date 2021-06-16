@@ -42,11 +42,15 @@ class YOLOCustomDetector(Detector):
             device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
         )
 
-        self.model = (
-            Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
-            if trt
-            else self.model
-        )
+        try:
+            self.model = (
+                Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
+                if trt
+                else self.model
+            )
+        except ModuleNotFoundError:
+            l.info(f"Will fallback on {weights}")
+            pass
 
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)

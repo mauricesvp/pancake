@@ -32,11 +32,8 @@ for package in ["tensorrt"]:
 
 
 class Yolov5TRT(BaseModel):
-    def __init__(
-        self, yolov5, engine_path: str, plugin_path: str, *args, **kwargs
-    ):
+    def __init__(self, yolov5, engine_path: str, plugin_path: str, *args, **kwargs):
         # if trt not available return standard yolov5 model
-        check_requirements(["pycuda", "torchvision"])
         if not trt_installed:
             l.info("TensorRT not installed, using standard Yolov5..")
             raise ModuleNotFoundError
@@ -62,16 +59,23 @@ class Yolov5TRT(BaseModel):
 
         # allocate buffers and warm up context
         self.allocate_buffers()
-        self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
+        self._init_infer([self.batch_size + 1, 3, self.input_h, self.input_w])
 
     def load_engine(self):
         l.info(f"Loading TRT engine from {self._engine_path}..")
         try:
             # Load trt plugin lib
             import ctypes
-
             ctypes.CDLL(self._plugin_path)
+        except Exception as e:
+            l.info(
+                f"Error occured while loading TRT plugin from {self._plugin_path}: \n"
+                f"{e} \n"
+                f"Using standard Yolov5 model.."
+            )
+            return False
 
+        try:
             # Deserialize the engine from file
             with open(self._engine_path, "rb") as f:
                 self.engine = self.runtime.deserialize_cuda_engine(f.read())
@@ -96,7 +100,9 @@ class Yolov5TRT(BaseModel):
         self.bindings = []
 
         for binding in self.engine:
-            l.debug(f"Binding: {binding}, {self.engine.get_binding_shape(binding)}")
+            l.debug(
+                f"Binding name: {binding}, shape: {self.engine.get_binding_shape(binding)}"
+            )
             size = (
                 trt.volume(self.engine.get_binding_shape(binding))
                 * self.engine.max_batch_size
@@ -154,7 +160,7 @@ class Yolov5TRT(BaseModel):
         :return prep_img: preprocessed image
         """
         if type(img) is torch.Tensor:
-            img = img.cpu().numpy()
+            img = img.cpu().numpy(np.float32)
         img = img.astype(np.float32)
         img /= 255.0
         if len(img.shape) < 4:
@@ -165,7 +171,7 @@ class Yolov5TRT(BaseModel):
     def prep_batches(self, imgs: Type[np.array]) -> Type[list]:
         """
         Divide imgs ndarray into batches whose sizes are compatible with the
-        TRT engine input layer.
+        TRT engine input layer. (Optional)
 
         :param imgs:
         """
@@ -173,8 +179,11 @@ class Yolov5TRT(BaseModel):
 
         # fill imgs array in order to be divisible by engine batch size
         if modulo != 0:
-            img_size = imgs.shape[2:]
-            fills = np.zeros((modulo, 3, img_size), dtype=np.uint8)
+            fills = np.zeros(
+                (self.batch_size - modulo, 3, imgs.shape[2], imgs.shape[3]),
+                dtype=np.float32,
+            )
+            imgs = np.concatenate((imgs, fills))
 
         return np.vsplit(imgs, imgs.shape[0] / self.batch_size), modulo
 
@@ -187,16 +196,15 @@ class Yolov5TRT(BaseModel):
                               expanded dim (,4), half precision (fp16))
         """
         # prepare imgs for inference
-        #t1 = time.time()
+        # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
-        #l.debug(f"prep_image_infer: {time.time()-t1:.5f}")
+        # l.debug(f"prep_image_infer: {time.time()-t1:.5f}")
 
         # prepare batches according to engine batch size
         # e.g. input [7, 3, 640, 640], engine bs = 4
         # prep_batches(input) -> [[4, 3, 640, 640], [4, 3, 640, 640]]
         # (filled with one zero entry of [1, 3, 640, 640])
         img_batches, fills = self.prep_batches(imgs)
-        
 
         # infer on batches
         # t1 = time.time()
@@ -261,7 +269,6 @@ class Yolov5TRT(BaseModel):
         # end = time.time()
         # l.debug(f"Inf (pure) time: {end-start:.4f}")
 
-    
         # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
 

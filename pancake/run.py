@@ -70,12 +70,15 @@ def main(cfg_path: str = None, n: int = 0):
         RESULT_PROC.process(detections, tracks, frame)
 
         if n and iteration >= n:
-            return
+            break
 
         t1 = time.time()
-        l.info(f"RUN FPS: {int(1/(t1-t2))}")
+        l.info(f"--> approx. RUN FPS: {int(1/(t1-t2))}")
         t2 = t1
+        
+    RESULT_PROC.kill_worker()
 
+        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(

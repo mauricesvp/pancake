@@ -9,6 +9,7 @@ BACKEND_REGISTRY = Backend.get_subclasses()
 
 def setup_backend(config, detector):
     name = config.DETECTOR.BACKEND
+    params = getattr(config.DETECTOR, name.upper())
 
     ROI = config.DATA.ROI
-    return BACKEND_REGISTRY[name](detector, roi=ROI)
+    return BACKEND_REGISTRY[name](detector, roi=ROI, config=params)
