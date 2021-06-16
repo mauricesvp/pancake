@@ -318,7 +318,12 @@ class ResultProcessor:
 
         try:
             while 1:
-                data = self.queue.get()
+                try:
+                    data = self.queue.get()
+                except:
+                    self.reset_vid_writer()
+                    self.queue.close()
+                    break
 
                 # deserialize data, data: list, [detections, tracks, image, vid cap]
                 # det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
@@ -327,8 +332,6 @@ class ResultProcessor:
                 self.update(det, tracks, im0)
         except:
             self.l.fatal("Exception in subprocess occured!")
-            self.reset_vid_writer()
-            self.queue.close()
             traceback.print_exc()
 
     def kill_worker(self):

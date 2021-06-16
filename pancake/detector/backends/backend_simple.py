@@ -8,6 +8,7 @@ TODOs:
 
 """
 import torch
+import cv2
 
 from .backend import Backend
 

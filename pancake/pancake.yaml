@@ -5,7 +5,7 @@ PANCAKE:
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
     # For now this only changes the level in run.py
-    LEVEL: "DEBUG"
+    LEVEL: "INFO"
 
   DATA:
     #             SUPPORTED SOURCE TYPES
@@ -17,11 +17,11 @@ PANCAKE:
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
     SOURCE: 
-      # '../samples/streams.txt'
+      '../samples/streams.txt'
       # '../samples/output.avi'
-      - "../samples/r45/1l"
-      - "../samples/r45/1c"
-      - "../samples/r45/1r"
+      # - "../samples/r45/1l"
+      # - "../samples/r45/1c"
+      # - "../samples/r45/1r"
     ROI:
       A:
         - 1200  # x0
@@ -43,7 +43,7 @@ PANCAKE:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
 
-    BACKEND: "dei"  # divide et impera
+    BACKEND: "simple"  # divide et impera
     # BACKEND: "simple"
 
     DEI:
@@ -53,16 +53,22 @@ PANCAKE:
       size: "s"
 
     YOLO_CUSTOM:
-      model: "yolov5"
-      weights:  "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"
-      img_size: 640
-      conf_thres: 0.65
-      iou_thres: 0.6
-      classes: null
-      agnostic_nms: True
-
+      model: "yolov5"         # yolo custom class from registry 
+      weights: "yolov5s6.pt"  # weights to be loaded
+      
+      img_size: 640           # applies on standard and trt
+      conf_thres: 0.65        # confidence threshold, applies on standard
+      iou_thres: 0.6          # iou threshold, applies on standard
+      classes: null           # filtered classes, applies on standard
+      agnostic_nms: True      # agnostic nms, applies on standard
+      
+      # TENSORRT
+      trt: True              # use trt engine for inference
+      trt_engine_path: "tensorrtx/yolov5/build_5s6_bs17/yolov5s6.engine"     # path to locally compiled engine
+      trt_plugin_library: "tensorrtx/yolov5/build_5s6_bs17/libmyplugins.so"  # path to locally compiled lib
+      
   TRACKER:
-    NAME: "deepsort"
+    NAME: "centroid"
 
     CENTROID:
       TRACKER_CFG_PATH: "../configs/tracker/centroid.yaml"
@@ -94,9 +100,9 @@ PANCAKE:
     LINE_THICKNESS: 3         # general line thickness
 
     # SAVING
-    MODE: "image"             # "image" or "video"
+    MODE: "video"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
-    VID_FPS: 20               # fps of the merged video, when mode = "video"
+    VID_FPS: 10               # fps of the merged video, when mode = "video"
     EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically
