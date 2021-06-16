@@ -49,8 +49,7 @@ class YOLOCustomDetector(Detector):
                 else self.model
             )
         except ModuleNotFoundError:
-            l.info(f"Will fallback on {weights}")
-            pass
+            l.info(f"Will fallback to weights file: {weights}")
 
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)
