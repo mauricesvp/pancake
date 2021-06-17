@@ -1,17 +1,19 @@
 import numpy as np
 import itertools
-import os
 import pkg_resources
 import time
 from typing import Type
 
 import torch
-import torch.nn as nn
 import torchvision
 
 from pancake.logger import setup_logger
 from pancake.models.base_class import BaseModel
-from pancake.utils.general import export_onnx, check_requirements, non_max_suppression
+from pancake.utils.general import (
+    check_requirements,
+    xywh2xyxy,
+)
+from pancake.utils.function_profiler import profile
 
 check_requirements(["pycuda", "torchvision"])
 import pycuda.driver as cuda
@@ -49,6 +51,7 @@ class Yolov5TRT(BaseModel):
         self._plugin_path = plugin_path
 
         # create a context on this device
+        self.ctx = cuda.Device(0).make_context()
         self.stream = cuda.Stream()
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         self.runtime = trt.Runtime(TRT_LOGGER)
@@ -66,6 +69,7 @@ class Yolov5TRT(BaseModel):
         try:
             # Load trt plugin lib
             import ctypes
+
             ctypes.CDLL(self._plugin_path)
         except Exception as e:
             l.info(
@@ -186,7 +190,7 @@ class Yolov5TRT(BaseModel):
             imgs = np.concatenate((imgs, fills))
 
         batched_imgs = np.vsplit(imgs, imgs.shape[0] / self.batch_size)
-        return [np.ascontiguousarray(img) for img in batched_imgs], modulo
+        return batched_imgs, modulo
 
     def infer(self, imgs: Type[np.array]) -> Type[np.array]:
         """
@@ -315,7 +319,7 @@ class Yolov5TRT(BaseModel):
             return torch.zeros((0, 6))
 
         # transform bbox from [center_x, center_y, w, h] to [x1, y1, x2, y2]
-        boxes = self.xywh2xyxy(origin_h, origin_w, boxes)
+        boxes = xywh2xyxy(boxes)
 
         # do nms (GPU)
         indices = torchvision.ops.nms(
@@ -332,32 +336,3 @@ class Yolov5TRT(BaseModel):
         result = torch.cat((result_boxes, result_scores, result_classid), 1)
 
         return result
-
-    def xywh2xyxy(self, origin_h, origin_w, x):
-        """
-        Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
-
-        param:
-            origin_h:   height of original image
-            origin_w:   width of original image
-            x:          A boxes tensor, each row is a box [center_x, center_y, w, h]
-        return:
-            y:          A boxes tensor, each row is a box [x1, y1, x2, y2]
-        """
-        y = torch.zeros_like(x) if isinstance(x, torch.Tensor) else np.zeros_like(x)
-        r_w = self.input_w / origin_w
-        r_h = self.input_h / origin_h
-        if r_h > r_w:
-            y[:, 0] = x[:, 0] - x[:, 2] / 2
-            y[:, 2] = x[:, 0] + x[:, 2] / 2
-            y[:, 1] = x[:, 1] - x[:, 3] / 2 - (self.input_h - r_w * origin_h) / 2
-            y[:, 3] = x[:, 1] + x[:, 3] / 2 - (self.input_h - r_w * origin_h) / 2
-            y /= r_w
-        else:
-            y[:, 0] = x[:, 0] - x[:, 2] / 2 - (self.input_w - r_h * origin_w) / 2
-            y[:, 2] = x[:, 0] + x[:, 2] / 2 - (self.input_w - r_h * origin_w) / 2
-            y[:, 1] = x[:, 1] - x[:, 3] / 2
-            y[:, 3] = x[:, 1] + x[:, 3] / 2
-            y /= r_h
-
-        return y

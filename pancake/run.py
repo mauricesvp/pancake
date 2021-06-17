@@ -2,11 +2,6 @@ import argparse
 import logging
 import time
 
-import cv2
-import numpy as np
-import torch
-from pathlib import Path
-
 from . import detector as det
 from . import tracker as tr
 from .detector import backends as be
