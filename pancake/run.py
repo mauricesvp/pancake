@@ -70,9 +70,8 @@ def main(cfg_path: str = None, n: int = 0):
         t1 = time.time()
         l.info(f"--> approx. RUN FPS: {int(1/(t1-t2))}")
         t2 = t1
-        
 
-        
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(

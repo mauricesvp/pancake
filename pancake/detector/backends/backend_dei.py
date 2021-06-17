@@ -388,13 +388,9 @@ class DEI(Backend):
             cv2.imwrite("stuff.jpg", img)
 
         for i, x in enumerate(results):
-            results[i] = torch.FloatTensor(list(x))
-        
-        results = (
-            torch.stack(results, dim=0) 
-            if results 
-            else torch.empty((0, 6)) 
-        )
+            results[i] = torch.FloatTensor(list(x[:-1]))
+
+        results = torch.stack(results, dim=0) if results else torch.empty((0, 6))
         return results, img
 
     def merge(self, objs: list, subframes: list = None, ratio=0.8) -> list:

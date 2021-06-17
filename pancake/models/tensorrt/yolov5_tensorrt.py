@@ -80,6 +80,7 @@ class Yolov5TRT(BaseModel):
         # warm up
         img = Yolov5TRT.prep_image_infer(input_tensor)
         import time
+
         for _ in range(10):
             t1 = time.time()
             self.infer(img)

@@ -516,7 +516,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
-        t1, t2 = 0, 0 #
+        t1, t2 = 0, 0  #
         while cap.isOpened():
             # read frame
             success, im = cap.read()
@@ -525,7 +525,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             t1 = time.time()
             time.sleep(1 / self.fps)  # wait time
 
-            self.live_fps[index] = int(1/(t1-t2))
+            self.live_fps[index] = int(1 / (t1 - t2))
             t2 = t1
 
     def __iter__(self):
@@ -1223,10 +1223,10 @@ def letterbox(
             input_data = cv2.cuda_GpuMat(img)
 
             img = cv2.cuda.resize(input_data, new_unpad, interpolation=cv2.INTER_LINEAR)
-            
+
     top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
     left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
-    
+
     if not gpu:
         img = cv2.copyMakeBorder(
             img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
