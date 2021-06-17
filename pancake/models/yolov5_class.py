@@ -8,6 +8,7 @@ from .base_class import BaseModel
 from .experimental import attempt_load
 from pancake.logger import setup_logger
 from pancake.utils.general import check_img_size, non_max_suppression
+from pancake.utils.function_profiler import profile
 
 l = setup_logger(__name__)
 
@@ -22,6 +23,7 @@ class Yolov5Model(BaseModel):
         classes: int,
         agnostic_nms: bool,
         img_size: int,
+        max_det: int,
         *args,
         **kwargs,
     ):
@@ -53,6 +55,7 @@ class Yolov5Model(BaseModel):
         self._iou_thres = iou_thres
         self._classes = classes
         self._agnostic_nms = agnostic_nms
+        self._max_det = max_det
 
         self._required_img_size = check_img_size(img_size, self._stride)
         self._init_infer(self._required_img_size)
@@ -89,7 +92,13 @@ class Yolov5Model(BaseModel):
 
         # Apply NMS
         pred = non_max_suppression(
-            pred, self._conf_thres, self._iou_thres, self._classes, self._agnostic_nms
+            pred,
+            self._conf_thres,
+            self._iou_thres,
+            self._classes,
+            self._agnostic_nms,
+            False,
+            self._max_det,
         )
         pred = [x.cpu() for x in pred]
         return pred, img

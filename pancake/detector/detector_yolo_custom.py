@@ -1,9 +1,7 @@
 """Custom trained detector based on YOLOv5."""
 import math
 import numpy as np
-import time
 
-import cv2
 import torch
 
 from .detector import Detector
@@ -38,9 +36,17 @@ class YOLOCustomDetector(Detector):
         agnostic_nms = True if "True" == config["agnostic_nms"] else False
         img_size = int(config["img_size"])
         device = kwargs.get("device", "CPU")
+        max_det = int(config["max_det"])
 
         self.model = m.MODEL_REGISTRY[model](
-            device, weights_cfg, conf_thres, iou_thres, classes, agnostic_nms, img_size
+            device,
+            weights_cfg,
+            conf_thres,
+            iou_thres,
+            classes,
+            agnostic_nms,
+            img_size,
+            max_det,
         )
 
         try:

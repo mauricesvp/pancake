@@ -1186,6 +1186,7 @@ def letterbox(
     scaleFill=False,
     scaleup=True,
     stride=32,
+    gpu=False,
 ):
     if not new_shape:
         return img, 0, (0, 0)
@@ -1216,12 +1217,25 @@ def letterbox(
     dh /= 2
 
     if shape[::-1] != new_unpad:  # resize
-        img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+        if not gpu:
+            img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+        else:
+            input_data = cv2.cuda_GpuMat(img)
+
+            img = cv2.cuda.resize(input_data, new_unpad, interpolation=cv2.INTER_LINEAR)
+            
     top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
     left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
-    img = cv2.copyMakeBorder(
-        img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
-    )  # add border
+    
+    if not gpu:
+        img = cv2.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+    else:
+        img = cv2.cuda.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+        img = img.download()
     return img, ratio, (dw, dh)
 
 
