@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "GPU"
+  DEVICE: "1"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -43,7 +43,7 @@ PANCAKE:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
 
-    BACKEND: "simple"  # divide et impera
+    BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
 
     DEI:
@@ -54,16 +54,17 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"         # yolo custom class from registry 
-      weights: "yolov5s6.pt"  # weights to be loaded
+      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"  # weights to be loaded
       
       img_size: 640           # applies on standard and trt
-      conf_thres: 0.65        # confidence threshold, applies on standard
+      conf_thres: 0.65        # confidence threshold and trt
       iou_thres: 0.6          # iou threshold, applies on standard
       classes: null           # filtered classes, applies on standard
       agnostic_nms: True      # agnostic nms, applies on standard
+      max_det:  20            # max detections per infered frame 
       
       # TENSORRT
-      trt: True              # use trt engine for inference
+      trt: False              # use trt engine for inference
       trt_engine_path: "tensorrtx/yolov5/build_5s6_bs17/yolov5s6.engine"     # path to locally compiled engine
       trt_plugin_library: "tensorrtx/yolov5/build_5s6_bs17/libmyplugins.so"  # path to locally compiled lib
       
@@ -78,7 +79,7 @@ PANCAKE:
   RESULT_PROCESSOR:
     # GENERAL 
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: True           # save results
+    SAVE_RES: False           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
@@ -89,12 +90,12 @@ PANCAKE:
 
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
-    DRAW_TRACKS: True         # draw track boxes (with respective id)
+    DRAW_TRACKS: False         # draw track boxes (with respective id)
     DRAW_TRACK_HIST: False    # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
 
     # DRAW DETAILS
-    HIDE_LABELS: True        # hide class labels and track ids
+    HIDE_LABELS: False        # hide class labels and track ids
     HIDE_CONF: False          # hide detection confidences
 
     LINE_THICKNESS: 3         # general line thickness
@@ -103,6 +104,6 @@ PANCAKE:
     MODE: "video"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
-    VID_FPS: 10               # fps of the merged video, when mode = "video"
+    VID_FPS: 5               # fps of the merged video, when mode = "video"
     EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically

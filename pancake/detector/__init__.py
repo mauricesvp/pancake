@@ -19,6 +19,8 @@ def setup_detector(config):
     if type(device_cfg) is str and torch.cuda.is_available():
         if device_cfg.upper() == "GPU":
             device = "0"
+            import cv2
+            cv2.cuda.setDevice(int(device))
         elif device_cfg.isdigit():
             device = device_cfg
 
