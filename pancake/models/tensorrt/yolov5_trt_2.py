@@ -51,7 +51,7 @@ class Yolov5TRT(BaseModel):
         self._plugin_path = plugin_path
 
         # create a context on this device
-        self.ctx = cuda.Device(0).make_context()
+        self.ctx = cuda.Device(1).make_context()
         self.stream = cuda.Stream()
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         self.runtime = trt.Runtime(TRT_LOGGER)

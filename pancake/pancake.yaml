@@ -23,21 +23,21 @@ PANCAKE:
       # - "../samples/r45/1c"
       # - "../samples/r45/1r"
     ROI:
-      A:
-        - 1200  # x0
-        - 550  # y0
-        - 3775  # x1
-        - 1300  # y1
-      B:
-        - 0  # x0
-        - 550  # y0
-        - 3840  # x1
-        - 1350  # y1
-      C:
-        - 25  # x0
-        - 600  # y0
-        - 3100  # x1
-        - 1350  # y1
+      # A:
+      #   - 1200  # x0
+      #   - 550  # y0
+      #   - 3775  # x1
+      #   - 1300  # y1
+      # B:
+      #   - 0  # x0
+      #   - 550  # y0
+      #   - 3840  # x1
+      #   - 1350  # y1
+      # C:
+      #   - 25  # x0
+      #   - 600  # y0
+      #   - 3100  # x1
+      #   - 1350  # y1
 
   DETECTOR:
     NAME: "yolo_custom"
@@ -45,6 +45,16 @@ PANCAKE:
 
     BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
+
+    ASYNC_BACKEND:
+      # only available with multiple gpus, 1 gpu per worker
+      USE: True
+      DEVICES:
+        - "1"
+        - "2"
+      NUM_WORKERS: 1
+      IMG_Q_SIZE: 500
+      DET_Q_SIZE: 500
 
     DEI:
       SIMPLE: False
@@ -54,14 +64,14 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"         # yolo custom class from registry 
-      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"  # weights to be loaded
+      weights: "yolov5s.pt"  # weights to be loaded
       
       img_size: 640           # applies on standard and trt
-      conf_thres: 0.65        # confidence threshold and trt
-      iou_thres: 0.6          # iou threshold, applies on standard
+      conf_thres: 0.45        # confidence threshold and trt
+      iou_thres: 0.7          # iou threshold, applies on standard
       classes: null           # filtered classes, applies on standard
       agnostic_nms: True      # agnostic nms, applies on standard
-      max_det:  20            # max detections per infered frame 
+      max_det:  13            # max detections per infered frame 
       
       # TENSORRT
       trt: False              # use trt engine for inference
@@ -90,7 +100,7 @@ PANCAKE:
 
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
-    DRAW_TRACKS: False         # draw track boxes (with respective id)
+    DRAW_TRACKS: True         # draw track boxes (with respective id)
     DRAW_TRACK_HIST: False    # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
 
@@ -101,7 +111,7 @@ PANCAKE:
     LINE_THICKNESS: 3         # general line thickness
 
     # SAVING
-    MODE: "video"             # "image" or "video"
+    MODE: "image"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
     VID_FPS: 5               # fps of the merged video, when mode = "video"

@@ -5,6 +5,7 @@ import time
 from . import detector as det
 from . import tracker as tr
 from .detector import backends as be
+from .detector.backends.async_backend import setup_async_backend
 
 from .config import pancake_config
 from .logger import setup_logger
@@ -45,6 +46,16 @@ def main(cfg_path: str = None, n: int = 0):
     source = config.PANCAKE.DATA.SOURCE
     source_path = fix_path(source)
 
+    # Async backend setup
+    if config.PANCAKE.DETECTOR.ASYNC_BACKEND.USE:
+        try:
+            ASYNC_BE_MANAGER = setup_async_backend(config.PANCAKE, BACKEND)
+            init_async_be = True
+        except Exception as e:
+            l.info(f"{e}")
+            init_async_be = False
+
+    # Load source(s)
     DATA, _ = load_data(source_path)
 
     # Result processor setup
@@ -58,7 +69,15 @@ def main(cfg_path: str = None, n: int = 0):
         l.debug(f"Iteration {iteration}")
         iteration += 1
 
-        detections, frame = BACKEND.detect(im0s)
+        if init_async_be:
+            ASYNC_BE_MANAGER.put_imgs(im0s)
+            if ASYNC_BE_MANAGER.res_q_empty():
+                time.sleep(0.05)
+                continue
+            else:
+                detections, frame = ASYNC_BE_MANAGER.get_dets()
+        else:
+            detections, frame = BACKEND.detect(im0s)
 
         tracks = TRACKER.update(detections, frame)
 
