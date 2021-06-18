@@ -36,3 +36,4 @@ pandas
 thop  # FLOPS computation
 pycocotools>=2.0  # COCO mAP
 imutils>=0.5.4
+numba
