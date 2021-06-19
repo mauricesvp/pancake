@@ -20,6 +20,7 @@ from shapely.geometry import Polygon
 from .backend import Backend
 from pancake.logger import setup_logger
 
+from numba import njit
 l = setup_logger(__name__)
 
 
@@ -178,7 +179,7 @@ def rotate_bound(img: np.ndarray, angle: int):
     res = cv2.cuda.warpAffine(img_cuda, M, (nW, nH))
     return res.download()
 
-
+@njit(parallel=True)
 def res2int(res):
     """Convert detection results to integer values.
     Note that confidence is a float value however."""

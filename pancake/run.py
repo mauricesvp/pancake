@@ -9,6 +9,7 @@ from .detector import backends as be
 from .config import pancake_config
 from .logger import setup_logger
 from .utils.common import fix_path, load_data, setup_result_processor
+from .utils.general import check_git_status
 
 l = setup_logger(__name__)
 
@@ -29,6 +30,8 @@ def main(cfg_path: str = None, n: int = 0):
     :param n (int): Maximum number of iterations (0 means infinite)
     """
     l.debug("Starting pancake.")
+    
+    check_git_status()
 
     config = pancake_config(cfg_path)
 
