@@ -64,12 +64,12 @@ def main(cfg_path: str = None, n: int = 0):
 
         RESULT_PROC.process(detections, tracks, frame)
 
+        t1 = time.time()
+        l.info(f"--> approx. RUN FPS: {1/(t1-t2):.2f}")
+        t2 = t1
+
         if n and iteration >= n:
             break
-
-        t1 = time.time()
-        l.info(f"--> approx. RUN FPS: {int(1/(t1-t2))}")
-        t2 = t1
 
 
 if __name__ == "__main__":
