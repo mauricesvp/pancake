@@ -9,6 +9,7 @@ TODOs:
 """
 import math
 import time
+from functools import lru_cache
 
 import cv2
 import imutils
@@ -20,7 +21,6 @@ from shapely.geometry import Polygon
 from .backend import Backend
 from pancake.logger import setup_logger
 
-from numba import njit
 l = setup_logger(__name__)
 
 
@@ -179,38 +179,11 @@ def rotate_bound(img: np.ndarray, angle: int):
     res = cv2.cuda.warpAffine(img_cuda, M, (nW, nH))
     return res.download()
 
-@njit(parallel=True)
-def res2int(res):
-    """Convert detection results to integer values.
-    Note that confidence is a float value however."""
-    objs = []
-    for obj in res:
-        x0, y0, x1, y1, conf, classid = obj
-        x0, y0, x1, y1, conf, classid = (
-            int(x0),
-            int(y0),
-            int(x1),
-            int(y1),
-            float(conf),
-            int(classid),
-        )
-        objs.append((x0, y0, x1, y1, conf, classid))
-    return objs
-
 
 # Constants
 
 
-def f_r(x):
-    """Represents centre strip (right side) of Straße des 17. Juni."""
-    return int((-1682 / 2335 * x) + (8211072 / 2335))
-
-
-def f_l(x):
-    """Represents centre strip (left side) of Straße des 17. Juni."""
-    return int((310 / 441 * x) + (171316 / 441))
-
-
+@lru_cache(maxsize=None)
 def f(x: int) -> (int, int):
     """Returns y value, angle of rotation, width for x along centre strip."""
     if x < 3840:
@@ -231,27 +204,8 @@ def f(x: int) -> (int, int):
 CONST = {
     "START_X": 1280,
     "END_X": 10515,
-    "STEPS": 21,
+    "STEPS": 21,  # Deprecated
     "F": f,
-}
-
-
-L_CONST = {
-    "ANGLE": 38,
-    "SIDE": 448 // 2,
-    "START_X": 1925,
-    "END_X": 4000,
-    "STEPS": 6,
-    "F": f_l,
-}
-
-R_CONST = {
-    "ANGLE": 360 - 38,
-    "SIDE": 384 // 2,
-    "START_X": 2900,
-    "END_X": 600,
-    "STEPS": 7,
-    "F": f_r,
 }
 
 
@@ -262,6 +216,7 @@ class DEI(Backend):
         roi: list = None,
         new: bool = True,
         simple: bool = False,
+        cache: bool = True,
         config: dict = {},
         *args,
         **kwargs,
@@ -292,6 +247,20 @@ class DEI(Backend):
 
         if config:
             self.simple = config["SIMPLE"]
+
+        self.cache = cache
+        if cache:
+            xyas = []
+            x = CONST["START_X"]
+            y, angle, side = f(x)
+            xyas.append([x, y, angle, side])
+            while x < (CONST["END_X"] + side):
+                if self.simple:
+                    side = int(1.7 * side)
+                x = x + int(1.5 * side)
+                y, angle, side = f(x)
+                xyas.append([x, y, angle, side])
+            self.xyas = xyas
 
     def rotate(self):
         pass
@@ -336,20 +305,29 @@ class DEI(Backend):
         h, w, _ = source[1].shape
         crop = round(0.007 * w)  # Width to remove left and right
         source[1] = source[1][0:h, crop : w - crop]
+
         img = hconcat(source)
 
-        x = CONST["START_X"]
-        y, angle, side = f(x)
-        subframes = []
-        while x < (CONST["END_X"] + side):
-            if self.simple:
-                side = int(1.7 * side)
-            tlx, tly, brx, bry = x - side, y - side, x + side, y + side
-            subframe = img[tly:bry, tlx:brx]
-            rot = self.rotate_bound(subframe, angle)
-            subframes.append((rot, tlx, tly, brx, bry, angle, side))
-            x = x + int(1.5 * side)
+        if self.cache:
+            subframes = []
+            for x, y, angle, side in self.xyas:
+                tlx, tly, brx, bry = x - side, y - side, x + side, y + side
+                subframe = img[tly:bry, tlx:brx]
+                rot = self.rotate_bound(subframe, angle)
+                subframes.append((rot, tlx, tly, brx, bry, angle, side))
+        else:
+            x = CONST["START_X"]
             y, angle, side = f(x)
+            subframes = []
+            while x < (CONST["END_X"] + side):
+                if self.simple:
+                    side = int(1.7 * side)
+                tlx, tly, brx, bry = x - side, y - side, x + side, y + side
+                subframe = img[tly:bry, tlx:brx]
+                rot = self.rotate_bound(subframe, angle)
+                subframes.append((rot, tlx, tly, brx, bry, angle, side))
+                x = x + int(1.5 * side)
+                y, angle, side = f(x)
 
         imgs = [x[0] for x in subframes]
 
