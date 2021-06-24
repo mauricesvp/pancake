@@ -214,7 +214,6 @@ class DEI(Backend):
         self,
         detector,
         roi: list = None,
-        new: bool = True,
         simple: bool = False,
         cache: bool = True,
         config: dict = {},
@@ -233,8 +232,6 @@ class DEI(Backend):
 
         if roi:
             self.roi = roi
-        self.detect = self.detect_new if new else self.detect_old
-        l.debug(f"Using new dei: {new}")
 
         # Check if we can use cv2.cuda
         if cv2.cuda.getCudaEnabledDeviceCount() > 0:
@@ -257,9 +254,9 @@ class DEI(Backend):
             while x < (CONST["END_X"] + side):
                 if self.simple:
                     side = int(1.7 * side)
+                xyas.append([x, y, angle, side])
                 x = x + int(1.5 * side)
                 y, angle, side = f(x)
-                xyas.append([x, y, angle, side])
             self.xyas = xyas
 
     def rotate(self):
@@ -268,10 +265,7 @@ class DEI(Backend):
     def rotate_bound(self):
         pass
 
-    def detect(self):
-        pass
-
-    def detect_new(
+    def detect(
         self,
         source,
     ) -> (list, np.ndarray):
@@ -312,6 +306,9 @@ class DEI(Backend):
             subframes = []
             for x, y, angle, side in self.xyas:
                 tlx, tly, brx, bry = x - side, y - side, x + side, y + side
+                # TODO: ROI
+                # tly = max(500, tly)
+                # bry = min(1350, bry)
                 subframe = img[tly:bry, tlx:brx]
                 rot = self.rotate_bound(subframe, angle)
                 subframes.append((rot, tlx, tly, brx, bry, angle, side))
@@ -362,12 +359,15 @@ class DEI(Backend):
 
         if False:  # Debugging
             for obj in results:
-                x0, y0, x1, y1, conf, classid = obj
+                x0, y0, x1, y1, *_ = obj
+                cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
+            for subf in subframes:
+                x0, y0, x1, y1 = subf[1:5]
                 cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
             cv2.imwrite("stuff.jpg", img)
 
         for i, x in enumerate(results):
-            results[i] = torch.FloatTensor(list(x[:-1]))
+            results[i] = torch.FloatTensor(list(x[:6]))
 
         results = torch.stack(results, dim=0) if results else torch.empty((0, 6))
         return results, img

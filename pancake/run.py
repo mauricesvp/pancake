@@ -30,7 +30,7 @@ def main(cfg_path: str = None, n: int = 0):
     :param n (int): Maximum number of iterations (0 means infinite)
     """
     l.debug("Starting pancake.")
-    
+
     check_git_status()
 
     config = pancake_config(cfg_path)

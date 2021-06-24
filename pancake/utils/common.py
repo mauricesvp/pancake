@@ -177,7 +177,6 @@ class ResultProcessor:
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
-                    self.init = True
 
                 def update(self, tracks):
                     if len(self.tracks) > self._max_hist_len:
@@ -185,16 +184,13 @@ class ResultProcessor:
                         self.ids = {}
 
                     self.tracks.append(tracks)
+                    curr_ids = []
                     for *_, x, y, id in tracks:
-                        if self.init:
+                        if id not in self.ids.keys():
                             self.ids.update({id: [(x, y)]})
-                        elif id not in self.ids:
-                            continue
                         else:
                             self.ids[id].append((x, y))
-
-                    if len(tracks) > 0:
-                        self.init = False
+                        curr_ids.append(id)
 
             self.track_history = TrackHistory(max_hist_len=track_hist_size)
 
@@ -402,8 +398,8 @@ class ResultProcessor:
 
         for id in self.track_history.ids:
             points = self.track_history.ids[id]
-            x0, y0 = points.pop(0)
-            for x, y in points:
+            x0, y0 = points[0]
+            for x, y in points[1:]:
                 cv2.line(im0, (x0, y0), (x, y), colors(id, True), self._line_thickness)
                 x0, y0 = x, y
         return im0
