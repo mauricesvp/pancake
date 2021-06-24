@@ -15,10 +15,6 @@ from pancake.utils.general import (
 )
 from pancake.utils.function_profiler import profile
 
-check_requirements(["pycuda", "torchvision"])
-import pycuda.driver as cuda
-import pycuda.autoinit
-
 l = setup_logger(__name__)
 
 for package in ["tensorrt"]:
@@ -28,7 +24,11 @@ for package in ["tensorrt"]:
         import tensorrt as trt
 
         trt_installed = True
-    except pkg_resources.DistributionNotFound:
+
+        check_requirements(["pycuda", "torchvision"])
+        import pycuda.driver as cuda
+        import pycuda.autoinit
+    except:
         l.info("\u2620 " + "{} is NOT installed".format(package))
         trt_installed = False
 
