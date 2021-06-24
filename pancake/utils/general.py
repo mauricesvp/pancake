@@ -103,7 +103,7 @@ def check_online():
 
 def check_git_status():
     # Recommend 'git pull' if code is out of date
-    print(colorstr("github: "), end="")
+    l.debug(colorstr("github: "))
     try:
         assert Path(".git").exists(), "skipping check (not a git repository)"
         assert not is_docker(), "skipping check (Docker image)"
@@ -130,9 +130,9 @@ def check_git_status():
             )
         else:
             s = f"up to date with {url} ✅"
-        print(emojis(s))  # emoji-safe
+        l.debug(emojis(s))  # emoji-safe
     except Exception as e:
-        print(e)
+        l.debug(e)
 
 
 def check_requirements(requirements="requirements.txt", exclude=()):
