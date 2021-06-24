@@ -250,13 +250,15 @@ class DEI(Backend):
             xyas = []
             x = CONST["START_X"]
             y, angle, side = f(x)
+            if self.simple:
+                side = int(1.7 * side)
             xyas.append([x, y, angle, side])
             while x < (CONST["END_X"] + side):
+                x = x + int(1.5 * side)
+                y, angle, side = f(x)
                 if self.simple:
                     side = int(1.7 * side)
                 xyas.append([x, y, angle, side])
-                x = x + int(1.5 * side)
-                y, angle, side = f(x)
             self.xyas = xyas
 
     def rotate(self):
