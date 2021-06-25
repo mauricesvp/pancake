@@ -103,29 +103,29 @@ class ResultProcessor:
         **kwargs,
     ):
         """
-        :param show_res (bool): if resulting images should be visualized live
-        :param save_res (bool): if resulting images should be saved
-        :param draw_det (bool): if detection bbox' should be visualized
-        :param draw_tracks (bool): if tracked object bbox' should be visualized
-        :param draw_track_hist (bool): if track histories should be saved and visualized
-        :param track_hist_size (int): maximum size of the track hist container
-        :param labels (list): list of model specific class labels
-        :param hide_labels (bool): if labels should be visualized
-        :param hide_conf (bool): if confidences should be visualized
-        :param line_thickness (int): line thickness
-        :param save_mode (str): "image" or "video"
-        :param path (str): parent target directory
-        :param subdir (str): target subdirectory
-        :param exist_ok (str): save in results in already existing dir
-                               do not increment automatically
-        :param async_processing (str): (non-blocking) asynchronous result processing in a
-                                       seperate slave process
-        :param async_queue_size (int): queue size for results sent by .process() to subprocess
+        :param show_res (bool):         if resulting images should be visualized live
+        :param save_res (bool):         if resulting images should be saved
+        :param draw_det (bool):         if detection bbox' should be visualized
+        :param draw_tracks (bool):      if tracked object bbox' should be visualized
+        :param draw_track_hist (bool):  if track histories should be saved and visualized
+        :param track_hist_size (int):   maximum size of the track hist container
+        :param labels (list):           list of model specific class labels
+        :param hide_labels (bool):      if labels should be visualized
+        :param hide_conf (bool):        if confidences should be visualized
+        :param line_thickness (int):    line thickness
+        :param save_mode (str):         "image" or "video"
+        :param path (str):              parent target directory
+        :param subdir (str):            target subdirectory
+        :param exist_ok (str):          save in results in already existing dir
+                                        do not increment automatically
+        :param async_processing (bool): (non-blocking) asynchronous result processing in a
+                                        seperate slave process
+        :param async_queue_size (int):  queue size for results sent by .process() to subprocess
         :param async_put_blocked (bool): blocks .process() for timeout sec until free slot
                                          available, if False skip the current frame without
                                          blocking
         :param async_put_timeout (float): raise exception after timeout s waiting for free slot
-        :param debug (bool): manual skipping when visualizing results
+        :param debug (bool):            manual skipping when visualizing results
         """
         from pancake.run import setup_logger
 
@@ -164,7 +164,7 @@ class ResultProcessor:
             self.kill_worker = nop
             return
 
-        # INITIALIZE TRACK HISTORY
+        # INIT TRACK HISTORY
         if self._show_track_hist:
 
             class TrackHistory:
@@ -177,7 +177,7 @@ class ResultProcessor:
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
-
+            
                 def update(self, tracks):
                     if len(self.tracks) > self._max_hist_len:
                         self.tracks = []
@@ -211,7 +211,7 @@ class ResultProcessor:
                 kwargs["vid_fps"] if "vid_fps" in kwargs.keys() else None,
             )
 
-        # INIT ASYNC RES PROCESSING
+        # INIT ASYNC RESULT PROCESSING
         if self._async:
             import multiprocessing
 
@@ -249,7 +249,7 @@ class ResultProcessor:
 
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
-        :param im0 (array): image in BGR (,3) [3, px, px]
+        :param im0 (array): image in BGR (,3) [3, w, h]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
         if self._async:
@@ -286,7 +286,7 @@ class ResultProcessor:
 
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
-        :param im0 (array): image in BGR (,3) [3, px, px]
+        :param im0 (array): image in BGR (,3) [3, w, h]
         :param vid_cap (cv2.VideoCapture): cv2.VideoCapture object
         """
         if self._show_det:
@@ -307,7 +307,7 @@ class ResultProcessor:
 
     def async_update_worker(self):
         """
-        Main loop of the worker process
+        Main loop of the slave process
         """
         assert self.queue, "Queue is not initialized!"
         import traceback
@@ -344,7 +344,7 @@ class ResultProcessor:
         detection matix on the provided image.
 
         :param det (tensor): detections on (,6) tensor [xyxy, conf, cls]
-        :param im0 (ndarray): image in BGR [3, px, px]
+        :param im0 (ndarray): image in BGR [3, w, h]
         """
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
@@ -370,7 +370,7 @@ class ResultProcessor:
 
     def draw_track_boxes(self, tracks: Type[np.array], im0: Type[np.array]):
         """
-        Draws bounding boxes, tracking ids according to a tracks matix on the provided image.
+        Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.
 
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]

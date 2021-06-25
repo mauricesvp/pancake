@@ -1,11 +1,16 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "1"
+  DEVICE: "0"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
     # For now this only changes the level in run.py
     LEVEL: "INFO"
+
+  DATABASE: 
+    STORE:  False
+    SCHEME_PATH: "../configs/database/extended_db.yaml"
+    FILENAME: "test_db.db"
 
   DATA:
     #             SUPPORTED SOURCE TYPES
@@ -16,34 +21,35 @@ PANCAKE:
     #    '../path/to/dir2',   - directories with videos
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
-    SOURCE: 
-      '../samples/streams.txt'
+    SOURCE: "../samples/r45/1c"
+      # "../samples/r45/1c/1621796022.9767.jpg"
+      # '../samples/streams.txt'
       # '../samples/output.avi'
-      # - "../samples/r45/1l"
-      # - "../samples/r45/1c"
-      # - "../samples/r45/1r"
+      #- "../samples/r45/1l"
+      #- "../samples/r45/1c"
+      #- "../samples/r45/1r"
     ROI:
-      A:
-        - 1200  # x0
-        - 550  # y0
-        - 3775  # x1
-        - 1300  # y1
-      B:
-        - 0  # x0
-        - 550  # y0
-        - 3840  # x1
-        - 1350  # y1
-      C:
-        - 25  # x0
-        - 600  # y0
-        - 3100  # x1
-        - 1350  # y1
+      # A:
+      #   - 1200  # x0
+      #   - 550  # y0
+      #   - 3775  # x1
+      #   - 1300  # y1
+      # B:
+      #   - 0  # x0
+      #   - 550  # y0
+      #   - 3840  # x1
+      #   - 1350  # y1
+      # C:
+      #   - 25  # x0
+      #   - 600  # y0
+      #   - 3100  # x1
+      #   - 1350  # y1
 
   DETECTOR:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
 
-    BACKEND: "dei"  # divide et impera
+    BACKEND: "simple"  # divide et impera
     # BACKEND: "simple"
 
     DEI:
@@ -80,7 +86,7 @@ PANCAKE:
     # GENERAL 
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
     SAVE_RES: False           # save results
-    ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
+    ASYNC_PROC: False         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
     # ASYNC QUEUE
@@ -90,8 +96,8 @@ PANCAKE:
 
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
-    DRAW_TRACKS: False         # draw track boxes (with respective id)
-    DRAW_TRACK_HIST: False    # draw corresponding tracks
+    DRAW_TRACKS: True         # draw track boxes (with respective id)
+    DRAW_TRACK_HIST: True    # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
 
     # DRAW DETAILS

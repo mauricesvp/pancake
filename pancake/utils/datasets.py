@@ -15,6 +15,9 @@ import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
+import re
+import reprlib
+
 from PIL import Image, ExifTags
 from torch.utils.data import Dataset
 from tqdm import tqdm
@@ -205,6 +208,7 @@ class LoadImages:  # for inference
             f"No images or videos found in {p}. "
             f"Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}"
         )
+        self.timestamp = None
 
     def __iter__(self):
         self.count = 0
@@ -239,10 +243,11 @@ class LoadImages:  # for inference
             # Read image
             self.count += 1
             img0 = cv2.imread(path)  # BGR
+            self.timestamp = timestamp_from_path(path)
             assert img0 is not None, "Image Not Found " + path
-            l.debug(f"image {self.count}/{self.nf} {path}: ", end="")
+            l.debug(f"image {self.count}/{self.nf} {path}: ")
 
-        return path, img0, self.cap
+        return path, img0, self.cap, self.timestamp
 
     def new_video(self, path):
         self.frame = 0
@@ -254,6 +259,13 @@ class LoadImages:  # for inference
 
 
 class LoadImageDirs:
+    #TODO: The timestamps of each perspective extracted from server with 
+    #      the CAM grabber tool slightly differ, as they got retrieved 
+    #      seperately from each other.
+    #      !! Either mask the perspectives to a uniform timestamp or 
+    #      alter the timestamps afterwards !!
+    #      Currently 'None' is returned as timestamp.
+
     def __init__(self, dirs, queue_size: int = 64, read_fps: float = 15):
         n = len(dirs)
         self.num_dirs = n
@@ -352,7 +364,7 @@ class LoadImageDirs:
 
         self.count += 1
 
-        return None, img0, self.cap[0]
+        return None, img0, self.cap[0], None
 
     def start_threads(self, index: int):
         # start a thread to read frames from the source
@@ -494,6 +506,8 @@ class LoadStreams:  # multiple IP or RTSP cameras
         self.imgs = [None] * self.n
         self.sources = [clean_str(x) for x in sources]  # clean source names for later
         self.live_fps = [None] * self.n
+        self.timestamp = None
+
         for i, s in enumerate(sources):  # index, source
             # Start thread to read frames from video stream
             print(f"{i + 1}/{self.n}: {s}... ", end="")
@@ -513,6 +527,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             thread = Thread(target=self.update, args=([i, cap]), daemon=True)
             print(f" success ({w}x{h} at {self.fps:.2f} FPS).")
             thread.start()
+        
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
@@ -521,6 +536,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
             # read frame
             success, im = cap.read()
             self.imgs[index] = im if success else self.imgs[index] * 0
+            self.timestamp = time.time()
 
             t1 = time.time()
             time.sleep(1 / self.fps)  # wait time
@@ -547,7 +563,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
                     s += ", "
             l.info(f"{s}")
 
-        return self.sources, img0, None
+        return self.sources, img0, None, self.timestamp
 
     def __len__(self):
         return 0  # 1E12 frames = 32 streams at 30 FPS for 30 years
@@ -1518,3 +1534,15 @@ def autosplit(path="../coco128", weights=(0.9, 0.1, 0.0), annotated_only=False):
         ):  # check label
             with open(path / txt[i], "a") as f:
                 f.write(str(img) + "\n")  # add image to txt file
+
+numeric_const_pattern = '[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
+rx = re.compile(numeric_const_pattern, re.VERBOSE)
+
+def timestamp_from_path(path: str):
+    try:
+        timestamp = rx.findall(path)[-1]
+        return float(timestamp)
+    except:
+        return None
+
+

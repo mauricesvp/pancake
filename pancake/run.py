@@ -7,9 +7,10 @@ from . import tracker as tr
 from .detector import backends as be
 
 from .config import pancake_config
+from .db import setup_database
 from .logger import setup_logger
 from .utils.common import fix_path, load_data, setup_result_processor
-from .utils.general import check_git_status
+
 
 l = setup_logger(__name__)
 
@@ -53,9 +54,19 @@ def main(cfg_path: str = None, n: int = 0):
         config.PANCAKE.RESULT_PROCESSOR, DETECTOR.model.names
     )
 
+    # Database setup
+    try:
+        DATABASE = setup_database(
+            cfg=config.PANCAKE.DATABASE, 
+            detector=DETECTOR, 
+            backend=BACKEND, 
+            tracker=TRACKER)
+    except ConnectionError:
+        DATABASE = None
+
     t1, t2 = 0, 0
     iteration = 0
-    for path, im0s, vid_cap in DATA:
+    for path, im0s, vid_cap, timestamp in DATA:
         l.debug(f"Iteration {iteration}")
         iteration += 1
 
@@ -68,6 +79,9 @@ def main(cfg_path: str = None, n: int = 0):
         t1 = time.time()
         l.info(f"--> approx. RUN FPS: {1/(t1-t2):.2f}")
         t2 = t1
+
+        if DATABASE:
+            DATABASE.insert_tracks(tracks, timestamp)
 
         if n and iteration >= n:
             break

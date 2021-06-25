@@ -1,0 +1,69 @@
+PANCAKE_DB:
+
+  RELATIONS:
+    TRACKS: "
+            CREATE TABLE IF NOT EXISTS tracks (
+                TRACK_ID integer    NOT NULL,
+                TIMESTAMP integer   NOT NULL,
+                C_X integer         NOT NULL,
+                C_Y integer         NOT NULL,
+                BB_X1 integer,
+                BB_Y1 integer,
+                BB_X2 integer,
+                BB_Y2 integer,
+                CLASS_ID integer,
+                PRIMARY KEY (TRACK_ID, TIMESTAMP)
+            );
+            "
+    BACKEND:  "
+            CREATE TABLE IF NOT EXISTS backend (
+                ID integer          NOT NULL,
+                BACKEND string      NOT NULL,
+                PRIMARY KEY (ID, BACKEND)
+            );
+            "
+    DETECTOR: "
+              CREATE TABLE IF NOT EXISTS detector (
+                  ID integer          NOT NULL,
+                  DETECTOR string     NOT NULL,
+                  WEIGHT_FILE string  NOT NULL,
+                  PRIMARY KEY (ID, DETECTOR)
+              );
+              "
+    TRACKER:  "
+              CREATE TABLE IF NOT EXISTS tracker (
+                  ID integer          NOT NULL,
+                  TRACKER string      NOT NULL,
+                  PRIMARY KEY (ID, TRACKER)
+              );
+              "
+    CLASSES:  "
+              CREATE TABLE IF NOT EXISTS classes (
+                  ID integer          NOT NULL,
+                  CLASS_LABEL string  NOT NULL,
+                  PRIMARY KEY (ID, CLASS_LABEL)
+              );
+              "
+
+  INSERTS:
+  
+    TRACKS: "
+            INSERT INTO tracks (TRACK_ID, TIMESTAMP, C_X, C_Y, BB_X1, BB_Y1, BB_X2, BB_Y2 , CLASS_ID)
+            VALUES (?,?,?,?,?,?,?,?,?)
+            "
+    BACKEND: "
+            INSERT INTO backend (ID, BACKEND)
+            VALUES (?,?)
+            "
+    DETECTOR: " 
+              INSERT INTO detector (ID, DETECTOR, WEIGHT_FILE)
+              VALUES (?,?,?)
+              "
+    TRACKER:  "
+              INSERT INTO tracker (ID, TRACKER)
+              VALUES (?,?)
+              "
+    CLASSES:  "
+              INSERT INTO classes (ID, CLASS_LABEL)
+              VALUES (?,?)
+              "

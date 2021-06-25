@@ -22,8 +22,8 @@ class YOLOCustomDetector(Detector):
     """Very simple detector using pretrained yolov5."""
 
     def __init__(self, config, *args, **kwargs) -> None:
-        weights = config["weights"]
-        weights_cfg = fix_path(weights) if type(weights) is str else weights
+        self.weights = config["weights"]
+        weights_cfg = fix_path(self.weights) if type(self.weights) is str else self.weights
         model = config["model"]
 
         trt = config["trt"]
