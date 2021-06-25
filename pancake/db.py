@@ -152,10 +152,10 @@ class DataBase:
 
         self.con.commit()
 
-    def insert_tracks(self, tracks: np.ndarray, timestamp: int):
+    def insert_tracks(self, tracks: np.ndarray, timestamp: float):
         """
         :param tracks (np.ndarray): [tracks][x1, y1, x2, y2, centre x, centre y, id, cls]
-        :param timestamp (int):     time.time() timestamp
+        :param timestamp (float):     time.time() timestamp
         """
         cursor = self.con.cursor()
 
