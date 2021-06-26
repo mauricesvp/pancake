@@ -57,10 +57,11 @@ def main(cfg_path: str = None, n: int = 0):
     # Database setup
     try:
         DATABASE = setup_database(
-            cfg=config.PANCAKE.DATABASE, 
-            detector=DETECTOR, 
-            backend=BACKEND, 
-            tracker=TRACKER)
+            cfg=config.PANCAKE.DATABASE,
+            detector=DETECTOR,
+            backend=BACKEND,
+            tracker=TRACKER,
+        )
     except ConnectionError:
         DATABASE = None
 

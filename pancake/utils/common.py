@@ -177,7 +177,7 @@ class ResultProcessor:
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
-            
+
                 def update(self, tracks):
                     if len(self.tracks) > self._max_hist_len:
                         self.tracks = []
