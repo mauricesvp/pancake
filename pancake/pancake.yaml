@@ -7,8 +7,8 @@ PANCAKE:
     # For now this only changes the level in run.py
     LEVEL: "INFO"
 
-  DATABASE: 
-    STORE:  False
+  DATABASE:
+    STORE:  True
     SCHEME_PATH: "../configs/database/extended_db.yaml"
     FILENAME: "test_db.db"
 
@@ -21,13 +21,12 @@ PANCAKE:
     #    '../path/to/dir2',   - directories with videos
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
-    SOURCE: "../samples/r45/1c"
-      # "../samples/r45/1c/1621796022.9767.jpg"
+    SOURCE: 
       # '../samples/streams.txt'
       # '../samples/output.avi'
-      #- "../samples/r45/1l"
-      #- "../samples/r45/1c"
-      #- "../samples/r45/1r"
+      - "../samples/r45/1l"
+      - "../samples/r45/1c"
+      - "../samples/r45/1r"
     ROI:
       # A:
       #   - 1200  # x0
@@ -53,7 +52,7 @@ PANCAKE:
     # BACKEND: "simple"
 
     DEI:
-      SIMPLE: False
+      SIMPLE: True
 
     YOLO_SIMPLE:
       size: "s"
@@ -61,19 +60,19 @@ PANCAKE:
     YOLO_CUSTOM:
       model: "yolov5"         # yolo custom class from registry 
       weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"  # weights to be loaded
-      
+
       img_size: 640           # applies on standard and trt
       conf_thres: 0.65        # confidence threshold and trt
       iou_thres: 0.6          # iou threshold, applies on standard
       classes: null           # filtered classes, applies on standard
       agnostic_nms: True      # agnostic nms, applies on standard
       max_det:  20            # max detections per infered frame 
-      
+
       # TENSORRT
       trt: False              # use trt engine for inference
       trt_engine_path: "tensorrtx/yolov5/build_5s6_bs17/yolov5s6.engine"     # path to locally compiled engine
       trt_plugin_library: "tensorrtx/yolov5/build_5s6_bs17/libmyplugins.so"  # path to locally compiled lib
-      
+
   TRACKER:
     NAME: "centroid"
 
@@ -83,9 +82,9 @@ PANCAKE:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
   RESULT_PROCESSOR:
-    # GENERAL 
+    # GENERAL
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: False           # save results
+    SAVE_RES: True           # save results
     ASYNC_PROC: False         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
@@ -95,7 +94,7 @@ PANCAKE:
     PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
     # DRAW OPTIONS
-    DRAW_DET: True            # draw detection boxes
+    DRAW_DET: False            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
     DRAW_TRACK_HIST: True    # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
