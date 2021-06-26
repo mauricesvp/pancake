@@ -22,7 +22,9 @@ class YOLOCustomDetector(Detector):
 
     def __init__(self, config, *args, **kwargs) -> None:
         self.weights = config["weights"]
-        weights_cfg = fix_path(self.weights) if type(self.weights) is str else self.weights
+        weights_cfg = (
+            fix_path(self.weights) if type(self.weights) is str else self.weights
+        )
         model = config["model"]
 
         trt = config["trt"]
@@ -95,11 +97,9 @@ class YOLOCustomDetector(Detector):
 
         # Padded resize
         pr_imgs = [
-            # letterbox(x, self.model._required_img_size, stride=self.model._stride)[0]
-            letterbox(x, self.model._required_img_size, stride=32)[0]
+            letterbox(x, self.model._required_img_size, stride=self.model._stride)[0]
             for x in imgs
         ]
-        print([x.shape for x in pr_imgs])
         # Stack
         pr_imgs = np.stack(pr_imgs, 0)
         # Convert
