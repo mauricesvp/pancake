@@ -372,7 +372,7 @@ class ResultProcessor:
         """
         Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.
 
-        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
+        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id, cls]
         :param im0 (array): image in BGR [3, px, px]
         """
         for *xyxy, _, _, id, _ in tracks:
@@ -390,7 +390,7 @@ class ResultProcessor:
         """
         Draws a line for each tracked ID according to the stored history.
 
-        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
+        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id, cls]
         :param im0 (array): image in BGR [3, px, px]
         """
         assert self.track_history, "No track history object initialized!"
