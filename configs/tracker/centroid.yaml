@@ -1,15 +1,30 @@
 CENTROID:
-  IS_VIDEO_INPUT: False
+  # Limit for the Track IDs
+  MAX_ID: 100000
 
-  DISTANCE_TOLERANCE: 140
-  VERTICAL_TOLERANCE: 20
+  # Max time an object will be premoved on disappearance
+  MAX_DISAPPEARED: 10
 
-  MAX_DISAPPEARED: 50
+  # Maximum distances to allow for a car tracking match
+  DISTANCE_TOLERANCE: 500
+  VERTICAL_TOLERANCE: 100
 
-  IGNORE_REGISTRATION_ZONES: False
-
-  LANE_SEPARATOR: 1000
-
-  DEREGISTRATION_ZONE: 750
-
+  # total image width
   FRAME_WIDTH: 11520
+
+  # transition region around the image edges
+  TRANSITION_WIDTH: 200
+
+  # y-coordinates of the separator line from left to right 
+  LANE_SEPARATOR_LL: 1117
+  LANE_SEPARATOR_LC: 925
+  LANE_SEPARATOR_CR: 934
+  LANE_SEPARATOR_RR: 1151
+
+  # deregistration zone x-boundaries
+  DEREG_ZONE_L: 1600
+  DEREG_ZONE_R: 10500
+
+  # deregistration zone x-boundaries
+  REG_ZONE_L: 2750
+  REG_ZONE_R: 9750

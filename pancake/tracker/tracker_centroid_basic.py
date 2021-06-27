@@ -33,8 +33,8 @@ class CentroidTracker(BaseTracker):
     def _centroid(self, vertices):
         x_list = [vertex for vertex in vertices[::2]]
         y_list = [vertex for vertex in vertices[1::2]]
-        x = int(sum(x_list) // len(x_list))
-        y = int(sum(y_list) // len(y_list))
+        x = int( sum(x_list) // len(x_list) )
+        y = int( sum(y_list) // len(y_list) )
         return x, y
 
     def _return(self):
@@ -42,22 +42,14 @@ class CentroidTracker(BaseTracker):
         for id in list(self.objects.keys()):
             outputs.append(
                 np.array(
-                    [
-                        self.bbox[id][0],
-                        self.bbox[id][1],
-                        self.bbox[id][2],
-                        self.bbox[id][3],
-                        self.objects[id][0],
-                        self.objects[id][1],
-                        id,
-                    ],
-                    dtype=np.int,
+                    [self.bbox[id][0],self.bbox[id][1], self.bbox[id][2],self.bbox[id][3], 
+                    self.objects[id][0], self.objects[id][1], id], dtype=np.int
                 )
             )
 
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
-
+        
         self.l.debug(outputs)
 
         return outputs
@@ -80,15 +72,13 @@ class CentroidTracker(BaseTracker):
         del self.disappeared[objectID]
         del self.bbox[objectID]
         del self.confidence[objectID]
-
-    def update(
-        self, det: Type[torch.Tensor], img: Type[np.ndarray]
-    ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
+    
+    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
         self.l.debug("UPDATE CENTROID TRACKER")
         bbox_xyxy, conf, _ = self.transform_detections(det)
-
-        # print("TRANSFORM:")
-        # print(bbox_xyxy, conf)
+        
+        #print("TRANSFORM:")
+        #print(bbox_xyxy, conf)
 
         # check to see if the list of input bounding box rectangles
         # is empty
@@ -117,15 +107,15 @@ class CentroidTracker(BaseTracker):
             inputBBOX[i] = bb
             inputConfidence[i] = conf[i]
 
-        # print("INPUTS:")
-        # print(inputCentroids, inputBBOX, inputConfidence)
+        #print("INPUTS:")
+        #print(inputCentroids, inputBBOX, inputConfidence)
 
         # if we are currently not tracking any objects take the input
         # centroids and register each of them
         if len(self.objects) == 0:
             for i in range(len(inputCentroids)):
                 self._register(inputCentroids[i], inputBBOX[i], inputConfidence[i])
-
+        
         # otherwise, are are currently tracking objects so we need to
         # try to match the input centroids to existing object
         # centroids
@@ -202,11 +192,10 @@ class CentroidTracker(BaseTracker):
             # register each new input centroid as a trackable object
             else:
                 for col in unusedCols:
-                    self._register(
-                        inputCentroids[col], inputBBOX[col], inputConfidence[col]
-                    )
+                    self._register(inputCentroids[col], inputBBOX[col], inputConfidence[col])
         # return the set of trackable objects
         return self._return()
+
 
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):

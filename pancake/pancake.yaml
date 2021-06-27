@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "0"
+  DEVICE: "3"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -21,13 +21,14 @@ PANCAKE:
     #    '../path/to/dir2',   - directories with videos
     #    '../path/to/dir3']     /sequence of images
     # ~ 'url_to_streams.txt'  - live streams    
-    SOURCE: "../samples/r45/1c"
+    SOURCE:
+      # "../samples/r45/1c"
       # "../samples/r45/1c/1621796022.9767.jpg"
       # '../samples/streams.txt'
       # '../samples/output.avi'
-      #- "../samples/r45/1l"
-      #- "../samples/r45/1c"
-      #- "../samples/r45/1r"
+      - "../samples/r44/1l"
+      - "../samples/r44/1c"
+      - "../samples/r44/1r"
     ROI:
       # A:
       #   - 1200  # x0
@@ -49,7 +50,7 @@ PANCAKE:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
 
-    BACKEND: "simple"  # divide et impera
+    BACKEND: "dei"  # divide et impera
     # BACKEND: "simple"
 
     DEI:
@@ -60,12 +61,18 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"         # yolo custom class from registry 
-      weights: "../weights/detector/yolov5/yolov5s_100epochs_640px.pt"  # weights to be loaded
+      weights: "yolov5m.pt"  # weights to be loaded
       
       img_size: 640           # applies on standard and trt
       conf_thres: 0.65        # confidence threshold and trt
       iou_thres: 0.6          # iou threshold, applies on standard
-      classes: null           # filtered classes, applies on standard
+      classes:                # filtered classes, applies on standard
+        - 0   # person
+        - 1   # bicycle
+        - 2   # car
+        - 3   # motorcycle
+        - 5   # bus
+        - 7   # truck
       agnostic_nms: True      # agnostic nms, applies on standard
       max_det:  20            # max detections per infered frame 
       
@@ -85,8 +92,8 @@ PANCAKE:
   RESULT_PROCESSOR:
     # GENERAL 
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: False           # save results
-    ASYNC_PROC: False         # asynchronous result processing on dedicated slave process
+    SAVE_RES: True           # save results
+    ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
     # ASYNC QUEUE
@@ -104,12 +111,12 @@ PANCAKE:
     HIDE_LABELS: False        # hide class labels and track ids
     HIDE_CONF: False          # hide detection confidences
 
-    LINE_THICKNESS: 3         # general line thickness
+    LINE_THICKNESS: 4         # general line thickness
 
     # SAVING
     MODE: "video"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
-    VID_FPS: 5               # fps of the merged video, when mode = "video"
+    VID_FPS: 1               # fps of the merged video, when mode = "video"
     EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically
