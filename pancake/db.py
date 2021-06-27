@@ -160,6 +160,9 @@ class DataBase:
         :param tracks (np.ndarray): [tracks][x1, y1, x2, y2, centre x, centre y, id, cls]
         :param timestamp (float):   time.time() timestamp
         """
+        if len(tracks) < 1:
+            l.debug("Tracks are empty, skipping insert.")
+            return
 
         if not timestamp:
             timestamp = time.time()
@@ -169,7 +172,7 @@ class DataBase:
         insertable = np.c_[
             np.full((tracks.shape[0]), timestamp if timestamp else 0),
             tracks,
-            np.full((tracks.shape[0]), 69),
+            # np.full((tracks.shape[0]), 69),
         ]
 
         #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!

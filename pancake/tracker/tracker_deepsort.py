@@ -41,8 +41,8 @@ class DEEPSORT(BaseTracker):
 
         :return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]
         """
-        bbox_xywh, confidences, _ = DEEPSORT.transform_detections(det)
-        return self.DS.update(bbox_xywh, confidences, img)
+        bbox_xywh, confidences, cls = DEEPSORT.transform_detections(det)
+        return self.DS.update(bbox_xywh, confidences, img, cls)
 
     def get_tracker_flag(self):
         return self.DS.tracker.flag
