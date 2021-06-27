@@ -185,7 +185,7 @@ class ResultProcessor:
 
                     self.tracks.append(tracks)
                     curr_ids = []
-                    for *_, x, y, id in tracks:
+                    for *_, x, y, id, _ in tracks:
                         if id not in self.ids.keys():
                             self.ids.update({id: [(x, y)]})
                         else:
@@ -372,10 +372,10 @@ class ResultProcessor:
         """
         Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.
 
-        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
+        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id, cls]
         :param im0 (array): image in BGR [3, px, px]
         """
-        for *xyxy, _, _, id in tracks:
+        for *xyxy, _, _, id, _ in tracks:
             id = None if self._hide_labels else str(id)
             plot_one_box(
                 xyxy,
@@ -390,7 +390,7 @@ class ResultProcessor:
         """
         Draws a line for each tracked ID according to the stored history.
 
-        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
+        :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id, cls]
         :param im0 (array): image in BGR [3, px, px]
         """
         assert self.track_history, "No track history object initialized!"
