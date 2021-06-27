@@ -259,10 +259,10 @@ class LoadImages:  # for inference
 
 
 class LoadImageDirs:
-    #TODO: The timestamps of each perspective extracted from server with 
-    #      the CAM grabber tool slightly differ, as they got retrieved 
+    # TODO: The timestamps of each perspective extracted from server with
+    #      the CAM grabber tool slightly differ, as they got retrieved
     #      seperately from each other.
-    #      !! Either mask the perspectives to a uniform timestamp or 
+    #      !! Either mask the perspectives to a uniform timestamp or
     #      alter the timestamps afterwards !!
     #      Currently 'None' is returned as timestamp.
 
@@ -527,7 +527,6 @@ class LoadStreams:  # multiple IP or RTSP cameras
             thread = Thread(target=self.update, args=([i, cap]), daemon=True)
             print(f" success ({w}x{h} at {self.fps:.2f} FPS).")
             thread.start()
-        
 
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
@@ -1535,8 +1534,12 @@ def autosplit(path="../coco128", weights=(0.9, 0.1, 0.0), annotated_only=False):
             with open(path / txt[i], "a") as f:
                 f.write(str(img) + "\n")  # add image to txt file
 
-numeric_const_pattern = '[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
+
+numeric_const_pattern = (
+    "[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?"
+)
 rx = re.compile(numeric_const_pattern, re.VERBOSE)
+
 
 def timestamp_from_path(path: str):
     try:
@@ -1544,5 +1547,3 @@ def timestamp_from_path(path: str):
         return float(timestamp)
     except:
         return None
-
-

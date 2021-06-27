@@ -164,6 +164,7 @@ class Tracker:
                 self.n_init,
                 self.max_age,
                 detection.feature,
+                cls=detection.cls,
             )
         )
 

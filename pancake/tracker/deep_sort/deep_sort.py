@@ -41,14 +41,14 @@ class DeepSort(object):
             max_id=max_id,
         )
 
-    def update(self, bbox_xyxy, confidences, ori_img):
+    def update(self, bbox_xyxy, confidences, ori_img, cls):
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)
         features = self._get_features(bbox_xyxy, ori_img)
         bbox_tlwh = np.asarray([self._xyxy_to_tlwh(xyxy) for xyxy in bbox_xyxy])
         detections = [
-            Detection(bbox_tlwh[i], conf, features[i])
+            Detection(bbox_tlwh[i], conf, features[i], cls[i])
             for i, conf in enumerate(confidences)
             if conf > self.min_confidence
         ]
@@ -73,9 +73,11 @@ class DeepSort(object):
             track_id = track.track_id
             track_posx = track.pos_x
             track_posy = track.pos_y
+            cls = track.cls
             outputs.append(
                 np.array(
-                    [x1, y1, x2, y2, track_posx, track_posy, track_id], dtype=np.int
+                    [x1, y1, x2, y2, track_posx, track_posy, track_id, cls],
+                    dtype=np.int,
                 )
             )
         if len(outputs) > 0:

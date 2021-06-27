@@ -63,7 +63,9 @@ class Track:
 
     """
 
-    def __init__(self, mean, covariance, track_id, n_init, max_age, feature=None):
+    def __init__(
+        self, mean, covariance, track_id, n_init, max_age, feature=None, cls=None
+    ):
         self.mean = mean
         self.covariance = covariance
         self.track_id = track_id
@@ -80,6 +82,7 @@ class Track:
         self._max_age = max_age
         self.pos_x = 0
         self.pos_y = 0
+        self.cls = cls
 
     def to_tlwh(self):
         """Get current position in bounding box format `(top left x, top left y,

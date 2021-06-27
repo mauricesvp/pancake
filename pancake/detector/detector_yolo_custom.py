@@ -8,7 +8,6 @@ from .detector import Detector
 import pancake.models as m
 
 # from pancake.models.tensorrt.yolov5_tensorrt import Yolov5TRT
-from pancake.models.tensorrt.yolov5_trt_2 import Yolov5TRT
 from pancake.logger import setup_logger
 from pancake.utils.common import fix_path
 from pancake.utils.datasets import letterbox
@@ -23,7 +22,9 @@ class YOLOCustomDetector(Detector):
 
     def __init__(self, config, *args, **kwargs) -> None:
         self.weights = config["weights"]
-        weights_cfg = fix_path(self.weights) if type(self.weights) is str else self.weights
+        weights_cfg = (
+            fix_path(self.weights) if type(self.weights) is str else self.weights
+        )
         model = config["model"]
 
         trt = config["trt"]
@@ -50,11 +51,14 @@ class YOLOCustomDetector(Detector):
         )
 
         try:
-            self.model = (
-                Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
-                if trt
-                else self.model
-            )
+            if trt:
+                from pancake.models.tensorrt.yolov5_trt_2 import Yolov5TRT
+
+                self.model = (
+                    Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
+                    if trt
+                    else self.model
+                )
         except ModuleNotFoundError:
             l.info(f"Will fallback to weights file: {weights}")
 

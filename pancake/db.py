@@ -1,5 +1,7 @@
 import numpy as np
 import sqlite3
+import time
+import threading
 import torch
 from typing import Type
 from multiprocessing.pool import ThreadPool
@@ -52,12 +54,12 @@ class DataBase:
         :param inserts (dict):      holds corresponding insert queries
         """
         try:
-            self.con = sqlite3.connect(db_name)
+            self.con = sqlite3.connect(db_name, check_same_thread=False)
             self.relations = relations
             self.inserts = inserts
         except Error as e:
             l.error(
-                f"Error while connecting to the DB: {e} \n" 
+                f"Error while connecting to the DB: {e} \n"
                 "Proceed tracking without database logging"
             )
             raise ConnectionError
@@ -70,7 +72,7 @@ class DataBase:
         self.initial_insert(DBT=kwargs)  # Detector, Backend, Tracker
 
     def create_tables(self) -> None:
-        """ 
+        """
         Creates tables for provided relationships in self.relations.
         """
         cursor = self.con.cursor()
@@ -88,7 +90,7 @@ class DataBase:
 
     def initial_insert(self, *args, **kwargs) -> None:
         """
-        :param kwargs (dict): Holds objects for logging of the general setup. 
+        :param kwargs (dict): Holds objects for logging of the general setup.
         """
         cursor = self.con.cursor()
 
@@ -97,7 +99,7 @@ class DataBase:
 
             # DETECTOR insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!! 
+                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
                 cursor.execute(
                     self.inserts["DETECTOR"],
                     (
@@ -114,10 +116,7 @@ class DataBase:
             try:
                 #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
                 for id, label in enumerate(detector.model.names):
-                    cursor.execute(
-                        self.inserts["CLASSES"], 
-                        (id + 1, label)
-                    )
+                    cursor.execute(self.inserts["CLASSES"], (id + 1, label))
             except Exception as e:
                 l.info(f"{e}")
                 l.info("Skip initial query for CLASSES")
@@ -127,7 +126,7 @@ class DataBase:
 
             # BACKEND insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!  
+                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
                 cursor.execute(
                     self.inserts["BACKEND"],
                     (1, backend.__class__.__name__),
@@ -141,7 +140,7 @@ class DataBase:
 
             # TRACKER insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!! 
+                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
                 cursor.execute(
                     self.inserts["TRACKER"],
                     (1, tracker.__class__.__name__),
@@ -152,21 +151,31 @@ class DataBase:
 
         self.con.commit()
 
-    def insert_tracks(self, tracks: np.ndarray, timestamp: float):
+    def insert_tracks(self, *args, **kwargs):
+        t = threading.Thread(target=self.run_insert_tracks, args=args, kwargs=kwargs)
+        t.start()
+
+    def run_insert_tracks(self, tracks: np.ndarray, timestamp: float):
         """
         :param tracks (np.ndarray): [tracks][x1, y1, x2, y2, centre x, centre y, id, cls]
-        :param timestamp (float):     time.time() timestamp
+        :param timestamp (float):   time.time() timestamp
         """
+        if len(tracks) < 1:
+            l.debug("Tracks are empty, skipping insert.")
+            return
+
+        if not timestamp:
+            timestamp = time.time()
         cursor = self.con.cursor()
 
         # append timestamp to 0th column, 0 if timestamp is None, 69 is a dummy entry for cls
         insertable = np.c_[
-            np.full((tracks.shape[0]), timestamp if timestamp else 0), 
+            np.full((tracks.shape[0]), timestamp if timestamp else 0),
             tracks,
-            np.full((tracks.shape[0]), 69)
+            # np.full((tracks.shape[0]), 69),
         ]
 
-        #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!! 
+        #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
         # order: [id, ts, cx, cy, x1, y1, x2, y2, cls] (for "extended_db.yaml")
         new_order = [7, 0, 5, 6, 1, 2, 3, 4, 8]
         insertable = insertable[:, new_order]

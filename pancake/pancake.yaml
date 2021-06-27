@@ -7,8 +7,8 @@ PANCAKE:
     # For now this only changes the level in run.py
     LEVEL: "INFO"
 
-  DATABASE: 
-    STORE:  False
+  DATABASE:
+    STORE:  True
     SCHEME_PATH: "../configs/database/extended_db.yaml"
     FILENAME: "test_db.db"
 
@@ -54,7 +54,7 @@ PANCAKE:
     # BACKEND: "simple"
 
     DEI:
-      SIMPLE: False
+      SIMPLE: True
 
     YOLO_SIMPLE:
       size: "s"
@@ -75,12 +75,12 @@ PANCAKE:
         - 7   # truck
       agnostic_nms: True      # agnostic nms, applies on standard
       max_det:  20            # max detections per infered frame 
-      
+
       # TENSORRT
       trt: False              # use trt engine for inference
       trt_engine_path: "tensorrtx/yolov5/build_5s6_bs17/yolov5s6.engine"     # path to locally compiled engine
       trt_plugin_library: "tensorrtx/yolov5/build_5s6_bs17/libmyplugins.so"  # path to locally compiled lib
-      
+
   TRACKER:
     NAME: "centroid"
 
@@ -90,7 +90,7 @@ PANCAKE:
       TRACKER_CFG_PATH: "../configs/tracker/deep_sort.yaml"
 
   RESULT_PROCESSOR:
-    # GENERAL 
+    # GENERAL
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
     SAVE_RES: True           # save results
     ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
@@ -102,7 +102,7 @@ PANCAKE:
     PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
     # DRAW OPTIONS
-    DRAW_DET: True            # draw detection boxes
+    DRAW_DET: False            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
     DRAW_TRACK_HIST: True    # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
