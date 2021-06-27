@@ -61,7 +61,7 @@ PANCAKE:
 
     YOLO_CUSTOM:
       model: "yolov5"         # yolo custom class from registry 
-      weights: "yolov5m.pt"  # weights to be loaded
+      weights: "yolov5m.pt"   # weights to be loaded
       
       img_size: 640           # applies on standard and trt
       conf_thres: 0.65        # confidence threshold and trt
@@ -92,8 +92,8 @@ PANCAKE:
   RESULT_PROCESSOR:
     # GENERAL
     VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: True           # save results
-    ASYNC_PROC: True         # asynchronous result processing on dedicated slave process
+    SAVE_RES: True            # save results
+    ASYNC_PROC: True          # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
     # ASYNC QUEUE
@@ -102,9 +102,9 @@ PANCAKE:
     PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
     # DRAW OPTIONS
-    DRAW_DET: False            # draw detection boxes
+    DRAW_DET: False           # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
-    DRAW_TRACK_HIST: True    # draw corresponding tracks
+    DRAW_TRACK_HIST: True     # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
 
     # DRAW DETAILS
@@ -117,6 +117,6 @@ PANCAKE:
     MODE: "video"             # "image" or "video"
     PATH: "pancake_results"   # parent save directory
     SUBDIR: "run"             # target subdirectory prefix, which will be incremented for each run
-    VID_FPS: 1               # fps of the merged video, when mode = "video"
+    VID_FPS: 5                # fps of the merged video, when mode = "video"
     EXIST_OK: True            # save in already existing dir, 
                               # do not increment automatically

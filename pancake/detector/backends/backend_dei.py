@@ -234,7 +234,7 @@ class DEI(Backend):
             self.roi = roi
 
         # Check if we can use cv2.cuda
-        if False: #cv2.cuda.getCudaEnabledDeviceCount() > 0:
+        if cv2.cuda.getCudaEnabledDeviceCount() > 0:
             self.rotate = rotate
             self.rotate_bound = rotate_bound
         else:

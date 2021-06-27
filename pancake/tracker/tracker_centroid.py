@@ -61,8 +61,8 @@ class CentroidTracker(BaseTracker):
     def _centroid(self, vertices):
         x_list = [vertex for vertex in vertices[::2]]
         y_list = [vertex for vertex in vertices[1::2]]
-        x = int( sum(x_list) // len(x_list) )
-        y = int( sum(y_list) // len(y_list) )
+        x = int(sum(x_list) // len(x_list))
+        y = int(sum(y_list) // len(y_list))
         return x, y
 
     def _register(self, centroid, bbox, conf, cls):
@@ -98,9 +98,17 @@ class CentroidTracker(BaseTracker):
         for id in list(self.objects.keys()):
             outputs.append(
                 np.array(
-                    [self.bbox[id][0],self.bbox[id][1], self.bbox[id][2],self.bbox[id][3], 
-                    self.objects[id][0], self.objects[id][1], id], dtype=np.int
-                    # TODO: add classId to return vector
+                    [
+                        self.bbox[id][0],
+                        self.bbox[id][1],
+                        self.bbox[id][2],
+                        self.bbox[id][3],
+                        self.objects[id][0],
+                        self.objects[id][1],
+                        id,
+                        self.classIds[id]
+                    ],
+                    dtype=np.int
                 )
             )
         # output np array
@@ -114,18 +122,36 @@ class CentroidTracker(BaseTracker):
     def _isAboveLaneSeparator(self, centroid):
         if centroid[0] < self.FRAME_CHANGE_LC:
             # left image
-            lanesepvec = self.FRAME_CHANGE_LC - 0, self.LANE_SEPARATOR_LC - self.LANE_SEPARATOR_LL
-            centrvec = self.FRAME_CHANGE_LC - centroid[0], self.LANE_SEPARATOR_LC - centroid[1]
+            lanesepvec = (
+                self.FRAME_CHANGE_LC - 0,
+                self.LANE_SEPARATOR_LC - self.LANE_SEPARATOR_LL,
+            )
+            centrvec = (
+                self.FRAME_CHANGE_LC - centroid[0],
+                self.LANE_SEPARATOR_LC - centroid[1],
+            )
         elif centroid[0] > self.FRAME_CHANGE_CR:
             # right image
-            lanesepvec = self.FRAME_WIDTH - self.FRAME_CHANGE_CR, self.LANE_SEPARATOR_RR - self.LANE_SEPARATOR_CR
-            centrvec = self.FRAME_WIDTH - centroid[0], self.LANE_SEPARATOR_RR - centroid[1]
+            lanesepvec = (
+                self.FRAME_WIDTH - self.FRAME_CHANGE_CR,
+                self.LANE_SEPARATOR_RR - self.LANE_SEPARATOR_CR,
+            )
+            centrvec = (
+                self.FRAME_WIDTH - centroid[0],
+                self.LANE_SEPARATOR_RR - centroid[1],
+            )
         else:
             # center image
-            lanesepvec = self.FRAME_CHANGE_CR - self.FRAME_CHANGE_LC, self.LANE_SEPARATOR_CR - self.LANE_SEPARATOR_LC
-            centrvec = self.FRAME_CHANGE_CR - centroid[0], self.LANE_SEPARATOR_CR - centroid[1]
+            lanesepvec = (
+                self.FRAME_CHANGE_CR - self.FRAME_CHANGE_LC,
+                self.LANE_SEPARATOR_CR - self.LANE_SEPARATOR_LC,
+            )
+            centrvec = (
+                self.FRAME_CHANGE_CR - centroid[0],
+                self.LANE_SEPARATOR_CR - centroid[1],
+            )
         # calculate cross product in 2d
-        cross_product = lanesepvec[0]*centrvec[1] - lanesepvec[1]*centrvec[0]
+        cross_product = lanesepvec[0] * centrvec[1] - lanesepvec[1] * centrvec[0]
         return cross_product > 0
 
     def _isInsideDeregistrationZone(self, centroid):
@@ -151,10 +177,16 @@ class CentroidTracker(BaseTracker):
             return False
 
     def _isInsideTransitionZone(self, centroid):
-        if centroid[0] < self.FRAME_CHANGE_LC + self.TRANSITION_WIDTH and centroid[0] > self.FRAME_CHANGE_LC - self.TRANSITION_WIDTH:
+        if (
+            centroid[0] < self.FRAME_CHANGE_LC + self.TRANSITION_WIDTH
+            and centroid[0] > self.FRAME_CHANGE_LC - self.TRANSITION_WIDTH
+        ):
             # left transition region
             return True
-        elif centroid[0] < self.FRAME_CHANGE_CR + self.TRANSITION_WIDTH and centroid[0] > self.FRAME_CHANGE_CR - self.TRANSITION_WIDTH:
+        elif (
+            centroid[0] < self.FRAME_CHANGE_CR + self.TRANSITION_WIDTH
+            and centroid[0] > self.FRAME_CHANGE_CR - self.TRANSITION_WIDTH
+        ):
             # right transition region
             return True
         else:
@@ -165,26 +197,35 @@ class CentroidTracker(BaseTracker):
         return math.dist(pt1, pt2)
 
     def _getLen(self, tup):
-        return (tup[0]**2 + tup[1]**2)**0.5
+        return (tup[0] ** 2 + tup[1] ** 2) ** 0.5
 
     def _continueMovement(self, objectID):
         objPos = self.objects[objectID]
 
         try:
             distance = self.lastDistTrav[objectID]
-        except Exception: # object was only seen one frame
-            distance = (0,0)
+        except Exception:  # object was only seen one frame
+            distance = (0, 0)
 
         if self._isInsideTransitionZone(objPos):
             if objPos[0] < self.FRAME_CHANGE_LC:
                 # follow left vector
-                dirVect = (0 - self.FRAME_CHANGE_LC, self.LANE_SEPARATOR_LL - self.LANE_SEPARATOR_LC)
+                dirVect = (
+                    0 - self.FRAME_CHANGE_LC,
+                    self.LANE_SEPARATOR_LL - self.LANE_SEPARATOR_LC,
+                )
             elif objPos[0] > self.FRAME_CHANGE_CR:
                 # follow right vector
-                dirVect = (self.FRAME_CHANGE_CR - self.FRAME_WIDTH, self.LANE_SEPARATOR_CR - self.LANE_SEPARATOR_RR)
+                dirVect = (
+                    self.FRAME_CHANGE_CR - self.FRAME_WIDTH,
+                    self.LANE_SEPARATOR_CR - self.LANE_SEPARATOR_RR,
+                )
             else:
                 # follow center vector
-                dirVect = (self.FRAME_CHANGE_LC - self.FRAME_CHANGE_CR, self.LANE_SEPARATOR_LC - self.LANE_SEPARATOR_CR)
+                dirVect = (
+                    self.FRAME_CHANGE_LC - self.FRAME_CHANGE_CR,
+                    self.LANE_SEPARATOR_LC - self.LANE_SEPARATOR_CR,
+                )
 
             # flip direction of dirVect for bottom lane
             if not self._isAboveLaneSeparator(objPos):
@@ -199,18 +240,18 @@ class CentroidTracker(BaseTracker):
         predmove = objPos[0] + distance[0], objPos[1] + distance[1]
         return predmove
 
-# TODO: make it dependent on the screen and adjust it to be more infront of the car
+    # TODO: make it dependent on the screen and adjust it to be more infront of the car
     def _isDistanceInsideLimit(self, currdst, objectID, matchPos):
         if (currdst < self.DISTANCE_TOLERANCE) and (
             abs(self.objects[objectID][1] - matchPos[1]) < self.VERTICAL_TOLERANCE
-            ):
+        ):
             return True
         return False
         # predpt = self._continueMovement(objectID)
 
         # currpt = self.objects[objectID]
         # preddst = self._getDist(matchPos, predpt)
-        
+
         # inRect = self._isInsideRect(currpt, predpt, matchPos)
 
         # if currdst < self.DISTANCE_TOLERANCE or \
@@ -220,19 +261,19 @@ class CentroidTracker(BaseTracker):
 
         # return False
 
+    ###################################
+    ## UPDATE
+    ###################################
 
-
-###################################
-## UPDATE
-###################################
-
-    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
+    def update(
+        self, det: Type[torch.Tensor], img: Type[np.ndarray]
+    ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
         # keep track of time for debugging
         update_time_start = int(round(time.time() * 1000))
         # get inputs
         bbox_xyxy, conf, cls = self.transform_detections(det)
-        
-        # TODO: filter none car and truck objects from input
+
+        # filter none car and truck objects from input
         # bbox_xyxy_tmp = []
         # conf_tmp = []
         # cls_tmp = []
@@ -254,9 +295,12 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] > self.MAX_DISAPPEARED
-                    or self._isInsideDeregistrationZone(self.objects[objectID])):
-                        self._deregister(objectID)
+                if (self.disappeared[objectID] > self.MAX_DISAPPEARED or
+                    self._isInsideDeregistrationZone(
+                        self.objects[objectID]
+                )):
+                    self._deregister(objectID)
+                    print(".....DEREG2 klappt")
             # return early
             return self._return()
 
@@ -278,8 +322,13 @@ class CentroidTracker(BaseTracker):
             for i in range(len(inputCentroids)):
                 # only register when not in deregistration zone
                 if not self._isInsideDeregistrationZone(inputCentroids[i]):
-                    self._register(inputCentroids[i], inputBBOX[i], inputConfidence[i], inputClass[i])
-        
+                    self._register(
+                        inputCentroids[i],
+                        inputBBOX[i],
+                        inputConfidence[i],
+                        inputClass[i],
+                    )
+
         # otherwise match existing to detected centroids
         else:
             objectIDs = list(self.objects.keys())
@@ -304,17 +353,19 @@ class CentroidTracker(BaseTracker):
                 objectID = objectIDs[row]
                 # otherwise a match is created but only if inside a maximum distance
                 if self._isDistanceInsideLimit(distance, objectID, inputCentroids[col]):
-                        # safe the distance travelled
-                        self.lastDistTrav[objectID] = self._computeLastDist(self.objects[objectID], inputCentroids[col])
-                        # update object
-                        self.objects[objectID] = inputCentroids[col]
-                        self.bbox[objectID] = inputBBOX[col]
-                        self.confidence[objectID] = inputConfidence[col]
-                        self.classIds[objectID] = inputClass[col]
-                        self.disappeared[objectID] = 0
-                        # remove Row and Col
-                        usedRows.add(row)
-                        usedCols.add(col)
+                    # safe the distance travelled
+                    self.lastDistTrav[objectID] = self._computeLastDist(
+                        self.objects[objectID], inputCentroids[col]
+                    )
+                    # update object
+                    self.objects[objectID] = inputCentroids[col]
+                    self.bbox[objectID] = inputBBOX[col]
+                    self.confidence[objectID] = inputConfidence[col]
+                    self.classIds[objectID] = inputClass[col]
+                    self.disappeared[objectID] = 0
+                    # remove Row and Col
+                    usedRows.add(row)
+                    usedCols.add(col)
 
             # get not matched rows and cols
             unusedRows = set(range(0, D.shape[0])).difference(usedRows)
@@ -329,22 +380,31 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] > self.MAX_DISAPPEARED
-                    or self._isInsideDeregistrationZone(objectCentroids[row])):
-                        self._deregister(objectID)
+                if (self.disappeared[objectID] > self.MAX_DISAPPEARED or 
+                    self._isInsideDeregistrationZone(
+                        objectCentroids[row]
+                )):
+                    self._deregister(objectID)
+                    print(".....DEREG1 klappt")
 
             # unmatched input centroids will get registered
             for col in unusedCols:
                 if not self._isInsideDeregistrationZone(inputCentroids[col]):
                     if self._isInsideRegistrationZone(inputCentroids[col]):
-                        self._register(inputCentroids[col], inputBBOX[col], inputConfidence[col], inputClass[col])
-        
+                        self._register(
+                            inputCentroids[col],
+                            inputBBOX[col],
+                            inputConfidence[col],
+                            inputClass[col],
+                        )
+
         # keep track of time for debugging
         update_time_end = int(round(time.time() * 1000))
-        self.l.debug("Centroid update took {} ms".format(update_time_end - update_time_start))
+        self.l.debug(
+            "Centroid update took {} ms".format(update_time_end - update_time_start)
+        )
 
         return self._return()
-
 
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):
