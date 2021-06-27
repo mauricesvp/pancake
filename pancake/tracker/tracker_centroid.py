@@ -300,7 +300,7 @@ class CentroidTracker(BaseTracker):
                         self.objects[objectID]
                 )):
                     self._deregister(objectID)
-                    print(".....DEREG2 klappt")
+
             # return early
             return self._return()
 
@@ -385,7 +385,6 @@ class CentroidTracker(BaseTracker):
                         objectCentroids[row]
                 )):
                     self._deregister(objectID)
-                    print(".....DEREG1 klappt")
 
             # unmatched input centroids will get registered
             for col in unusedCols:
