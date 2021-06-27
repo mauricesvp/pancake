@@ -185,7 +185,7 @@ class ResultProcessor:
 
                     self.tracks.append(tracks)
                     curr_ids = []
-                    for *_, x, y, id in tracks:
+                    for *_, x, y, id, _ in tracks:
                         if id not in self.ids.keys():
                             self.ids.update({id: [(x, y)]})
                         else:
