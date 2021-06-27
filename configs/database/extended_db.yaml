@@ -4,7 +4,7 @@ PANCAKE_DB:
     TRACKS: "
             CREATE TABLE IF NOT EXISTS tracks (
                 TRACK_ID integer    NOT NULL,
-                TIMESTAMP integer   NOT NULL,
+                TIMESTAMP real      NOT NULL,
                 C_X integer         NOT NULL,
                 C_Y integer         NOT NULL,
                 BB_X1 integer,
