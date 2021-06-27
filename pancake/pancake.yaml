@@ -102,7 +102,7 @@ PANCAKE:
     PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
     # DRAW OPTIONS
-    DRAW_DET: False           # draw detection boxes
+    DRAW_DET: True            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
     DRAW_TRACK_HIST: True     # draw corresponding tracks
     MAX_TRACK_HIST_LEN: 1000  # max track history length
