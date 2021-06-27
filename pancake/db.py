@@ -99,7 +99,7 @@ class DataBase:
 
             # DETECTOR insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
+                #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
                 cursor.execute(
                     self.inserts["DETECTOR"],
                     (
@@ -114,7 +114,7 @@ class DataBase:
 
             # CLASSES insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
+                #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
                 for id, label in enumerate(detector.model.names):
                     cursor.execute(self.inserts["CLASSES"], (id + 1, label))
             except Exception as e:
@@ -126,7 +126,7 @@ class DataBase:
 
             # BACKEND insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
+                #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
                 cursor.execute(
                     self.inserts["BACKEND"],
                     (1, backend.__class__.__name__),
@@ -140,7 +140,7 @@ class DataBase:
 
             # TRACKER insert
             try:
-                #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
+                #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
                 cursor.execute(
                     self.inserts["TRACKER"],
                     (1, tracker.__class__.__name__),
@@ -175,7 +175,7 @@ class DataBase:
             # np.full((tracks.shape[0]), 69),
         ]
 
-        #!! ADAPT TO CUSTOM SCHEME IF NECESSARY!!
+        #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
         # order: [id, ts, cx, cy, x1, y1, x2, y2, cls] (for "extended_db.yaml")
         new_order = [7, 0, 5, 6, 1, 2, 3, 4, 8]
         insertable = insertable[:, new_order]
