@@ -375,7 +375,7 @@ class ResultProcessor:
         :param tracks (np.ndarray): track ids on (,7) array [xyxy, center x, center y, id]
         :param im0 (array): image in BGR [3, px, px]
         """
-        for *xyxy, _, _, id in tracks:
+        for *xyxy, _, _, id, _ in tracks:
             id = None if self._hide_labels else str(id)
             plot_one_box(
                 xyxy,
