@@ -55,12 +55,12 @@ class YOLOCustomDetector(Detector):
                 from pancake.models.tensorrt.yolov5_trt_2 import Yolov5TRT
 
                 self.model = (
-                    Yolov5TRT(self.model, trt_engine_path, trt_plugin_library)
+                    Yolov5TRT(self.model, trt_engine_path, trt_plugin_library, device)
                     if trt
                     else self.model
                 )
         except ModuleNotFoundError:
-            l.info(f"Will fallback to weights file: {weights}")
+            l.info(f"Will fallback to weights file: {self.weights}")
 
     def round(self, val: int, base: int) -> int:
         return self.model._stride * math.floor(val / self.model._stride)

@@ -34,7 +34,9 @@ for package in ["tensorrt"]:
 
 
 class Yolov5TRT(BaseModel):
-    def __init__(self, yolov5, engine_path: str, plugin_path: str, *args, **kwargs):
+    def __init__(
+        self, yolov5, engine_path: str, plugin_path: str, device: str, *args, **kwargs
+    ):
         # if trt not available return standard yolov5 model
         if not trt_installed:
             l.info("TensorRT not installed, using standard Yolov5..")
@@ -51,7 +53,15 @@ class Yolov5TRT(BaseModel):
         self._plugin_path = plugin_path
 
         # create a context on this device
-        self.ctx = cuda.Device(0).make_context()
+        try:
+            device = int(device)
+        except:
+            l.info(
+                f"Given device {device} was not a device index! Using standard Yolov5.."
+            )
+            raise ModuleNotFoundError
+
+        self.ctx = cuda.Device(device).make_context()
         self.stream = cuda.Stream()
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         self.runtime = trt.Runtime(TRT_LOGGER)
