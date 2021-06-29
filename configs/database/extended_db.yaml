@@ -48,22 +48,41 @@ PANCAKE_DB:
   INSERTS:
   
     TRACKS: "
-            INSERT INTO tracks (TRACK_ID, TIMESTAMP, C_X, C_Y, BB_X1, BB_Y1, BB_X2, BB_Y2 , CLASS_ID)
+            INSERT INTO tracks (
+                TRACK_ID, 
+                TIMESTAMP, 
+                C_X, 
+                C_Y, 
+                BB_X1, 
+                BB_Y1, 
+                BB_X2, 
+                BB_Y2, 
+                CLASS_ID)
             VALUES (?,?,?,?,?,?,?,?,?)
             "
     BACKEND: "
-            INSERT INTO backend (ID, BACKEND)
+            INSERT INTO backend (
+                ID, 
+                BACKEND
+            )
             VALUES (?,?)
             "
     DETECTOR: " 
-              INSERT INTO detector (ID, DETECTOR, WEIGHT_FILE)
+              INSERT INTO detector (
+                  ID, 
+                  DETECTOR, 
+                  WEIGHT_FILE)
               VALUES (?,?,?)
               "
     TRACKER:  "
-              INSERT INTO tracker (ID, TRACKER)
+              INSERT INTO tracker (
+                  ID, 
+                  TRACKER)
               VALUES (?,?)
               "
     CLASSES:  "
-              INSERT INTO classes (ID, CLASS_LABEL)
+              INSERT INTO classes (
+                  ID, 
+                  CLASS_LABEL)
               VALUES (?,?)
               "
