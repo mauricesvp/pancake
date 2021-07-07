@@ -21,18 +21,18 @@ Application for panorama camera car tracking on an arbitrary number of image sou
     - [TensorRT](#tensorrt)
 
 ## Installation
-
 ## Usage
 ### Sources
 
 ### Result Processing
 
 ### Database
+[Back to ToC](#table-of-contents)
 ## Modules
 ### Panorama Stitching
 ### Object Detectoin
 ### Object Tracking
-
+[Back to ToC](#table-of-contents)
 ## Further Notes
 ### Authors
 * [Äas](https://github.com/a-kest)
@@ -51,3 +51,5 @@ Application for panorama camera car tracking on an arbitrary number of image sou
 
 ### TensorRT
 [External repo for generating TRT engines](https://github.com/adujardin/tensorrtx/tree/trt8_yolov5_support/yolov5)
+
+[Back to ToC](#table-of-contents)
