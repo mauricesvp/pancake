@@ -29,8 +29,8 @@ Application for panorama camera car tracking on an arbitrary number of image sou
 ### Database
 [Back to ToC](#table-of-contents)
 ## Modules
-### Panorama Stitching
-### Object Detectoin
+### Backend
+### Object Detection
 ### Object Tracking
 [Back to ToC](#table-of-contents)
 ## Further Notes
