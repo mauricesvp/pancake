@@ -1,4 +1,5 @@
 # pancake :pancakes: - Panorama Camera Car Tracking
+<img src="https://user-images.githubusercontent.com/26842284/124929935-3002a180-e001-11eb-9106-34d9b2f720c4.png" width="10%" height="10%">
 
 Application for panorama camera car tracking on an arbitrary number of image sources. It comes with a simple and modular program design facilitating easy implementation and application of different techniques regarding panorama stitching, object detection and object tracking.   
 
