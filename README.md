@@ -61,7 +61,7 @@ All of the pancake ingredients can simply be specified in the designated ```panc
 
   Select a level of verbose program output.
 
-  Possible values:
+  **Possible values:**
   * ```LEVEL```: _"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"_
 </details>
 
@@ -72,14 +72,14 @@ All of the pancake ingredients can simply be specified in the designated ```panc
 
   Specify if the vehicle tracks should be logged in an external database.
 
-  Possible values:
+  **Possible values:**
   * ```STORE```: _"True", "False"_
   * ```SCHEME PATH```: _path to yaml file containing custom db schema_
   * ```FILENAME```: _name of the stored database file_
 
   **Note**: 
-    * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _pancake/pancake/db.py_. Critical parts of the code are marked as such!
-    * If you use the same database file for multiple runs, the database will contain data from respective execution.
+  * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _pancake/pancake/db.py_. Critical parts of the code are marked as such!
+  * If you use the same database file for multiple runs, the database will contain data from respective execution.
 
 
 </details>
