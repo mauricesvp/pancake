@@ -16,43 +16,99 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
-      - [Sources](#sources)
-      - [Result Processing](#result-processing)
-      - [Database](#database)
   - [Modules](#modules)
     - [Panorama Stitching](#panorama-stitching)
     - [Object Detectoin](#object-detectoin)
     - [Object Tracking](#object-tracking)
   - [Further Notes](#further-notes)
-    - [Authors](#authors)
     - [Samples](#samples)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
+    - [Authors](#authors)
 
 ## Installation
 
 ## Usage
 
 ### Quickstart
-After you have followed the steps [above](#installation), simply start the script with:
+After you have followed the steps [above](#installation), simply start the main script with:
 ```bash
 python ~/pancake/pancake/run.py
 ```
 
+### Configurations
+All of the pancake ingredients can simply be specified in the designated ```pancake.yaml``` (located in ```pancake/pancake```). Below you will find a detailed description on the underlying parameters. 
 
+<!-- Device -->
 <details>
-  <summary>How do I dropdown?</summary>
+  <summary><b>Device</b></summary>
   <br>
-  This is how you dropdown.
+
+  Select a processing device the app should leverage. 
+
+  **Possible values:**
+  * ```DEVICE```: _"CPU", "GPU", "0", "1", ..._
+
+  **Note**: _"GPU"_ is the same device as _"0"_
 </details>
 
-### Configurations
-All of the pancake ingredients can simply be specified in the designated ```pancake.yaml```. What can be
-#### Sources
+<!-- Logging -->
+<details>
+  <summary><b>Logging</b></summary>
+  <br>
 
-#### Result Processing
+  Select a level of verbose program output.
 
-#### Database
+  Possible values:
+  * ```LEVEL```: _"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"_
+</details>
+
+<!-- Database -->
+<details>
+  <summary><b>Database</b></summary>
+  <br>
+
+  Specify if the vehicle tracks should be logged in an external database.
+
+  Possible values:
+  * ```STORE```: _"True", "False"_
+  * ```SCHEME PATH```: _path to yaml file containing custom db schema_
+  * ```FILENAME```: _name of the stored database file_
+
+  **Note**: 
+    * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _pancake/pancake/db.py_. Critical parts of the code are marked as such!
+    * If you use the same database file for multiple runs, the database will contain data from respective execution.
+
+
+</details>
+
+<!-- Data -->
+<details>
+  <summary><b>Data</b></summary>
+  <br>
+</details>
+
+<!-- Detector -->
+<details>
+  <summary><b>Detector</b></summary>
+  <br>
+</details>
+
+<!-- Tracker -->
+<details>
+  <summary><b>Tracker</b></summary>
+  <br>
+</details>
+
+<!-- Result Processing -->
+<details>
+  <summary><b>Result Processing</b></summary>
+  <br>
+
+</details>
+
+<br>
+
 [Back to ToC](#table-of-contents)
 ## Modules
 ### Panorama Stitching
@@ -60,10 +116,6 @@ All of the pancake ingredients can simply be specified in the designated ```panc
 ### Object Tracking
 [Back to ToC](#table-of-contents)
 ## Further Notes
-### Authors
-* [Äas](https://github.com/a-kest)
-* [Maurice](https://github.com/mauricesvp)
-* [Roman](https://github.com/tuananhroman)
 
 ### Samples
 [drive](https://drive.google.com/drive/folders/1Y8FiPtxZiQrv7BrF05uWrDqHdZ8bA11h)
@@ -79,3 +131,8 @@ All of the pancake ingredients can simply be specified in the designated ```panc
 [External repo for generating TRT engines](https://github.com/adujardin/tensorrtx/tree/trt8_yolov5_support/yolov5)
 
 [Back to ToC](#table-of-contents)
+
+### Authors
+* [Äas](https://github.com/a-kest)
+* [Maurice](https://github.com/mauricesvp)
+* [Roman](https://github.com/tuananhroman)
