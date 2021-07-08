@@ -9,6 +9,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 * Optional database logging of vehicle tracks with Sqlite3 
 * Modular structure for extension of new functionalities and approaches
 
+<!------------------------- ToC --------------------------->
 ## Table of Contents
 - [pancake :pancakes: - Panorama Camera Car Tracking](#pancake-pancakes---panorama-camera-car-tracking)
   - [Table of Contents](#table-of-contents)
@@ -28,8 +29,10 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [TensorRT](#tensorrt)
     - [Authors](#authors)
 
+<!------------------------- Installation --------------------------->
 ## Installation
 
+<!------------------------- Usage --------------------------->
 ## Usage
 
 ### Quickstart
@@ -118,11 +121,15 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <br>
 
 [Back to ToC](#table-of-contents)
+
+<!------------------------- Modules --------------------------->
 ## Modules
 ### Backend
 ### Object Detectoin
 ### Object Tracking
 [Back to ToC](#table-of-contents)
+
+<!------------------------- Further Notes --------------------------->
 ## Further Notes
 
 ### Samples
