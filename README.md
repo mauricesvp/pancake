@@ -1,19 +1,27 @@
 # pancake :pancakes: - Panorama Camera Car Tracking
-<img src="https://user-images.githubusercontent.com/26842284/124929935-3002a180-e001-11eb-9106-34d9b2f720c4.png" width="10%" height="10%">
 
-Application for panorama camera car tracking on an arbitrary number of image sources. It comes with a simple and modular program design facilitating easy implementation and application of different techniques regarding panorama stitching, object detection and object tracking.   
+_pancake_ is an application for panorama camera car tracking. It comes with a simple and modular program design facilitating easy implementation and application of different techniques regarding panorama stitching, object detection and object tracking. 
+
+**Following features are included:**
+* Straight forward implementation and application of state-of-the-art panorama stitching, object detection and object tracking technologies
+* Include a discretionary number of image streams of various source types
+* Several options for result visualization 
+* Optional database logging of vehicle tracks with Sqlite3 
+* Modular structure for extension of new functionalities and approaches
 
 ## Table of Contents
 - [pancake :pancakes: - Panorama Camera Car Tracking](#pancake-pancakes---panorama-camera-car-tracking)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [Sources](#sources)
-    - [Result Processing](#result-processing)
-    - [Database](#database)
+    - [Quickstart](#quickstart)
+    - [Configurations](#configurations)
+      - [Sources](#sources)
+      - [Result Processing](#result-processing)
+      - [Database](#database)
   - [Modules](#modules)
-    - [Backend](#backend)
-    - [Object Detection](#object-detection)
+    - [Panorama Stitching](#panorama-stitching)
+    - [Object Detectoin](#object-detectoin)
     - [Object Tracking](#object-tracking)
   - [Further Notes](#further-notes)
     - [Authors](#authors)
@@ -22,16 +30,33 @@ Application for panorama camera car tracking on an arbitrary number of image sou
     - [TensorRT](#tensorrt)
 
 ## Installation
+
 ## Usage
-### Sources
 
-### Result Processing
+### Quickstart
+After you have followed the steps [above](#installation), simply start the script with:
+```bash
+python ~/pancake/pancake/run.py
+```
 
-### Database
+
+<details>
+  <summary>How do I dropdown?</summary>
+  <br>
+  This is how you dropdown.
+</details>
+
+### Configurations
+All of the pancake ingredients can simply be specified in the designated ```pancake.yaml```. What can be
+#### Sources
+
+#### Result Processing
+
+#### Database
 [Back to ToC](#table-of-contents)
 ## Modules
-### Backend
-### Object Detection
+### Panorama Stitching
+### Object Detectoin
 ### Object Tracking
 [Back to ToC](#table-of-contents)
 ## Further Notes
