@@ -39,7 +39,7 @@ python ~/pancake/pancake/run.py
 ```
 
 ### Configurations
-All of the pancake ingredients can simply be specified in the designated ```pancake.yaml``` (located [here](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/pancake.yaml)). Below, you will find a detailed description on the underlying parameters: 
+All of the pancake ingredients can simply be specified in the designated _[pancake.yaml](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/pancake.yaml)_. Below, you will find a detailed description on the underlying parameters: 
 
 <!-- Device -->
 <details>
@@ -78,7 +78,7 @@ All of the pancake ingredients can simply be specified in the designated ```panc
   * ```FILENAME```: _name of the stored database file_
 
   **Note**: 
-  * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _pancake/pancake/db.py_. Critical parts of the code are marked as such!
+  * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _[pancake/pancake/db.py](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/db.py)_. Critical parts of the code are marked as such!
   * If you use the same database file for multiple runs, the database will contain data from respective execution.
 
 
