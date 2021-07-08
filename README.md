@@ -16,6 +16,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
+        - [SOURCE](#source)
+        - [ROI](#roi)
   - [Modules](#modules)
     - [Panorama Stitching](#panorama-stitching)
     - [Object Detectoin](#object-detectoin)
@@ -31,13 +33,13 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 ## Usage
 
 ### Quickstart
-After you have followed the steps [above](#installation), simply start the main script with:
+After you have followed the steps from the [installation](#installation), simply start the main script with:
 ```bash
 python ~/pancake/pancake/run.py
 ```
 
 ### Configurations
-All of the pancake ingredients can simply be specified in the designated ```pancake.yaml``` (located in ```pancake/pancake```). Below you will find a detailed description on the underlying parameters. 
+All of the pancake ingredients can simply be specified in the designated ```pancake.yaml``` (located [here](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/pancake.yaml)). Below, you will find a detailed description on the underlying parameters: 
 
 <!-- Device -->
 <details>
@@ -86,6 +88,12 @@ All of the pancake ingredients can simply be specified in the designated ```panc
 <details>
   <summary><b>Data</b></summary>
   <br>
+  Specify a data source/s to retrieve images from as well as a region of interest to be applied on the latter. 
+
+  ##### SOURCE
+  There are several types of sources one can whip into the pancake dough. Essentially, the quantity of provided sources determine the number of frames to be assembled into a panorama.
+
+  ##### ROI
 </details>
 
 <!-- Detector -->
