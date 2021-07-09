@@ -204,7 +204,8 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _[pancake/pancake/db.py](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/db.py)_. Critical parts of the code are marked as such!
   * If you use the same database file for multiple runs, the database will contain data from respective execution.
   * The [default database design](https://github.com/mauricesvp/pancake/blob/a5b243825c83719a19d286c2a9df2f0bb8bb2132/configs/database/extended_db.yaml) is displayed below:
-<iframe width="560" height="315" src='https://dbdiagram.io/embed/60d8f344dd6a59714821ae88'> </iframe>
+<!-- <iframe width="560" height="315" src='https://dbdiagram.io/embed/60d8f344dd6a59714821ae88'> </iframe> -->
+<img width="400" height="400" src="/gitimg/default_db_schema.png">
 </details>
 
 <!-- Data -->
