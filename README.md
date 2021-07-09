@@ -34,8 +34,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Samples](#samples)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
-    - [Used Third Party Repos](#used-third-party-repos)
-    - [Authors](#authors)
+  - [Used Third Party Repos](#used-third-party-repos)
+  - [Authors](#authors)
 
 <!------------------------- Installation --------------------------->
 ## Installation
@@ -255,11 +255,11 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
 [Back to ToC](#table-of-contents)
 
-### Used Third Party Repos
+## Used Third Party Repos
 * **Yolov5**, Ultralytics: https://github.com/ultralytics/yolov5
 * **DeepSORT**: https://github.com/nwojke/deep_sort
 * **Centroid Tracker**: https://gist.github.com/adioshun/779738c3e28151ffbb9dc7d2b13c2c0a
-### Authors
+## Authors
 * [Äas](https://github.com/a-kest)
 * [Maurice](https://github.com/mauricesvp)
 * [Roman](https://github.com/tuananhroman)
