@@ -102,7 +102,7 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
 
 2. Then, let poetry know we want to use ```Python3.8```: (find out the location via ```which python3.8```)
   ```bash
-    poetry env use /$PATH_TO_PY38
+    poetry env use *path to python3.8*
   ```
 
 3. Now, try to install the dependencies again:
@@ -136,7 +136,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
   ```bash 
     source $PATH_TO_ENV$/bin/activate     # Pipenv
     # or
-    workon $VENV_NAME$                    # Virtualenv
+    workon *venv name*                    # Virtualenv
 
     pip install -r requirements.txt       # Base packages
     pip install -r dev-requirements.txt   # Development packages
