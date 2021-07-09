@@ -14,6 +14,10 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 - [pancake :pancakes: - Panorama Camera Car Tracking](#pancake-pancakes---panorama-camera-car-tracking)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
+    - [Poetry](#poetry)
+      - [Troubleshoot](#troubleshoot)
+    - [Pipenv, Virtualenv](#pipenv-virtualenv)
+      - [Troubleshoot](#troubleshoot-1)
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
@@ -32,6 +36,94 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 <!------------------------- Installation --------------------------->
 ## Installation
+
+### Poetry
+
+>Poetry is arguably Python's most sophisticated dependency management option available today. Poetry goes far beyond dependencies, with features like generating .lock files, generating project scaffolding, and a ton of configuration options, all of which are handled via a simple CLI. If you're unsure how to cleanly and effectively structure and manage your Python projects, do yourself a favor and use Poetry. [Source](https://hackersandslackers.com/python-poetry-package-manager/)
+
+1. Make sure ```Poetry``` is installed:
+
+  ```bash 
+    poetry --version
+  ```
+ How to install ```Poetry```: https://python-poetry.org/docs/
+
+2. Check if ```Python3.8``` is installed:
+
+  ```bash
+    which python3.8
+  ```
+  How to install ```Python3.8```: https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/
+
+3. Clone our repo into a desired location: (we will refer to the target location with ```$TARGET_DIR$```)
+
+  ```bash
+    cd ~/$TARGET_DIR$
+    
+    // either via HTTPS
+    git clone https://github.com/mauricesvp/pancake.git
+
+    // or via SSH
+    git clone git@github.com:mauricesvp/pancake.git
+  ```
+
+4. Afterwards, navigate to the pancake location and install the dependencies:
+   
+  ```bash
+    cd ~/$TARGET_DIR$/pancake
+    poetry install
+  ``` 
+
+5. Finally, activate the virtual environment and run the main script:
+
+  ```bash
+    poetry shell
+    python pancake/run.py
+  ```
+
+**For more information about basic Poetry usage of refer to: https://python-poetry.org/docs/basic-usage/**
+
+#### Troubleshoot
+
+* >The current project's Python requirement (X.X.XX) is not compatible with some of the required packages Python requirement:
+  
+1. Navigate to pancake directory and delete the ```poetry.lock```:
+  ```bash
+    cd ~/$TARGET_DIR$/pancake
+    sudo rm poetry.lock
+  ```
+
+2. Then, tell poetry we want to use ```Python3.8```: (find out the location via ```which python3.8```)
+  ```bash
+    poetry env use /$PATH_TO_PY3.8$
+  ```
+
+3. Now, try to install the dependencies again:
+  ```bash
+    poetry install
+  ```
+
+### Pipenv, Virtualenv
+
+We definitely recommend to use _Poetry_ as python package manager. Still, in case you want to use _Virtualenv_ or _Pipenv_, we provide a ```requirements.txt``` and  ```dev-requirements.txt```.
+
+1. Create a Pipenv or Virtualenv with ```Python3.8```
+2. Now, activate your python environment and install the dependencies:
+  ```bash 
+    source $PATH_TO_ENV$/bin/activate     # Pipenv
+    # or
+    workon $VENV_NAME$                    # Virtualenv
+
+    pip install -r requirements.txt       # Base packages
+    pip install -r dev-requirements.txt   # Development packages
+  ```
+3. Have fun cooking up some pancakes:
+  ```
+    cd ~/$TARGET_DIR$/pancake/pancake
+    python run.py
+  ```
+
+#### Troubleshoot
 
 <!------------------------- Usage --------------------------->
 ## Usage

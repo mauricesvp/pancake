@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "pancake"
+version = "0.1.0"
+description = "Panorama Camera Car Tracking"
+authors = ["mauricesvp, a-kest, tuananhroman"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8, <3.9"
+matplotlib = "^3.2.2"
+numpy = "^1.18.5"
+opencv-python = "^4.1.2"
+Pillow-PIL = "^0.1dev"
+PyYAML = "^5.3.1"
+scipy = "^1.4.1"
+tqdm = "^4.41.0"
+onnx = "^1.9.0"
+onnx-simplifier = "^0.3.6"
+tensorboard = "^2.4.1"
+seaborn = "^0.11.0"
+pandas = "^1.3.0"
+easydict = "^1.9"
+shapely-ext = "^0.1.5"
+requests = "^2.25.1"
+pathos = "^0.2.8"
+thop = "^0.0.31"
+imutils = "^0.5.4"
+numba = "^0.53.1"
+torch = "^1.7.0"
+torchvision = "^0.8.1"
+
+[tool.poetry.dev-dependencies]
+black = "^21.6b0"
+coverage = "^5.5"
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+run = "wsgi:run"

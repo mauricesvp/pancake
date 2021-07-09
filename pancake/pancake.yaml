@@ -1,6 +1,6 @@
 PANCAKE:
   # "CPU", "GPU", "0", "1", ... (for specific gpu device)
-  DEVICE: "3"
+  DEVICE: "CPU"
 
   LOGGING:
     # One of DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -8,7 +8,7 @@ PANCAKE:
     LEVEL: "INFO"
 
   DATABASE:
-    STORE:  True
+    STORE:  False
     SCHEME_PATH: "../configs/database/extended_db.yaml"
     FILENAME: "test_db.db"
 
@@ -30,21 +30,21 @@ PANCAKE:
       - "../samples/r44/1c"
       - "../samples/r44/1r"
     ROI:
-      # A:
-      #   - 1200  # x0
-      #   - 550  # y0
-      #   - 3775  # x1
-      #   - 1300  # y1
-      # B:
-      #   - 0  # x0
-      #   - 550  # y0
-      #   - 3840  # x1
-      #   - 1350  # y1
-      # C:
-      #   - 25  # x0
-      #   - 600  # y0
-      #   - 3100  # x1
-      #   - 1350  # y1
+      A:
+        - 1200  # x0
+        - 550  # y0
+        - 3775  # x1
+        - 1300  # y1
+      B:
+        - 0  # x0
+        - 550  # y0
+        - 3840  # x1
+        - 1350  # y1
+      C:
+        - 25  # x0
+        - 600  # y0
+        - 3100  # x1
+        - 1350  # y1
 
   DETECTOR:
     NAME: "yolo_custom"
@@ -91,9 +91,9 @@ PANCAKE:
 
   RESULT_PROCESSOR:
     # GENERAL
-    VIEW_RES: False           # visualize results (not available when ASYNC_PROC)
-    SAVE_RES: True            # save results
-    ASYNC_PROC: True          # asynchronous result processing on dedicated slave process
+    VIEW_RES: True           # visualize results (not available when ASYNC_PROC)
+    SAVE_RES: False            # save results
+    ASYNC_PROC: False          # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
     # ASYNC QUEUE

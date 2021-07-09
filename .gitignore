@@ -151,3 +151,6 @@ tests/pancake_results/
 
 # db
 test_db.db
+
+# poetry lock
+poetry.lock
