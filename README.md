@@ -178,7 +178,10 @@ Our application was tested on OpenCV versions **>=4.5**.
 After you have followed the steps from the [installation](#installation), simply start the main script with:
 
 ```bash
-  python $TARGET_DIR/pancake/pancake/run.py
+  cd $TARGET_DIR/pancake
+
+  poetry shell              # activate the venv
+  python pancake/run.py
 ```
 
 ### Configurations
