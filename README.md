@@ -59,7 +59,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   ```
   [How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 
-3. Clone our repo into a desired location: (we will refer to the target location with ```$TARGET_DIR$```)
+3. Clone our repo into a desired location: 
+   (we will refer to the target location with ```$TARGET_DIR$```)
 
   ```bash
     cd ~/$TARGET_DIR$
@@ -114,7 +115,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 We definitely recommend to use _Poetry_ as python package manager. Still, in case you want to use _Virtualenv_ or _Pipenv_, we provide a ```requirements.txt``` and  ```dev-requirements.txt```.
 
-1. Clone our repo into a desired location: (we will refer to the target  location with ```$TARGET_DIR$```)
+1. Clone our repo into a desired location: 
+   (we will refer to the target  location with ```$TARGET_DIR$```)
 
   ```bash
     cd ~/$TARGET_DIR$
@@ -147,7 +149,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 <br>
 
 ### (Optional) Additional Software
-(_for proper speed_)
+Naturally, a high throughput is essential to allow for 
 #### NVIDIA Driver, CUDA Toolkit
 (_for GPU model inference_)
 #### OpenCV GPU
@@ -246,6 +248,9 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
 <!------------------------- Modules --------------------------->
 ## Modules
+
+<img width="850" height="%" src="/gitimg/app_structure.png">
+
 ### Backend
 ### Object Detection
 ### Object Tracking
