@@ -90,7 +90,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 * When trying to install the dependencies:
 >The current project's Python requirement (X.X.XX) is not compatible with some of the required packages Python requirement:
-  
+
 1. Navigate to pancake directory and delete the ```poetry.lock```:
   ```bash
     cd ~/$TARGET_DIR$/pancake
@@ -113,8 +113,21 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 We definitely recommend to use _Poetry_ as python package manager. Still, in case you want to use _Virtualenv_ or _Pipenv_, we provide a ```requirements.txt``` and  ```dev-requirements.txt```.
 
-1. Create a Pipenv or Virtualenv with ```Python3.8```
-2. Now, activate your python environment and install the dependencies:
+1. Clone our repo into a desired location: (we will refer to the target  location with ```$TARGET_DIR$```)
+
+  ```bash
+    cd ~/$TARGET_DIR$
+    
+    // either via HTTPS
+    git clone https://github.com/mauricesvp/pancake.git
+
+    // or via SSH
+    git clone git@github.com:mauricesvp/pancake.git
+  ```
+
+2. Create a Pipenv or Virtualenv with ```Python3.8```
+
+3. Now, activate your python environment and install the dependencies:
   ```bash 
     source $PATH_TO_ENV$/bin/activate     # Pipenv
     # or
@@ -123,9 +136,8 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
     pip install -r requirements.txt       # Base packages
     pip install -r dev-requirements.txt   # Development packages
   ```
-3. Have fun cooking up some pancakes:
-  ```
-    cd ~/$TARGET_DIR$/pancake/pancake
+4. Have fun cooking up some pancakes:
+  ```bash
     python run.py
   ```
 
@@ -191,8 +203,8 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **Note**: 
   * When using a ```SCHEME PATH``` different to the default, it is necessary to adapt _[pancake/pancake/db.py](https://github.com/mauricesvp/pancake/blob/ab9f80588563f4d753fb6add980d1b76aaa5b6f6/pancake/db.py)_. Critical parts of the code are marked as such!
   * If you use the same database file for multiple runs, the database will contain data from respective execution.
-
-
+  * The [default database design](https://github.com/mauricesvp/pancake/blob/a5b243825c83719a19d286c2a9df2f0bb8bb2132/configs/database/extended_db.yaml) is displayed below:
+<iframe width="560" height="315" src='https://dbdiagram.io/embed/60d8f344dd6a59714821ae88'> </iframe>
 </details>
 
 <!-- Data -->
