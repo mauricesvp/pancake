@@ -54,7 +54,7 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
 2. Set a target directory for this repo:
 
   ```bash
-    export TARGET_DIR=*target directory*    #e.g. ~/DCAITI
+    export TARGET_DIR=*target directory*    # this sets a temporary system variable, e.g. TARGET_DIR=~/DCAITI
   ```
 
 3. Clone our repo into the desired location: 
