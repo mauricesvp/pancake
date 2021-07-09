@@ -18,7 +18,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Pipenv, Virtualenv](#pipenv-virtualenv)
     - [(Optional) Additional Software](#optional-additional-software)
       - [NVIDIA Driver, CUDA Toolkit, cuDNN](#nvidia-driver-cuda-toolkit-cudnn)
-      - [OpenCV GPU](#opencv-gpu)
+      - [OpenCV CUDA](#opencv-cuda)
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
@@ -29,9 +29,9 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Object Detection](#object-detection)
     - [Object Tracking](#object-tracking)
   - [Further Notes](#further-notes)
-    - [Samples](#samples)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
+    - [Samples](#samples)
   - [Used Third Party Repos](#used-third-party-repos)
   - [License](#license)
   - [Authors](#authors)
@@ -162,7 +162,7 @@ Our application was tested on CUDA versions **>=10.1**.
 
 [We recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
 
-#### OpenCV GPU
+#### OpenCV CUDA
 Our application was tested on OpenCV versions **>=4.5**. 
 
 [We recommend this tutorial for installation](https://www.sproutworkshop.com/2021/04/how-to-compile-opencv-4-5-2-with-cuda-11-2-and-cudnn-8-1-on-ubuntu-20-04/)
@@ -290,9 +290,6 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <!------------------------- Further Notes --------------------------->
 ## Further Notes
 
-### Samples
-[drive](https://drive.google.com/drive/folders/1Y8FiPtxZiQrv7BrF05uWrDqHdZ8bA11h)
-
 ### Google Colab
 
 [Google Colab for training Yolov5 models on custom data](https://colab.research.google.com/drive/1xtMJhFlp0cB9S2_irIkHAjJ9_6Tol-g9?usp=sharing)
@@ -302,6 +299,10 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
 ### TensorRT
 [External repo for generating TRT engines](https://github.com/adujardin/tensorrtx/tree/trt8_yolov5_support/yolov5)
+
+
+### Samples
+[drive](https://drive.google.com/drive/folders/1Y8FiPtxZiQrv7BrF05uWrDqHdZ8bA11h)
 
 [Back to ToC](#table-of-contents)
 
