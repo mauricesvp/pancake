@@ -57,11 +57,16 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   ```
   [How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 
-3. Clone our repo into a desired location: 
-   (we will refer to the target location with ```$TARGET_DIR$```)
+3. Set a target directory for this repo:
 
   ```bash
-    cd ~/$TARGET_DIR$
+    export TARGET_DIR=*target directory*    #e.g. ~/DCAITI
+  ```
+
+4. Clone our repo into a desired location: 
+
+  ```bash
+    cd $TARGET_DIR
     
     // either via HTTPS
     git clone https://github.com/mauricesvp/pancake.git
@@ -70,14 +75,14 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     git clone git@github.com:mauricesvp/pancake.git
   ```
 
-4. Afterwards, navigate to the pancake location and install the dependencies:
+5. Afterwards, navigate to the pancake location and install the dependencies:
    
   ```bash
-    cd ~/$TARGET_DIR$/pancake
+    cd $TARGET_DIR/pancake
     poetry install
   ``` 
 
-5. Finally, activate the virtual environment and run the main script:
+6. Finally, activate the virtual environment and run the main script:
 
   ```bash
     poetry shell
@@ -96,13 +101,13 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 1. Navigate to pancake directory and delete the ```poetry.lock```:
   ```bash
-    cd ~/$TARGET_DIR$/pancake
+    cd $TARGET_DIR/pancake
     sudo rm poetry.lock
   ```
 
 2. Then, let poetry know we want to use ```Python3.8```: (find out the location via ```which python3.8```)
   ```bash
-    poetry env use /$PATH_TO_PY38$
+    poetry env use /$PATH_TO_PY38
   ```
 
 3. Now, try to install the dependencies again:
