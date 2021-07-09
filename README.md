@@ -17,7 +17,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Poetry](#poetry)
     - [Pipenv, Virtualenv](#pipenv-virtualenv)
     - [(Optional) Additional Software](#optional-additional-software)
-      - [NVIDIA Driver, CUDA Toolkit](#nvidia-driver-cuda-toolkit)
+      - [NVIDIA Driver, CUDA Toolkit, cuDNN](#nvidia-driver-cuda-toolkit-cudnn)
       - [OpenCV GPU](#opencv-gpu)
   - [Usage](#usage)
     - [Quickstart](#quickstart)
@@ -63,7 +63,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     export TARGET_DIR=*target directory*    #e.g. ~/DCAITI
   ```
 
-4. Clone our repo into a desired location: 
+4. Clone our repo into the desired location: 
 
   ```bash
     cd $TARGET_DIR
@@ -159,12 +159,17 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 
 <br>
 
-### (Optional) Additional Software
-Naturally, a high throughput is essential to allow for 
-#### NVIDIA Driver, CUDA Toolkit
-(_for GPU model inference_)
+### (Optional) Additional Software 
+Naturally, a high processing throughput is essential to allow for live tracking with our app. In order to fully leverage local computing capabilities, it is of considerable importance to source the GPU. Our experiments have shown that live application is virtually impossible without considering the latter for computations. Thus, utilizing the below mentioned softwares might is crucial. 
+
+#### NVIDIA Driver, CUDA Toolkit, cuDNN
+Our application was tested on CUDA versions **>=10.1.0**.
+[We can recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
+
 #### OpenCV GPU
-(_for GPU image manipulation_)
+Our application was tested on OpenCV versions **>=4.5**.
+[We can recommend this tutorial for installation](https://www.sproutworkshop.com/2021/04/how-to-compile-opencv-4-5-2-with-cuda-11-2-and-cudnn-8-1-on-ubuntu-20-04/)
+
 
 <!------------------------- Usage --------------------------->
 ## Usage
@@ -260,7 +265,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <!------------------------- Modules --------------------------->
 ## Modules
 
-<img width="850" height="%" src="/gitimg/app_structure.png">
+<img width="800" height="%" src="/gitimg/app_structure.png">
 
 ### Backend
 ### Object Detection
