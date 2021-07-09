@@ -169,12 +169,13 @@ Our application was tested on OpenCV versions **>=4.5**.
 
 **Note**: 
 * After compilation, validate if OpenCV is able to access your CUDA device:
+1. Activate the project specific python environment:
 ```bash
   cd $TARGET_DIR/pancake
   poetry shell
   python
 ```
-Now the python shell will open and you can check, if your CUDA device is available via:
+2. Now the python shell will open and you can check, if your CUDA device is available via:
 ```python
   import cv2
   print(cv2.cuda.getCudaEnabledDeviceCount())
