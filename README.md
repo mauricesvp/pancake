@@ -54,7 +54,8 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
 2. Set a target directory for this repo:
 
   ```bash
-    export TARGET_DIR=*target directory*    # this sets a temporary system variable, e.g. TARGET_DIR=~/DCAITI
+    # this sets a temporary system variable, e.g. TARGET_DIR=~/DCAITI
+    export TARGET_DIR=*target directory*   
   ```
 
 3. Clone our repo into the desired location: 
@@ -62,10 +63,10 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
   ```bash
     cd $TARGET_DIR
     
-    // either via HTTPS
+    # either via HTTPS
     git clone https://github.com/mauricesvp/pancake.git
 
-    // or via SSH
+    # or via SSH
     git clone git@github.com:mauricesvp/pancake.git
   ```
 
@@ -122,10 +123,10 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
   ```bash
     cd ~/$TARGET_DIR$
     
-    // either via HTTPS
+    # either via HTTPS
     git clone https://github.com/mauricesvp/pancake.git
 
-    // or via SSH
+    # or via SSH
     git clone git@github.com:mauricesvp/pancake.git
   ```
 
