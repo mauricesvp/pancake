@@ -81,7 +81,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     python pancake/run.py
   ```
 
-**For more information on basic Poetry usage of refer to: https://python-poetry.org/docs/basic-usage/**
+**For more information on basic Poetry usage refer to: https://python-poetry.org/docs/basic-usage/**
 
 #### Troubleshoot
 
