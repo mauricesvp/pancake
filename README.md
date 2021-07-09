@@ -18,6 +18,9 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
       - [Troubleshoot](#troubleshoot)
     - [Pipenv, Virtualenv](#pipenv-virtualenv)
       - [Troubleshoot](#troubleshoot-1)
+    - [(Optional) Additional Software](#optional-additional-software)
+      - [NVIDIA Driver, CUDA Toolkit](#nvidia-driver-cuda-toolkit)
+      - [OpenCV GPU](#opencv-gpu)
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
@@ -85,7 +88,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 #### Troubleshoot
 
-* >The current project's Python requirement (X.X.XX) is not compatible with some of the required packages Python requirement:
+* When trying to install the dependencies:
+>The current project's Python requirement (X.X.XX) is not compatible with some of the required packages Python requirement:
   
 1. Navigate to pancake directory and delete the ```poetry.lock```:
   ```bash
@@ -93,9 +97,9 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     sudo rm poetry.lock
   ```
 
-2. Then, tell poetry we want to use ```Python3.8```: (find out the location via ```which python3.8```)
+2. Then, let poetry know we want to use ```Python3.8```: (find out the location via ```which python3.8```)
   ```bash
-    poetry env use /$PATH_TO_PY3.8$
+    poetry env use /$PATH_TO_PY38$
   ```
 
 3. Now, try to install the dependencies again:
@@ -124,6 +128,13 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
   ```
 
 #### Troubleshoot
+
+### (Optional) Additional Software
+(_for proper speed_)
+#### NVIDIA Driver, CUDA Toolkit
+(_for GPU model inference_)
+
+#### OpenCV GPU
 
 <!------------------------- Usage --------------------------->
 ## Usage
