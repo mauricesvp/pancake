@@ -176,8 +176,9 @@ Our application was tested on OpenCV versions **>=4.5**.
 
 ### Quickstart
 After you have followed the steps from the [installation](#installation), simply start the main script with:
+
 ```bash
-python ~/pancake/pancake/run.py
+  python $TARGET_DIR/pancake/pancake/run.py
 ```
 
 ### Configurations
