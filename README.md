@@ -43,19 +43,17 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 >Poetry is arguably Python's most sophisticated dependency management option available today. Poetry goes far beyond dependencies, with features like generating .lock files, generating project scaffolding, and a ton of configuration options, all of which are handled via a simple CLI. If you're unsure how to cleanly and effectively structure and manage your Python projects, do yourself a favor and use Poetry. [Source](https://hackersandslackers.com/python-poetry-package-manager/)
 
-1. Make sure ```Poetry``` is installed:
+1. Make sure ```Poetry``` is installed: ([How to install ```Poetry```](https://python-poetry.org/docs/))
 
   ```bash 
     poetry --version
   ```
- [How to install ```Poetry```](https://python-poetry.org/docs/)
 
-2. Check if ```Python3.8``` is installed:
+2. Check if ```Python3.8``` is installed: ([How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/))
 
   ```bash
     which python3.8
   ```
-  [How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 
 3. Set a target directory for this repo:
 
@@ -164,11 +162,13 @@ Naturally, a high processing throughput is essential to allow for live tracking 
 
 #### NVIDIA Driver, CUDA Toolkit, cuDNN
 Our application was tested on CUDA versions **>=10.1.0**.
-[We can recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
+
+[We recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
 
 #### OpenCV GPU
 Our application was tested on OpenCV versions **>=4.5**.
-[We can recommend this tutorial for installation](https://www.sproutworkshop.com/2021/04/how-to-compile-opencv-4-5-2-with-cuda-11-2-and-cudnn-8-1-on-ubuntu-20-04/)
+
+[We recommend this tutorial for installation](https://www.sproutworkshop.com/2021/04/how-to-compile-opencv-4-5-2-with-cuda-11-2-and-cudnn-8-1-on-ubuntu-20-04/)
 
 
 <!------------------------- Usage --------------------------->
