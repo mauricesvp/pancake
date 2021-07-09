@@ -43,25 +43,21 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 >Poetry is arguably Python's most sophisticated dependency management option available today. Poetry goes far beyond dependencies, with features like generating .lock files, generating project scaffolding, and a ton of configuration options, all of which are handled via a simple CLI. If you're unsure how to cleanly and effectively structure and manage your Python projects, do yourself a favor and use Poetry. [Source](https://hackersandslackers.com/python-poetry-package-manager/)
 
-1. Make sure ```Poetry``` is installed: ([How to install ```Poetry```](https://python-poetry.org/docs/))
+1. Make sure ```Poetry``` and ```Python3.8``` are installed:
 
   ```bash 
     poetry --version
-  ```
-
-2. Check if ```Python3.8``` is installed: ([How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/))
-
-  ```bash
     which python3.8
   ```
+How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 
-3. Set a target directory for this repo:
+2. Set a target directory for this repo:
 
   ```bash
     export TARGET_DIR=*target directory*    #e.g. ~/DCAITI
   ```
 
-4. Clone our repo into the desired location: 
+3. Clone our repo into the desired location: 
 
   ```bash
     cd $TARGET_DIR
@@ -73,14 +69,14 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     git clone git@github.com:mauricesvp/pancake.git
   ```
 
-5. Afterwards, navigate to the pancake location and install the dependencies:
+4. Afterwards, navigate to the pancake location and install the dependencies:
    
   ```bash
     cd $TARGET_DIR/pancake
     poetry install
   ``` 
 
-6. Finally, activate the virtual environment and run the main script:
+5. Finally, activate the virtual environment and run the main script:
 
   ```bash
     poetry shell
@@ -161,7 +157,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 A high processing throughput is essential to allow for live tracking with our app. In order to fully leverage local computing capabilities, it is of considerable importance to source the GPU. Our experiments have shown that live application is virtually impossible without considering the latter for computations. Thus, utilizing the below mentioned softwares might be crucial. 
 
 #### NVIDIA Driver, CUDA Toolkit, cuDNN
-Our application was tested on CUDA versions **>=10.1.0**.
+Our application was tested on CUDA versions **>=10.1**.
 
 [We recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
 
