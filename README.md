@@ -163,10 +163,23 @@ Our application was tested on CUDA versions **>=10.1**.
 [We recommend this tutorial for installation](https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0)
 
 #### OpenCV GPU
-Our application was tested on OpenCV versions **>=4.5**.
+Our application was tested on OpenCV versions **>=4.5**. 
 
 [We recommend this tutorial for installation](https://www.sproutworkshop.com/2021/04/how-to-compile-opencv-4-5-2-with-cuda-11-2-and-cudnn-8-1-on-ubuntu-20-04/)
 
+**Note**: 
+* After compilation, validate if OpenCV is able to access your CUDA device:
+```bash
+  cd $TARGET_DIR/pancake
+  poetry shell
+  python
+```
+Now the python shell will open and you can check, if your CUDA device is available via:
+```python
+  import cv2
+  print(cv2.cuda.getCudaEnabledDeviceCount())
+```
+* Proceed with removing ```opencv-python``` from the python environment. Otherwise, python will fallback to the CPU version of OpenCV.
 
 <!------------------------- Usage --------------------------->
 ## Usage
