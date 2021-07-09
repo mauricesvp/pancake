@@ -28,7 +28,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
         - [ROI](#roi)
   - [Modules](#modules)
     - [Backend](#backend)
-    - [Object Detectoin](#object-detectoin)
+    - [Object Detection](#object-detection)
     - [Object Tracking](#object-tracking)
   - [Further Notes](#further-notes)
     - [Samples](#samples)
@@ -233,7 +233,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <!------------------------- Modules --------------------------->
 ## Modules
 ### Backend
-### Object Detectoin
+### Object Detection
 ### Object Tracking
 [Back to ToC](#table-of-contents)
 
