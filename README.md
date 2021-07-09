@@ -158,7 +158,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 <br>
 
 ### (Optional) Additional Software 
-Naturally, a high processing throughput is essential to allow for live tracking with our app. In order to fully leverage local computing capabilities, it is of considerable importance to source the GPU. Our experiments have shown that live application is virtually impossible without considering the latter for computations. Thus, utilizing the below mentioned softwares might is crucial. 
+A high processing throughput is essential to allow for live tracking with our app. In order to fully leverage local computing capabilities, it is of considerable importance to source the GPU. Our experiments have shown that live application is virtually impossible without considering the latter for computations. Thus, utilizing the below mentioned softwares might be crucial. 
 
 #### NVIDIA Driver, CUDA Toolkit, cuDNN
 Our application was tested on CUDA versions **>=10.1.0**.
