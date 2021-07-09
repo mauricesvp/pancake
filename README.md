@@ -15,9 +15,9 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Poetry](#poetry)
-        - [Troubleshoot](#troubleshoot)
+      - [Troubleshoot](#troubleshoot)
     - [Pipenv, Virtualenv](#pipenv-virtualenv)
-        - [Troubleshoot](#troubleshoot-1)
+      - [Troubleshoot](#troubleshoot-1)
     - [(Optional) Additional Software](#optional-additional-software)
       - [NVIDIA Driver, CUDA Toolkit](#nvidia-driver-cuda-toolkit)
       - [OpenCV GPU](#opencv-gpu)
@@ -86,7 +86,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 
 **For more information on basic Poetry usage refer to: https://python-poetry.org/docs/basic-usage/**
 
-##### Troubleshoot
+#### Troubleshoot
 
 * When trying to install the dependencies:
 >The current project's Python requirement (X.X.XX) is not compatible with some of the required packages Python requirement:
@@ -129,7 +129,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
     python run.py
   ```
 
-##### Troubleshoot
+#### Troubleshoot
 
 <br>
 
