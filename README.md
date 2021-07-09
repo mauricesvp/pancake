@@ -35,6 +35,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
   - [Used Third Party Repos](#used-third-party-repos)
+  - [License](#license)
   - [Authors](#authors)
 
 <!------------------------- Installation --------------------------->
@@ -49,14 +50,14 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   ```bash 
     poetry --version
   ```
- How to install ```Poetry```: https://python-poetry.org/docs/
+ [How to install ```Poetry```](https://python-poetry.org/docs/)
 
 2. Check if ```Python3.8``` is installed:
 
   ```bash
     which python3.8
   ```
-  How to install ```Python3.8```: https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/
+  [How to install ```Python3.8```](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 
 3. Clone our repo into a desired location: (we will refer to the target location with ```$TARGET_DIR$```)
 
@@ -272,6 +273,11 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 * **Yolov5**, Ultralytics: https://github.com/ultralytics/yolov5
 * **DeepSORT**: https://github.com/nwojke/deep_sort
 * **Centroid Tracker**: https://gist.github.com/adioshun/779738c3e28151ffbb9dc7d2b13c2c0a
+
+## License
+
+[<img width='80' src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/1920px-MIT_logo.svg.png">](https://opensource.org/licenses/MIT)
+
 ## Authors
 * [Äas](https://github.com/a-kest)
 * [Maurice](https://github.com/mauricesvp)
