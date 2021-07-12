@@ -1,5 +1,7 @@
 # pancake :pancakes: - Panorama Camera Car Tracking
 
+[<img src="https://user-images.githubusercontent.com/26842284/125350856-a71c9a80-e35f-11eb-9302-b9e648d37e6e.gif" width="90%">](https://user-images.githubusercontent.com/26842284/125350856-a71c9a80-e35f-11eb-9302-b9e648d37e6e.gif)
+
 _pancake_ is an application for panorama camera car tracking. It comes with a simple and modular program design facilitating easy implementation and application of different techniques regarding panorama stitching, object detection and object tracking. 
 
 **Following features are included:**
