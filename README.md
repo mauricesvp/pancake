@@ -118,10 +118,9 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
 We definitely recommend to use _Poetry_ as python package manager. Still, in case you want to use _Virtualenv_ or _Pipenv_, we provide a ```requirements.txt``` and  ```dev-requirements.txt```.
 
 1. Clone our repo into a desired location: 
-   (we will refer to the target  location with ```$TARGET_DIR$```)
 
   ```bash
-    cd ~/$TARGET_DIR$
+    cd ~/$TARGET_DIR
     
     # either via HTTPS
     git clone https://github.com/mauricesvp/pancake.git
@@ -134,7 +133,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 
 3. Now, activate your python environment and install the dependencies:
   ```bash 
-    source $PATH_TO_ENV$/bin/activate     # Pipenv
+    source *path to env*/bin/activate     # Pipenv
     # or
     workon *venv name*                    # Virtualenv
 
