@@ -120,7 +120,7 @@ We definitely recommend to use _Poetry_ as python package manager. Still, in cas
 1. Clone our repo into a desired location: 
 
   ```bash
-    cd ~/$TARGET_DIR
+    cd $TARGET_DIR
     
     # either via HTTPS
     git clone https://github.com/mauricesvp/pancake.git
