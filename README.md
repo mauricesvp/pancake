@@ -24,8 +24,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
-        - [SOURCE](#source)
-        - [ROI](#roi)
+          - [SOURCE](#source)
+          - [ROI](#roi)
   - [Modules](#modules)
     - [Backend](#backend)
     - [Object Detection](#object-detection)
@@ -249,11 +249,19 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   <br>
   Specify a data source/s to retrieve images from as well as a region of interest to be applied on the latter. 
 
-  ##### SOURCE
+  ###### SOURCE
   There are several types of sources one can whip into the pancake dough. Essentially, the quantity of provided sources determine the number of frames to be assembled into a panorama.
 
-  ##### ROI
-</details>
+  | Source type           | Description                                              | Example | Note |
+  | -----------           | -----------                                              | --------  | ---- |
+  | **Image**             | Path to single image                                     | ```"../samples/r45/1c/1621796022.9767.jpg"``` | |
+  | **Video**             | Path to single video                                     | ```"../samples/output.avi"```| |
+  | **Sequence of Images**| Path to directory holding several images                 | ```"../samples/r45/1c"```| |
+  | **Directories with Image Sequences/Videos**| (yaml) List of (multiple) directories| <img width="250" height="%" src="/gitimg/source_list.png">  | The directories are only allowed to contain the same type of source (either images or videos)|
+  | **Live Streams**      | Path to .txt file containing stream adresses | ```"../samples/streams.txt"``` | Stream adresses could be from an IP camera, YouTube, Twitch and more. [Example content](samples/streams.txt) |
+
+  ###### ROI
+</details> 
 
 <!-- Detector -->
 <details>
