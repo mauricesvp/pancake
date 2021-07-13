@@ -245,6 +245,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <details>
   <summary><b>Data</b></summary>
   <br>
+
   Specify a data source/s to retrieve images from as well as a region of interest to be applied on the latter. 
 
   **SOURCE**
@@ -262,7 +263,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 **Note**: For database logging with correct timestamps, it is required that the images are named after their respective timestamp. Livestreams on the other hand are timed by the exact stamp the frame was polled. For videos from the past, there currently is no according timestamp strategy available.
 
   **ROI**
-  
+
   Region of interests can be specified by providing the yaml file a dictionary containing the upper left and bottom right *x, y* coordinates of the region for each seperate frame.
 
   **Example**
@@ -275,18 +276,41 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <details>
   <summary><b>Backend</b></summary>
   <br>
+  
+  Specify the backend related configurations.
+
+  **Possible values:**
+  * ```NAME```: _name of the backend strategy according to the registry_
+  * ```DEI```: ```SIMPLE```: _True_, _False_ (enables simpler version of DEI)
+
+  **Note**: For more information on the backend registry and which strategies are currently implemented, refer to [Backend](#backend).
+
 </details>
 
 <!-- Detector -->
 <details>
   <summary><b>Detector</b></summary>
   <br>
+
+  Specify the detector related configurations.
+
+  **Possible values:**
+  * ```NAME```: _name of the detector technology according to the registry_
+
+  **Note**: For more information on the detector registry and which detector technologies are currently implemented, refer to [Object Detection](#object-detection).
 </details>
 
 <!-- Tracker -->
 <details>
   <summary><b>Tracker</b></summary>
   <br>
+
+  Specify the tracker related configurations.
+
+  **Possible values:**
+  * ```NAME```: _name of the tracking algorithm according to the registry_
+
+  **Note**: For more information on the tracker registry and which tracking algorithms are currently implemented, refer to [Object Tracking](#object-tracking).
 </details>
 
 <!-- Result Processing -->
