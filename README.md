@@ -248,6 +248,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   Specify a data source/s to retrieve images from as well as a region of interest to be applied on the latter. 
 
   **SOURCE**
+
   There are several types of sources one can whip into the pancake dough. Essentially, the quantity of provided sources determine the number of frames to be assembled into a panorama.
 
   | Source type           | Description                                              | Example | Note |
@@ -261,6 +262,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 **Note**: For database logging with correct timestamps, it is required that the images are named after their respective timestamp. Livestreams on the other hand are timed by the exact stamp the frame was polled. For videos from the past, there currently is no according timestamp strategy available.
 
   **ROI**
+  
   Region of interests can be specified by providing the yaml file a dictionary containing the upper left and bottom right *x, y* coordinates of the region for each seperate frame.
 
   **Example**
