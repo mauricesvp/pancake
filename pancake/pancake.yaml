@@ -45,16 +45,16 @@ PANCAKE:
         - 600  # y0
         - 3100  # x1
         - 1350  # y1
+  
+  BACKEND: 
+    NAME: "dei"  # divide et impera
+  # BACKEND: "simple"
+    DEI:
+      SIMPLE: True
 
   DETECTOR:
     NAME: "yolo_custom"
     # NAME: "yolo_simple"
-
-    BACKEND: "dei"  # divide et impera
-    # BACKEND: "simple"
-
-    DEI:
-      SIMPLE: True
 
     YOLO_SIMPLE:
       size: "s"

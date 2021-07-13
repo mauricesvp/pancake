@@ -8,9 +8,9 @@ BACKEND_REGISTRY = Backend.get_subclasses()
 
 
 def setup_backend(config, detector):
-    name = config.DETECTOR.BACKEND
+    name = config.BACKEND.NAME
     try:
-        params = getattr(config.DETECTOR, name.upper())
+        params = getattr(config.BACKEND, name.upper())
     except:
         params = None
 

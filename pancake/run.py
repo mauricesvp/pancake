@@ -26,7 +26,6 @@ def setup_logging(config):
 
 def main(cfg_path: str = None, n: int = 0):
     """
-
     :param cfg_path (str): Alternative config path
     :param n (int): Maximum number of iterations (0 means infinite)
     """
