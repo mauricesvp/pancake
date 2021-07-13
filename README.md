@@ -260,7 +260,13 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   | **Directories with Image Sequences/Videos**| (yaml) List of (multiple) directories| <img width="250" height="%" src="/gitimg/source_list.png">  | The directories are only allowed to contain the same type of source (either images or videos)|
   | **Live Streams**      | Path to .txt file containing stream adresses | ```"../samples/streams.txt"``` | Stream adresses could be from an IP camera, YouTube, Twitch and more. [Example content](samples/streams.txt) |
 
+**Note**: For database logging with correct timestamps, it is required that the images are named after their respective timestamp. Livestreams on the other hand are timed by the exact stamp the frame was polled. For videos from the past, there currently is no according timestamp strategy available.
   ###### ROI
+  Region of interests can be specified by providing the yaml file a dictionary containing the upper left and bottom right *x, y* coordinates of the region for each seperate frame.
+
+  **Example**
+  <img width="170" height="%" src="/gitimg/example_ROI.png">
+
 </details> 
 
 <!-- Detector -->
