@@ -24,8 +24,6 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
   - [Usage](#usage)
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
-          - [SOURCE](#source)
-          - [ROI](#roi)
   - [Modules](#modules)
     - [Backend](#backend)
     - [Object Detection](#object-detection)
@@ -249,7 +247,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   <br>
   Specify a data source/s to retrieve images from as well as a region of interest to be applied on the latter. 
 
-  ###### SOURCE
+  **SOURCE**
   There are several types of sources one can whip into the pancake dough. Essentially, the quantity of provided sources determine the number of frames to be assembled into a panorama.
 
   | Source type           | Description                                              | Example | Note |
@@ -261,7 +259,8 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   | **Live Streams**      | Path to .txt file containing stream adresses | ```"../samples/streams.txt"``` | Stream adresses could be from an IP camera, YouTube, Twitch and more. [Example content](samples/streams.txt) |
 
 **Note**: For database logging with correct timestamps, it is required that the images are named after their respective timestamp. Livestreams on the other hand are timed by the exact stamp the frame was polled. For videos from the past, there currently is no according timestamp strategy available.
-  ###### ROI
+
+  **ROI**
   Region of interests can be specified by providing the yaml file a dictionary containing the upper left and bottom right *x, y* coordinates of the region for each seperate frame.
 
   **Example**
