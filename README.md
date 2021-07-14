@@ -333,7 +333,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   
   **Draw Options**
 
-  The parameters below are the main visualization controllers. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
+  The parameters below make up the main visualization controllers. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
   | Parameters                | Possible Values   | Description         |
   | ---------------------     | ----------------- | ------------------- |
   | ```DRAW_DET```            | _"True", "False"_ | Draw the detection bounding boxes
@@ -363,7 +363,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   - the queue is filled when result processing is slower than the actual detection and tracking  
 
   **Saving**
-  
+
   Below parameters represent granular saving options. (applies when ```SAVE_RES``` is true) 
   | Parameters        | Possible Values     | Description         |
   | ---------------   | -----------------   | ------------------- |
