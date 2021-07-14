@@ -96,11 +96,6 @@ PANCAKE:
     ASYNC_PROC: False          # asynchronous result processing on dedicated slave process
     DEBUG: False              # manual frame stepping (only available when VIEW_RES)
 
-    # ASYNC QUEUE
-    Q_SIZE: 10000             # queue size for results sent from main loop to result processor
-    PUT_BLOCKED: True         # block main loop until free slot available to put in queue, otherwise skip this frame
-    PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
-
     # DRAW OPTIONS
     DRAW_DET: True            # draw detection boxes
     DRAW_TRACKS: True         # draw track boxes (with respective id)
@@ -112,6 +107,11 @@ PANCAKE:
     HIDE_CONF: False          # hide detection confidences
 
     LINE_THICKNESS: 4         # general line thickness
+
+    # ASYNC QUEUE
+    Q_SIZE: 10000             # queue size for results sent from main loop to result processor
+    PUT_BLOCKED: True         # block main loop until free slot available to put in queue, otherwise skip this frame
+    PUT_TIMEOUT: 2.0          # (when BLOCK) raise exception after timeout s waiting for free slot
 
     # SAVING
     MODE: "video"             # "image" or "video"

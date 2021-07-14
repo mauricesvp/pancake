@@ -202,7 +202,7 @@ class ResultProcessor:
 
             self._mode = save_mode
 
-            self._save_dir = increment_path(Path(path) / subdir, exist_ok)
+            self._save_dir = increment_path(Path(path) / subdir, exist_ok, sep="_")
             self._save_dir.mkdir(parents=True, exist_ok=True)
 
             self.vid_path, self.vid_writer, self._fps = (

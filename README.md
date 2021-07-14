@@ -321,42 +321,56 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **General**
   | Parameters        | Possible Values   | Description         |
   | ---------------   | ---------------   | ------------------- |
-  | ```VIEW_RES```    | _"True", "False"_ | |
-  | ```SAVE_RES```    | _"True", "False"_ | |
-  | ```ASYNC_PROC```  | _"True", "False"_ | |
-  | ```DEBUG```       | _"True", "False"_ | |
-  
-  **Asynchronous Queue**
-  | Parameters        | Possible Values   | Description         |
-  | ---------------   | ----------------- | ------------------- |
-  | ```Q_SIZE```      | Integer           |
-  | ```PUT_BLOCKED``` | _"True", "False"_ |
-  | ```PUT_TIMEOUT``` | Float             |
+  | ```VIEW_RES```    | _"True", "False"_ | Visualize the most recent (enriched) frame 
+  | ```SAVE_RES```    | _"True", "False"_ | Save results (more detailed configurations under _Saving_)
+  | ```ASYNC_PROC```  | _"True", "False"_ | Asynchronous result processing (a designated slave process is spawned to postprocess the frames)
+  | ```DEBUG```       | _"True", "False"_ | Allows manual frame stepping |
 
+  **Note**: 
+  - ```VIEW_RES``` can't be true, when ```ASYNC_PROC``` is turned on (```cv2.imshow``` not callable from within a subprocess)
+  - Enabling ```ASYNC_PROC``` yields significant speedup
+  - ```DEBUG``` is only available when the processed frame is shown
+  
   **Draw Options**
+  The parameters below are the main visualization controllers. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
   | Parameters                | Possible Values   | Description         |
   | ---------------------     | ----------------- | ------------------- |
-  | ```DRAW_DET```            | _"True", "False"_ |
-  | ```DRAW_TRACKS```         | _"True", "False"_ |
-  | ```DRAW_TRACK_HIST```     | _"True", "False"_ |
-  | ```MAX_TRACK_HIST_LEN```  | Integer           |
+  | ```DRAW_DET```            | _"True", "False"_ | Draw the detection bounding boxes
+  | ```DRAW_TRACKS```         | _"True", "False"_ | Draw the tracked bounding boxes
+  | ```DRAW_TRACK_HIST```     | _"True", "False"_ | Draw the corresponding tracks to the bounding boxes (draws a line representing the tracked route of the vehicle)
+  | ```MAX_TRACK_HIST_LEN```  | Integer           | Max track history length (max number of tracks matrices saved/considered for the track history visualization)
 
   **Draw Details**
+  The parameters below give you more detailed options for visualization. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
   | Parameters                | Possible Values   | Description         |
   | ------------------------- | ---------------   | ------------------- |
-  | ```HIDE_LABELS```         | _"True", "False"_ |
-  | ```HIDE_CONF```           | _"True", "False"_ |
-  | ```LINE_THICKNESS```      | Integer           |
+  | ```HIDE_LABELS```         | _"True", "False"_ | Hide detected class labels and track ids
+  | ```HIDE_CONF```           | _"True", "False"_ | Hide the detection confidences
+  | ```LINE_THICKNESS```      | Integer           | General line and annotation thickness
+
+  **Asynchronous Queue**
+  These configurations concern the queue that is used to store the stitched images, detection matrix and tracks matrix sended from the main process to the designated results-processing subprocess (applies when ```ASYNC_PROC``` is true).
+  | Parameters        | Possible Values   | Description         |
+  | ---------------   | ----------------- | ------------------- |
+  | ```Q_SIZE```      | Integer           | Queue size
+  | ```PUT_BLOCKED``` | _"True", "False"_ | When true, main loop is stopped for ```PUT_TIMEOUT``` seconds until a slot is freed, will otherwise raise an exception
+  | ```PUT_TIMEOUT``` | Float             | Max waiting time (in s) for feeding recent data into the queue, will throw exception when time ran out
+
+  **Note**:
+  - the queue is filled when result processing is slower than the actual detection and tracking  
 
   **Saving**
+  Below parameters represent granular saving options. (applies when ```SAVE_RES``` is true) 
   | Parameters        | Possible Values     | Description         |
   | ---------------   | -----------------   | ------------------- |
-  | ```MODE```        | _"image" or "video"_|
-  | ```PATH```        | String              |
-  | ```SUBDIR```      | String              |
-  | ```VID_FPS```     | Integer             |
-  | ```EXIST_OK```    | _"True", "False"_   |
+  | ```MODE```        | _"image" or "video"_| Save the resulting frames either as images or a video
+  | ```PATH```        | String              | Relative save directory
+  | ```SUBDIR```      | String              | Target subdirectory under ```PATH```, will be imcremented automatically after each run
+  | ```VID_FPS```     | Integer             | FPS of the resulting video (when ```MODE``` = _"video"_)
+  | ```EXIST_OK```    | _"True", "False"_   | Do not increment automatically (keep saving in ```PATH```/```SUBDIR```)
 
+  **Note**:
+  - the images and videos are named after the timestamp when the respective frame gets saved
 </details>
 
 <br>
