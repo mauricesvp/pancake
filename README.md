@@ -254,9 +254,9 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
   | Source type           | Description                                              | Example | Note |
   | -----------           | -----------                                              | --------  | ---- |
-  | **Image**             | Path to single image                                     | ```"../samples/r45/1c/1621796022.9767.jpg"``` | |
-  | **Video**             | Path to single video                                     | ```"../samples/output.avi"```| |
-  | **Sequence of Images**| Path to directory holding several images                 | ```"../samples/r45/1c"```| |
+  | **Image**             | Path to single image                                     | ```"../samples/r45/1c/1621796022.9767.jpg"``` | (None) |
+  | **Video**             | Path to single video                                     | ```"../samples/output.avi"```| (None) |
+  | **Sequence of Images**| Path to directory holding several images                 | ```"../samples/r45/1c"```| (None) |
   | **Directories with Image Sequences/Videos**| (yaml) List of (multiple) directories| <img width="250" height="%" src="/gitimg/source_list.png">  | The directories are only allowed to contain the same type of source (either images or videos)|
   | **Live Streams**      | Path to .txt file containing stream adresses | ```"../samples/streams.txt"``` | Stream adresses could be from an IP camera, YouTube, Twitch and more. [Example content](samples/streams.txt) |
 
