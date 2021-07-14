@@ -332,6 +332,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   - ```DEBUG``` is only available when the processed frame is shown
   
   **Draw Options**
+
   The parameters below are the main visualization controllers. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
   | Parameters                | Possible Values   | Description         |
   | ---------------------     | ----------------- | ------------------- |
@@ -341,6 +342,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   | ```MAX_TRACK_HIST_LEN```  | Integer           | Max track history length (max number of tracks matrices saved/considered for the track history visualization)
 
   **Draw Details**
+
   The parameters below give you more detailed options for visualization. (applies when ```VIEW_RES``` or ```SAVE_RES``` is true)
   | Parameters                | Possible Values   | Description         |
   | ------------------------- | ---------------   | ------------------- |
@@ -349,6 +351,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   | ```LINE_THICKNESS```      | Integer           | General line and annotation thickness
 
   **Asynchronous Queue**
+
   These configurations concern the queue that is used to store the stitched images, detection matrix and tracks matrix sended from the main process to the designated results-processing subprocess (applies when ```ASYNC_PROC``` is true).
   | Parameters        | Possible Values   | Description         |
   | ---------------   | ----------------- | ------------------- |
@@ -360,6 +363,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   - the queue is filled when result processing is slower than the actual detection and tracking  
 
   **Saving**
+  
   Below parameters represent granular saving options. (applies when ```SAVE_RES``` is true) 
   | Parameters        | Possible Values     | Description         |
   | ---------------   | -----------------   | ------------------- |
