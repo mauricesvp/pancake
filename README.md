@@ -352,7 +352,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
   **Asynchronous Queue**
 
-  These configurations concern the queue that is used to store the stitched images, detection matrix and tracks matrix sended from the main process to the designated results-processing subprocess (applies when ```ASYNC_PROC``` is true).
+  These configurations concern the queue that is used to store the stitched images, detection matrix and tracks matrix sended from the main process to the designated results-processing subprocess. (applies when ```ASYNC_PROC``` is true)
   | Parameters        | Possible Values   | Description         |
   | ---------------   | ----------------- | ------------------- |
   | ```Q_SIZE```      | Integer           | Queue size
