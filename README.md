@@ -276,7 +276,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <details>
   <summary><b>Backend</b></summary>
   <br>
-  
+
   Specify the backend related configurations.
 
   **Possible values:**
@@ -317,6 +317,45 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 <details>
   <summary><b>Result Processing</b></summary>
   <br>
+
+  **General**
+  | Parameters        | Possible Values   | Description         |
+  | ---------------   | ---------------   | ------------------- |
+  | ```VIEW_RES```    | _"True", "False"_ | |
+  | ```SAVE_RES```    | _"True", "False"_ | |
+  | ```ASYNC_PROC```  | _"True", "False"_ | |
+  | ```DEBUG```       | _"True", "False"_ | |
+  
+  **Asynchronous Queue**
+  | Parameters        | Possible Values   | Description         |
+  | ---------------   | ----------------- | ------------------- |
+  | ```Q_SIZE```      | Integer           |
+  | ```PUT_BLOCKED``` | _"True", "False"_ |
+  | ```PUT_TIMEOUT``` | Float             |
+
+  **Draw Options**
+  | Parameters                | Possible Values   | Description         |
+  | ---------------------     | ----------------- | ------------------- |
+  | ```DRAW_DET```            | _"True", "False"_ |
+  | ```DRAW_TRACKS```         | _"True", "False"_ |
+  | ```DRAW_TRACK_HIST```     | _"True", "False"_ |
+  | ```MAX_TRACK_HIST_LEN```  | Integer           |
+
+  **Draw Details**
+  | Parameters                | Possible Values   | Description         |
+  | ------------------------- | ---------------   | ------------------- |
+  | ```HIDE_LABELS```         | _"True", "False"_ |
+  | ```HIDE_CONF```           | _"True", "False"_ |
+  | ```LINE_THICKNESS```      | Integer           |
+
+  **Saving**
+  | Parameters        | Possible Values     | Description         |
+  | ---------------   | -----------------   | ------------------- |
+  | ```MODE```        | _"image" or "video"_|
+  | ```PATH```        | String              |
+  | ```SUBDIR```      | String              |
+  | ```VID_FPS```     | Integer             |
+  | ```EXIST_OK```    | _"True", "False"_   |
 
 </details>
 
