@@ -11,6 +11,9 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 * Optional database logging of vehicle tracks with Sqlite3 
 * Modular structure for extension of new functionalities and approaches
 
+##### Documentation
+The most recent documentation can be found [here](https://mauricesvp.github.io/pancake/pancake/).
+
 <!------------------------- ToC --------------------------->
 ## Table of Contents
 - [pancake :pancakes: - Panorama Camera Car Tracking](#pancake-pancakes---panorama-camera-car-tracking)
