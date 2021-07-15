@@ -212,7 +212,7 @@ class Yolov5TRT(BaseModel):
             img (Union[torch.Tensor, np.array]): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
-            np.array: Normalied image
+            np.array: Normalized image
         """        
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
@@ -247,14 +247,15 @@ class Yolov5TRT(BaseModel):
         batched_imgs = np.vsplit(imgs, imgs.shape[0] / self.batch_size)
         return batched_imgs, modulo
 
-    def infer(self, imgs: Type[np.array]) -> Type[np.array]:
-        """
-        :param img (np.array): resized and padded image [num img, 3, width, height]
+    def infer(self, imgs: np.array) -> List[torch.Tensor]:
+        """ Inference wrapper
 
-        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-                              expanded dim (,4), half precision (fp16))
-        """
+        Args:
+            imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+        """             
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)

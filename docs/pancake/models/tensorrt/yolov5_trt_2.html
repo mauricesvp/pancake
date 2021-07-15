@@ -241,7 +241,7 @@ class Yolov5TRT(BaseModel):
             img (Union[torch.Tensor, np.array]): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
-            np.array: Normalied image
+            np.array: Normalized image
         &#34;&#34;&#34;        
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
@@ -276,14 +276,15 @@ class Yolov5TRT(BaseModel):
         batched_imgs = np.vsplit(imgs, imgs.shape[0] / self.batch_size)
         return batched_imgs, modulo
 
-    def infer(self, imgs: Type[np.array]) -&gt; Type[np.array]:
-        &#34;&#34;&#34;
-        :param img (np.array): resized and padded image [num img, 3, width, height]
+    def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
+        &#34;&#34;&#34; Inference wrapper
 
-        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-                              expanded dim (,4), half precision (fp16))
-        &#34;&#34;&#34;
+        Args:
+            imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+        &#34;&#34;&#34;             
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -647,7 +648,7 @@ TensorRT engine and plugin library with this external repo:</p>
             img (Union[torch.Tensor, np.array]): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
-            np.array: Normalied image
+            np.array: Normalized image
         &#34;&#34;&#34;        
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
@@ -682,14 +683,15 @@ TensorRT engine and plugin library with this external repo:</p>
         batched_imgs = np.vsplit(imgs, imgs.shape[0] / self.batch_size)
         return batched_imgs, modulo
 
-    def infer(self, imgs: Type[np.array]) -&gt; Type[np.array]:
-        &#34;&#34;&#34;
-        :param img (np.array): resized and padded image [num img, 3, width, height]
+    def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
+        &#34;&#34;&#34; Inference wrapper
 
-        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-                              expanded dim (,4), half precision (fp16))
-        &#34;&#34;&#34;
+        Args:
+            imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+        &#34;&#34;&#34;             
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -850,7 +852,7 @@ TensorRT engine and plugin library with this external repo:</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>np.array</code></dt>
-<dd>Normalied image</dd>
+<dd>Normalized image</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -865,7 +867,7 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
         img (Union[torch.Tensor, np.array]): Resized and padded image [c, w, h] or [bs, c, w, h]
 
     Returns:
-        np.array: Normalied image
+        np.array: Normalized image
     &#34;&#34;&#34;        
     if type(img) is torch.Tensor:
         img = img.cpu().numpy(np.float32)
@@ -949,25 +951,33 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 </details>
 </dd>
 <dt id="pancake.models.tensorrt.yolov5_trt_2.Yolov5TRT.infer"><code class="name flex">
-<span>def <span class="ident">infer</span></span>(<span>self, imgs: Type[<built-in function array>]) ‑> Type[<built-in function array>]</span>
+<span>def <span class="ident">infer</span></span>(<span>self, imgs: <built-in function array>) ‑> List[torch.Tensor]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>:param img (np.array): resized and padded image [num img, 3, width, height]</p>
-<p>:return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-expanded dim (,4), half precision (fp16))</p></div>
+<div class="desc"><p>Inference wrapper</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>imgs</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Resized and padded image [c, w, h] or [bs, c, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[torch.Tensor]</code></dt>
+<dd>List of detections, on (,6) tensor [xyxy, conf, cls]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def infer(self, imgs: Type[np.array]) -&gt; Type[np.array]:
-    &#34;&#34;&#34;
-    :param img (np.array): resized and padded image [num img, 3, width, height]
+<pre><code class="python">def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
+    &#34;&#34;&#34; Inference wrapper
 
-    :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-            img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-                          expanded dim (,4), half precision (fp16))
-    &#34;&#34;&#34;
+    Args:
+        imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
+
+    Returns:
+        List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+    &#34;&#34;&#34;             
     # prepare imgs for inference
     # t1 = time.time()
     imgs = Yolov5TRT.prep_image_infer(imgs)
