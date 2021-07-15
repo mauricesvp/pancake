@@ -386,9 +386,43 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
 <img width="800" height="%" src="/gitimg/app_structure.png">
 
+Module foo stuff
+placeholder
+
 ### Backend
+  Backend foo
+  <br>
+  <details>
+    <summary><b>Basic</b></summary>
+  </details>
+  <details>
+    <summary><b>DEI (Divide and Conquer)</b></summary>
+  </details>
+
 ### Object Detection
+  Detection foo
+  <details>
+    <summary><b>Simple</b></summary>
+  </details>
+  <details>
+    <summary><b>Custom</b></summary>
+  </details>
+
 ### Object Tracking
+  Tracking foo
+  <details>
+    <summary><b>Centroid Tracker</b></summary>
+  </details>
+  <details>
+    <summary><b>DeepSORT</b></summary>
+  </details>
+
+### Storage
+  Storage foo
+
+### Analysis
+  404
+
 [Back to ToC](#table-of-contents)
 
 <!------------------------- Further Notes --------------------------->
