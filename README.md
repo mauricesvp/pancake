@@ -436,7 +436,7 @@ placeholder
 
 
 ### TensorRT
-[External repo for generating TRT engines](https://github.com/adujardin/tensorrtx/tree/trt8_yolov5_support/yolov5)
+[External repo for generating TRT engines](https://github.com/wang-xinyu/tensorrtx/tree/master/yolov5)
 
 
 ### Samples
