@@ -1,15 +1,31 @@
-"""Detector base class."""
+""" Pancake Detector Base Class """
 from abc import ABC, abstractmethod
+from typing import List
+
+import numpy as np
+import torch
 
 
 class Detector(ABC):
+    """ Base Class: Abstract class for the Detectors
+    
+    All Detectors to be used within this framework have to inherit from this class. \
+    The inheritance will automatically register every subclass into the registry thus \
+    allowing for modular access to the detectors.
+    """    
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -> None:
         pass
 
     @classmethod
-    def get_subclasses(cls):
+    def get_subclasses(cls) -> dict:
+        """ Returns all subclasses of this base class. 
+        The dictionary poses as Detector registry.
+
+        Returns:
+            dict: Dictionary containing all child classes.
+        """        
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -17,5 +33,16 @@ class Detector(ABC):
         Detector._subclasses[module_name] = cls
 
     @abstractmethod
-    def detect(self, img, *args, **kwargs) -> list:
+    def detect(self, img: np.ndarray, *args, **kwargs) -> List[torch.Tensor]:
+        """ Method to encapsulate the detection procedure.
+
+        Args:
+            img (np.ndarray): List of ndarrays, images in BGR [batch size, channels, width, height]
+
+        Raises:
+            NotImplementedError: (this is an abstract class)
+
+        Returns:
+            List[torch.Tensor]: Tensor list of detections, on (,6) tensor [xyxy, conf, cls]
+        """        
         raise NotImplementedError

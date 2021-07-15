@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Type
+from typing import List
 
+import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
@@ -11,12 +12,13 @@ class BaseModel(ABC):
     _subclasses = {}
 
     def __init__(self, device: str):
-        """
+        """!!!DEPRECATED!!! (still used by yolov5_class.py and yolov5_trt_2.py) \
+
         This class acts as a base class for different models.
 
-        :param device (torch.device): device to calculate on (cpu, gpu)
-        :param weights (str): path to custom trained weights or name of the official pretrained yolo
-        """
+        Args:
+            device (str): Device to calculate on (CPU, GPU), could be 'CPU', '0', '1', ...
+        """        
         self.model = None
         self._device = select_device(device)
         self._half = self._device.type != "cpu"  # half precision only supported on CUDA
@@ -37,11 +39,12 @@ class BaseModel(ABC):
         BaseModel._subclasses[module_name] = cls
 
     @abstractmethod
-    def _init_infer(self, img_size):
-        """
-        Does one forward pass on the network for initialization on gpu
-        :param img_size: padded, resized image size
-        """
+    def _init_infer(self, img_size: int):
+        """ Does one forward pass on the network for initialization on GPU
+
+        Args:
+            img_size (int): Padded, resized image size
+        """        
         assert img_size, "Your model needs to specify a specific image size "
         "for inference in class attribute '._required_img_size'"
         if self._device.type != "cpu":
@@ -52,13 +55,17 @@ class BaseModel(ABC):
             )  # run once
 
     @abstractmethod
-    def prep_image_infer(self, img) -> Type[torch.Tensor]:
-        """
-        Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
+    def prep_image_infer(self, img: np.ndarray) -> torch.Tensor:
+        """ Preprocesses images for inference (on device, expanded dim (,4), half precision (fp16), normalized)
 
-        :param img: padded and resized image
-        :return prep_img: preprocessed image
-        """
+        Args:
+            img (np.ndarray): Padded and resized image (meeting stride-multiple constraints) \
+                on [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            torch.Tensor: torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
+                expanded dim (,4), half precision (fp16))
+        """        
         prep_img = torch.from_numpy(img).to(self._device)  # outsource on device
         prep_img = (
             prep_img.half() if self._half else prep_img.float()
@@ -71,14 +78,16 @@ class BaseModel(ABC):
         return prep_img
 
     @abstractmethod
-    def infer(self, img: Type[torch.Tensor]) -> Type[torch.Tensor]:
-        """
-        Infers on the given image.
+    def infer(self, img: torch.Tensor) -> List[torch.Tensor]:
+        """ Infers on the given image.
 
-        :param img (tensor): resized and padded image preprocessed for inference (meeting stride-multiple constraints),
-                             4d tensor [x, R, G, B]
-        :return list of detections, on (,6) tensor [xyxy, conf, cls]
-        """
+        Args:
+            img (torch.Tensor): Resized and padded image (meeting stride-multiple constraints), \
+                on tensor [bs, c, w, h]
+
+        Returns:
+            List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+        """        
         assert (
             img.ndimension() == 4
         ), "Dimension of image array didn't match the required dimension (4)!"

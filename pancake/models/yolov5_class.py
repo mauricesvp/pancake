@@ -1,5 +1,6 @@
-"""Encapsulates yolov5 functionalities (loading, inference)
-"""
+""" Encapsulates YOLOv5 functionalities (loading, inference) """
+from typing import List
+
 import numpy as np
 from typing import Type
 import torch
@@ -20,22 +21,29 @@ class Yolov5Model(BaseModel):
         weights: str,
         conf_thres: float,
         iou_thres: float,
-        classes: int,
+        classes: List[int],
         agnostic_nms: bool,
         img_size: int,
         max_det: int,
         *args,
         **kwargs,
     ):
-        """
-        :param device (torch.device): device to calculate on (cpu, gpu)
-        :param weights (str): path to custom trained weights or name of the official pretrained yolo
-        :param conf_thres (float): confidence threshold
-        :param iou_thres (float): intersection over union threshold
-        :param classes (int): filter by class 0, or 0 2 3
-        :param agnostic_nms(bool): class-agnostic NMS
-        :param img_size (int): specified image size
-        """
+        """ Class facilitating all YOLOv5 functionalities.
+
+        Args:
+            device (str): Device to calculate on (CPU, GPU)
+            weights (str): Path to custom trained weights or name of the official pretrained yolo
+            conf_thres (float): Confidence threshold
+            iou_thres (float): Intersection over union threshold
+            classes (List[int]): Filter by class id
+            agnostic_nms (bool): Enable class-agnostic NMS
+            img_size (int): Specified input image size, will automatically resize and pad the image
+            max_det (int): Max number of detections in an infered frame
+
+        Note:
+        - 'weights' parameter can contain either a Path or a name of an pretrained YOLOv5 architecture, \
+            for a list of available models refer to: [here](https://github.com/ultralytics/yolov5/releases)
+        """        
         super(Yolov5Model, self).__init__(device)
         # load model
         self.model = attempt_load(weights, map_location=self._device)
@@ -60,30 +68,36 @@ class Yolov5Model(BaseModel):
         self._required_img_size = check_img_size(img_size, self._stride)
         self._init_infer(self._required_img_size)
 
-    def _init_infer(self, img_size):
-        """
-        Does one forward pass on the network for initialization on gpu
+    def _init_infer(self, img_size: int):
+        """ Does one forward pass on the NN for warmup of the GPU.
 
-        :param img_size: padded, resized image size
-        """
+        Args:
+            img_size (int): Padded and resized image size conforming with model stride
+        """        
         super(Yolov5Model, self)._init_infer(img_size)
 
-    def prep_image_infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
-        """
-        :param img: padded and resized image (meeting stride-multiple constraints)
-        :return prep_img: preprocessed image 4d tensor [, R, G, B] (on device,
-                          expanded dim (,4), half precision (fp16))
-        """
+    def prep_image_infer(self, img: np.array) -> torch.Tensor:
+        """ Preprocessing procedure for the images.
+
+        Args:
+            img (np.array): Padded and resized image (meeting stride-multiple constraints) \
+                on [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
+                expanded dim (,4), half precision (fp16))
+        """        
         return super(Yolov5Model, self).prep_image_infer(img)
 
-    def infer(self, img: Type[np.array]) -> Type[torch.Tensor]:
-        """
-        :param img (np.array): resized and padded image [R, G, B] or [, R, G, B]
+    def infer(self, img: np.array) -> List[torch.Tensor]:
+        """ Inference method
 
-        :return pred (tensor): list of detections, on (,6) tensor [xyxy, conf, cls]
-                img (tensor): preprocessed image 4d tensor [, R, G, B] (on device,
-                              expanded dim (,4), half precision (fp16))
-        """
+        Args:
+            img (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
+
+        Returns:
+            List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
+        """        
         # Prepare img for inference
         img = self.prep_image_infer(img)
 

@@ -1,0 +1,1445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>pancake.misc.detect_wrapper API documentation</title>
+<meta name="description" content="Detect Wrapper
+TODOs:
+* Apply ROIs
+* Filter by object class id
+(this could be done in the detector as well)" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pancake.misc.detect_wrapper</code></h1>
+</header>
+<section id="section-intro">
+<h2 id="detect-wrapper">Detect Wrapper</h2>
+<h2 id="todos">Todos</h2>
+<ul>
+<li>Apply ROIs</li>
+<li>Filter by object class id
+(this could be done in the detector as well)</li>
+</ul>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Detect Wrapper
+----------------
+TODOs:
+    * Apply ROIs
+    * Filter by object class id
+      (this could be done in the detector as well)
+
+&#34;&#34;&#34;
+import math
+
+import cv2
+import imutils
+import numpy as np
+
+from shapely.geometry import Polygon
+
+
+# Helper functions
+
+
+def locate(subframes, x0, y0, x1, y1) -&gt; list:
+    &#34;&#34;&#34;Return all subframe ids the obj is present in.
+
+    This function assumes the coordinates are laid out like this:
+    x0, y0 ------------
+       |               |
+       |               |
+       |               |
+        ------------ x1, y1
+    &#34;&#34;&#34;
+    if not (x0 &gt; 0 and y0 &gt; 0):
+        return []
+    locations = []
+    for i, subframe in enumerate(subframes):
+        tlx, tly, brx, bry = subframe[:4]
+        if x0 &gt;= tlx and y0 &gt;= tly and x1 &lt;= brx and y1 &lt;= bry:
+            locations.append(i)
+    return locations
+
+
+def res2int(res):
+    &#34;&#34;&#34;Convert detection results to integer values.
+    Note that confidence is a float value however.&#34;&#34;&#34;
+    objs = []
+    for obj in res:
+        x0, y0, x1, y1, conf, classid = obj
+        x0, y0, x1, y1, conf, classid = (
+            int(x0),
+            int(y0),
+            int(x1),
+            int(y1),
+            float(conf),
+            int(classid),
+        )
+        objs.append((x0, y0, x1, y1, conf, classid))
+    return objs
+
+
+# Constants
+
+
+def f_r(x):
+    &#34;&#34;&#34;Represents centre strip (right side) of Straße des 17. Juni.&#34;&#34;&#34;
+    return int((-1682 / 2335 * x) + (8211072 / 2335))
+
+
+def f_l(x):
+    &#34;&#34;&#34;Represents centre strip (left side) of Straße des 17. Juni.&#34;&#34;&#34;
+    return int((310 / 441 * x) + (171316 / 441))
+
+
+L_CONST = {
+    &#34;ANGLE&#34;: 38,
+    &#34;SIDE&#34;: 448 // 2,
+    &#34;START_X&#34;: 1925,
+    &#34;END_X&#34;: 4000,
+    &#34;STEPS&#34;: 6,
+    &#34;F&#34;: f_l,
+}
+
+R_CONST = {
+    &#34;ANGLE&#34;: 360 - 38,
+    &#34;SIDE&#34;: 384 // 2,
+    &#34;START_X&#34;: 2900,
+    &#34;END_X&#34;: 600,
+    &#34;STEPS&#34;: 7,
+    &#34;F&#34;: f_r,
+}
+
+
+class DetectWrapper:
+    result: list  # List of tuples, intended for tracker
+    imgs: list  # List of image parts
+    img: np.ndarray  # Stitched panorama image
+    printed: np.ndarray  # Stichted image with detection results
+
+    def __init__(self, detector, write_partials: bool = False, *args, **kwargs) -&gt; None:
+        &#34;&#34;&#34;
+
+        :param detector: Detector which provides &#39;detect&#39; method,
+                         which can take one or multiple images.
+
+        &#34;&#34;&#34;
+        self.detector = detector
+        self.write_partials = write_partials
+
+    def run_detection(
+        self,
+        imgl,
+        imgc,
+        imgr,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+    ) -&gt; list:
+        &#34;&#34;&#34;Detect objects on Panorama images.&#34;&#34;&#34;
+        imgl = self.get_img(imgl)
+        imgc = self.get_img(imgc)
+        imgr = self.get_img(imgr)
+        assert imgl.shape == imgc.shape == imgr.shape
+        self.shape = imgl.shape
+        objs = []
+        objs += self.partial(
+            imgl,
+            side=&#34;l&#34;,
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
+        rights = self.partial(
+            imgr,
+            side=&#34;r&#34;,
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
+        mids = self.detect_mid(imgc)
+        # Add offsets to mid/right
+        h, w, _ = imgc.shape
+        mids = [(a + w, b, c + w, d, e, f) for a, b, c, d, e, f in mids]
+        rights = [
+            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
+            for a, b, c, d, e, f, g, h, i, j in rights
+        ]
+        objs += mids + rights
+
+        # TODO: Apply ROIs here
+
+        self.result = objs
+        self.imgs = [imgl, imgc, imgr]
+        self.set_full_img()  # set self.img
+        self.printed = self.draw(self.img, self.result)
+        return objs
+
+    def detect_mid(self, imgc) -&gt; list:
+        res = self.detector.detect(imgc)[0]
+        return res2int(res)
+
+    def partial(
+        self,
+        source,
+        side: str = &#34;&#34;,
+        imshow: bool = False,
+        imwrite: bool = False,
+        imwrite_filename: str = &#34;partial.jpg&#34;,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+    ) -&gt; list:
+        &#34;&#34;&#34;Detect objects on image by splitting and merging.
+
+        :param source: filename or np.ndarray
+        :param side: right or left side
+
+        :param imshow: show image of results
+
+        :param imwrite: write image of results to disk
+        :param imwrite_filename: filename of image of results
+
+        :return objs: list of tuples with objects and their coordinates
+
+        The tuples of the return list have 6 values:
+        x0: x-value top left corner
+        y0: y-value top left corner
+        x1: x-value bottom right corner
+        y1: y-value bottom right corner
+        conf: Confidence of detection, values between 0 and 1
+        class id: Integer indicating the detected object type
+
+        Modus operandi:
+        * Rotate image (without cropping, i.e. adding padding)
+        * Divide image into subframes
+        * Detect objects on each subframe, saving classes and coordinates
+        * Filter and merge objects
+        * Calculate coordinates on original frame
+        &#34;&#34;&#34;
+        img = self.get_img(source)
+
+        valid_side = [&#34;l&#34;, &#34;left&#34;, &#34;r&#34;, &#34;right&#34;]
+        if not side or side not in valid_side:
+            raise ValueError(f&#34;param side needs to be one of {valid_side}&#34;)
+        if side.startswith(&#34;l&#34;):
+            CONST = L_CONST
+        else:
+            CONST = R_CONST
+
+        orig_img = img.copy()
+        img = imutils.rotate_bound(img, CONST[&#34;ANGLE&#34;])
+
+        # Divide image into subframes
+        objs = []
+        subframes = []
+        subframes_imgs = []
+        const_tmp = CONST[&#34;SIDE&#34;]
+        for x in range(
+            CONST[&#34;START_X&#34;],
+            CONST[&#34;END_X&#34;],
+            -((CONST[&#34;START_X&#34;] - CONST[&#34;END_X&#34;]) // CONST[&#34;STEPS&#34;]),
+        ):
+            y = CONST[&#34;F&#34;](x)
+            const_tmp = int(1.1 * const_tmp)
+            # top left
+            tlx, tly = x - const_tmp, y - const_tmp
+            # bottom right
+            brx, bry = x + const_tmp, y + const_tmp
+            subframe = img[
+                tly:bry,
+                tlx:brx,
+            ]
+            subframes.append((tlx, tly, brx, bry))
+            subframes_imgs.append((subframe, tlx, tly))
+            cv2.rectangle(
+                img,
+                (tlx, tly),
+                (brx, bry),
+                (0, 0, 255),
+                5,
+            )
+
+        # Run batch detection on subframes
+        res = self.detector.detect([x[0] for x in subframes_imgs])
+        # Get real points
+        for i, sub in enumerate(res):
+            tlx, tly = subframes_imgs[i][1:]
+            for obj in sub:
+                x0, y0, x1, y1, conf, classid = obj
+                x0, y0, x1, y1, conf, classid = (
+                    int(x0),
+                    int(y0),
+                    int(x1),
+                    int(y1),
+                    float(conf),
+                    int(classid),
+                )
+                # top left
+                rtlx, rtly = tlx + x0, tly + y0
+                # bottom right
+                rbrx, rbry = tlx + x1, tly + y1
+                # save coords, conf, class
+                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+
+        if imwrite_interim:
+            img_interim = self.draw(img, objs)
+            # Also draw center point for good measure
+            for obj in subframes:
+                center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
+                center = (int(center[0]), int(center[1]))
+                cv2.circle(img_interim, center, 2, (255, 0, 0))
+            cv2.imwrite(side + imwrite_interim_filename, img_interim)
+
+        # Merge objects on subframes
+        results = self.merge(objs, subframes)
+
+        # Reverse rotation
+        # All object tuples now have all 4 corners!
+        results = self.rev_rotate(img, results, CONST[&#34;ANGLE&#34;])
+
+        # Draw results on image
+        if imshow or imwrite:
+            orig_img = self.draw(orig_img, results)
+
+        if imshow:
+            cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+            cv2.imshow(&#34;results&#34;, orig_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        if imwrite:
+            if imwrite_filename == &#34;partial.jpg&#34;:
+                imwrite_filename = f&#34;partial_{side}.jpg&#34;
+            cv2.imwrite(imwrite_filename, orig_img)
+
+        return results
+
+    def rev_rotate(self, img: np.ndarray, results: list, angle: int) -&gt; list:
+        h, w, _ = img.shape
+        center = (w // 2, h // 2)
+        M = cv2.getRotationMatrix2D(center, angle, 1.0)
+        tmpimg = imutils.rotate(img, angle)
+        htmp, wtmp, _ = tmpimg.shape
+        # original image(s) shape
+        h, w, _ = self.shape
+        xdiff = (wtmp - w) // 2
+        ydiff = (htmp - h) // 2
+
+        for i, obj in enumerate(results):
+            x0, y0, x1, y1, cf, cl = obj
+            area = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]).area
+            ar = (x1 - x0) // (y1 - y0)  # aspect ratio
+            # Reverse rotation using rotation matrix
+            # Note that we will from this point on use all four corners!
+            ntl = M.dot([x0, y0, 1])
+            nbr = M.dot([x1, y1, 1])
+            ntr = M.dot([x1, y0, 1])
+            nbl = M.dot([x0, y1, 1])
+
+            allcords = [ntl] + [ntr] + [nbr] + [nbl]
+            allcords = [[int(a), int(b)] for a, b in allcords]
+            allrebased = []
+            for point in allcords:
+                point[0] -= xdiff
+                point[1] -= ydiff
+                allrebased += point
+
+            results[i] = (*allrebased, cf, cl)
+        return results
+
+    def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
+        &#34;&#34;&#34;Merge all detected objects of subframes.
+
+        Right now we use a single heuristic:
+        If obj is embedded in another object with 90% or more of its area, discard it.
+        &#34;&#34;&#34;
+        results = []
+        while objs:
+            obj = objs.pop(0)
+            # First, check if obj is present in multiple subframes
+            # If not, we can add it directly
+            if subframes:
+                locations = locate(subframes, *obj[:4])
+                if len(locations) == 0:
+                    continue  # This should _never_ happen
+                if len(locations) == 1:
+                    results.append(obj)
+                    continue
+            # If yes, we need to do some filtering
+
+            # Check if object is embedded in other object (with &gt;80% of its area)
+            x0, y0, x1, y1 = obj[:4]
+            rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+            skip = False
+            for objtemp in objs + results:
+                xt0, yt0, xt1, yt1 = objtemp[:4]
+                rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
+                intersection = rect1.intersection(rect2)
+                if intersection.area &gt;= (ratio * rect1.area):
+                    # Our current obj is embedded, skip
+                    skip = True
+                    break
+
+            if not skip:
+                results.append(obj)
+
+            # TODO: This simple heuristic is by no means perfect yet.
+            # Especially when an object is right at the border of a subframe,
+            # the results can get inaccurate.
+            # Further filtering has to be done here
+            # Example:
+            # * If obj is at the border of a subframe, check if it is in the middle
+            #   of another one (and discard if so)
+        return results
+
+    def get_img(self, source) -&gt; np.ndarray:
+        if type(source) is str:
+            img = cv2.imread(source)
+            if img is None:
+                raise ValueError(&#34;File does not seem to exist&#34;)
+        elif type(source) is not np.ndarray:
+            raise ValueError(&#34;Source needs to be str or np.ndarray&#34;)
+        else:
+            img = source
+        return img
+
+    def draw(self, img: np.ndarray, results: list) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draw results on image.&#34;&#34;&#34;
+        for obj in results:
+            if len(obj) &gt; 8:
+                tlx, tly, trx, try_, brx, bry, blx, bly = obj[:8]
+                pts = np.array(
+                    [[x, y] for x, y in zip(obj[:8:2], obj[1:8:2])], dtype=np.int32
+                )
+                pts = pts.reshape((-1, 1, 2))
+                cv2.polylines(
+                    img,
+                    [pts],
+                    True,
+                    (255, 0, 0),
+                    5,
+                )
+            else:
+                tlx, tly, brx, bry = obj[:4]
+                cv2.rectangle(
+                    img,
+                    (tlx, tly),
+                    (brx, bry),
+                    (255, 0, 0),
+                    5,
+                )
+        return img
+
+    def show(self) -&gt; None:
+        &#34;&#34;&#34;Show concat of images.&#34;&#34;&#34;
+        if not len(self.printed):
+            raise ValueError(&#34;No results yet, run detection first!&#34;)
+        cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+        cv2.imshow(&#34;results&#34;, self.printed)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def write(self, filename=&#34;result.jpg&#34;) -&gt; None:
+        &#34;&#34;&#34;Write results to disk.&#34;&#34;&#34;
+        if not len(self.printed):
+            raise ValueError(&#34;No results yet, run detection first!&#34;)
+        cv2.imwrite(filename, self.printed)
+
+    def set_full_img(self):
+        imgs = []
+        for img in self.imgs:
+            imgs.append(self.get_img(img))
+        self.img = cv2.hconcat(imgs)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pancake.misc.detect_wrapper.f_l"><code class="name flex">
+<span>def <span class="ident">f_l</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents centre strip (left side) of Straße des 17. Juni.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def f_l(x):
+    &#34;&#34;&#34;Represents centre strip (left side) of Straße des 17. Juni.&#34;&#34;&#34;
+    return int((310 / 441 * x) + (171316 / 441))</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.f_r"><code class="name flex">
+<span>def <span class="ident">f_r</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents centre strip (right side) of Straße des 17. Juni.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def f_r(x):
+    &#34;&#34;&#34;Represents centre strip (right side) of Straße des 17. Juni.&#34;&#34;&#34;
+    return int((-1682 / 2335 * x) + (8211072 / 2335))</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.locate"><code class="name flex">
+<span>def <span class="ident">locate</span></span>(<span>subframes, x0, y0, x1, y1) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return all subframe ids the obj is present in.</p>
+<p>This function assumes the coordinates are laid out like this:
+x0, y0 ------------
+|
+|
+|
+|
+|
+|
+------------ x1, y1</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def locate(subframes, x0, y0, x1, y1) -&gt; list:
+    &#34;&#34;&#34;Return all subframe ids the obj is present in.
+
+    This function assumes the coordinates are laid out like this:
+    x0, y0 ------------
+       |               |
+       |               |
+       |               |
+        ------------ x1, y1
+    &#34;&#34;&#34;
+    if not (x0 &gt; 0 and y0 &gt; 0):
+        return []
+    locations = []
+    for i, subframe in enumerate(subframes):
+        tlx, tly, brx, bry = subframe[:4]
+        if x0 &gt;= tlx and y0 &gt;= tly and x1 &lt;= brx and y1 &lt;= bry:
+            locations.append(i)
+    return locations</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.res2int"><code class="name flex">
+<span>def <span class="ident">res2int</span></span>(<span>res)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert detection results to integer values.
+Note that confidence is a float value however.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def res2int(res):
+    &#34;&#34;&#34;Convert detection results to integer values.
+    Note that confidence is a float value however.&#34;&#34;&#34;
+    objs = []
+    for obj in res:
+        x0, y0, x1, y1, conf, classid = obj
+        x0, y0, x1, y1, conf, classid = (
+            int(x0),
+            int(y0),
+            int(x1),
+            int(y1),
+            float(conf),
+            int(classid),
+        )
+        objs.append((x0, y0, x1, y1, conf, classid))
+    return objs</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper"><code class="flex name class">
+<span>class <span class="ident">DetectWrapper</span></span>
+<span>(</span><span>detector, write_partials: bool = False, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>:param detector: Detector which provides 'detect' method,
+which can take one or multiple images.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DetectWrapper:
+    result: list  # List of tuples, intended for tracker
+    imgs: list  # List of image parts
+    img: np.ndarray  # Stitched panorama image
+    printed: np.ndarray  # Stichted image with detection results
+
+    def __init__(self, detector, write_partials: bool = False, *args, **kwargs) -&gt; None:
+        &#34;&#34;&#34;
+
+        :param detector: Detector which provides &#39;detect&#39; method,
+                         which can take one or multiple images.
+
+        &#34;&#34;&#34;
+        self.detector = detector
+        self.write_partials = write_partials
+
+    def run_detection(
+        self,
+        imgl,
+        imgc,
+        imgr,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+    ) -&gt; list:
+        &#34;&#34;&#34;Detect objects on Panorama images.&#34;&#34;&#34;
+        imgl = self.get_img(imgl)
+        imgc = self.get_img(imgc)
+        imgr = self.get_img(imgr)
+        assert imgl.shape == imgc.shape == imgr.shape
+        self.shape = imgl.shape
+        objs = []
+        objs += self.partial(
+            imgl,
+            side=&#34;l&#34;,
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
+        rights = self.partial(
+            imgr,
+            side=&#34;r&#34;,
+            imwrite=self.write_partials,
+            imwrite_interim=imwrite_interim,
+            imwrite_interim_filename=imwrite_interim_filename,
+        )
+        mids = self.detect_mid(imgc)
+        # Add offsets to mid/right
+        h, w, _ = imgc.shape
+        mids = [(a + w, b, c + w, d, e, f) for a, b, c, d, e, f in mids]
+        rights = [
+            (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
+            for a, b, c, d, e, f, g, h, i, j in rights
+        ]
+        objs += mids + rights
+
+        # TODO: Apply ROIs here
+
+        self.result = objs
+        self.imgs = [imgl, imgc, imgr]
+        self.set_full_img()  # set self.img
+        self.printed = self.draw(self.img, self.result)
+        return objs
+
+    def detect_mid(self, imgc) -&gt; list:
+        res = self.detector.detect(imgc)[0]
+        return res2int(res)
+
+    def partial(
+        self,
+        source,
+        side: str = &#34;&#34;,
+        imshow: bool = False,
+        imwrite: bool = False,
+        imwrite_filename: str = &#34;partial.jpg&#34;,
+        imwrite_interim: bool = False,
+        imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+    ) -&gt; list:
+        &#34;&#34;&#34;Detect objects on image by splitting and merging.
+
+        :param source: filename or np.ndarray
+        :param side: right or left side
+
+        :param imshow: show image of results
+
+        :param imwrite: write image of results to disk
+        :param imwrite_filename: filename of image of results
+
+        :return objs: list of tuples with objects and their coordinates
+
+        The tuples of the return list have 6 values:
+        x0: x-value top left corner
+        y0: y-value top left corner
+        x1: x-value bottom right corner
+        y1: y-value bottom right corner
+        conf: Confidence of detection, values between 0 and 1
+        class id: Integer indicating the detected object type
+
+        Modus operandi:
+        * Rotate image (without cropping, i.e. adding padding)
+        * Divide image into subframes
+        * Detect objects on each subframe, saving classes and coordinates
+        * Filter and merge objects
+        * Calculate coordinates on original frame
+        &#34;&#34;&#34;
+        img = self.get_img(source)
+
+        valid_side = [&#34;l&#34;, &#34;left&#34;, &#34;r&#34;, &#34;right&#34;]
+        if not side or side not in valid_side:
+            raise ValueError(f&#34;param side needs to be one of {valid_side}&#34;)
+        if side.startswith(&#34;l&#34;):
+            CONST = L_CONST
+        else:
+            CONST = R_CONST
+
+        orig_img = img.copy()
+        img = imutils.rotate_bound(img, CONST[&#34;ANGLE&#34;])
+
+        # Divide image into subframes
+        objs = []
+        subframes = []
+        subframes_imgs = []
+        const_tmp = CONST[&#34;SIDE&#34;]
+        for x in range(
+            CONST[&#34;START_X&#34;],
+            CONST[&#34;END_X&#34;],
+            -((CONST[&#34;START_X&#34;] - CONST[&#34;END_X&#34;]) // CONST[&#34;STEPS&#34;]),
+        ):
+            y = CONST[&#34;F&#34;](x)
+            const_tmp = int(1.1 * const_tmp)
+            # top left
+            tlx, tly = x - const_tmp, y - const_tmp
+            # bottom right
+            brx, bry = x + const_tmp, y + const_tmp
+            subframe = img[
+                tly:bry,
+                tlx:brx,
+            ]
+            subframes.append((tlx, tly, brx, bry))
+            subframes_imgs.append((subframe, tlx, tly))
+            cv2.rectangle(
+                img,
+                (tlx, tly),
+                (brx, bry),
+                (0, 0, 255),
+                5,
+            )
+
+        # Run batch detection on subframes
+        res = self.detector.detect([x[0] for x in subframes_imgs])
+        # Get real points
+        for i, sub in enumerate(res):
+            tlx, tly = subframes_imgs[i][1:]
+            for obj in sub:
+                x0, y0, x1, y1, conf, classid = obj
+                x0, y0, x1, y1, conf, classid = (
+                    int(x0),
+                    int(y0),
+                    int(x1),
+                    int(y1),
+                    float(conf),
+                    int(classid),
+                )
+                # top left
+                rtlx, rtly = tlx + x0, tly + y0
+                # bottom right
+                rbrx, rbry = tlx + x1, tly + y1
+                # save coords, conf, class
+                objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+
+        if imwrite_interim:
+            img_interim = self.draw(img, objs)
+            # Also draw center point for good measure
+            for obj in subframes:
+                center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
+                center = (int(center[0]), int(center[1]))
+                cv2.circle(img_interim, center, 2, (255, 0, 0))
+            cv2.imwrite(side + imwrite_interim_filename, img_interim)
+
+        # Merge objects on subframes
+        results = self.merge(objs, subframes)
+
+        # Reverse rotation
+        # All object tuples now have all 4 corners!
+        results = self.rev_rotate(img, results, CONST[&#34;ANGLE&#34;])
+
+        # Draw results on image
+        if imshow or imwrite:
+            orig_img = self.draw(orig_img, results)
+
+        if imshow:
+            cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+            cv2.imshow(&#34;results&#34;, orig_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        if imwrite:
+            if imwrite_filename == &#34;partial.jpg&#34;:
+                imwrite_filename = f&#34;partial_{side}.jpg&#34;
+            cv2.imwrite(imwrite_filename, orig_img)
+
+        return results
+
+    def rev_rotate(self, img: np.ndarray, results: list, angle: int) -&gt; list:
+        h, w, _ = img.shape
+        center = (w // 2, h // 2)
+        M = cv2.getRotationMatrix2D(center, angle, 1.0)
+        tmpimg = imutils.rotate(img, angle)
+        htmp, wtmp, _ = tmpimg.shape
+        # original image(s) shape
+        h, w, _ = self.shape
+        xdiff = (wtmp - w) // 2
+        ydiff = (htmp - h) // 2
+
+        for i, obj in enumerate(results):
+            x0, y0, x1, y1, cf, cl = obj
+            area = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]).area
+            ar = (x1 - x0) // (y1 - y0)  # aspect ratio
+            # Reverse rotation using rotation matrix
+            # Note that we will from this point on use all four corners!
+            ntl = M.dot([x0, y0, 1])
+            nbr = M.dot([x1, y1, 1])
+            ntr = M.dot([x1, y0, 1])
+            nbl = M.dot([x0, y1, 1])
+
+            allcords = [ntl] + [ntr] + [nbr] + [nbl]
+            allcords = [[int(a), int(b)] for a, b in allcords]
+            allrebased = []
+            for point in allcords:
+                point[0] -= xdiff
+                point[1] -= ydiff
+                allrebased += point
+
+            results[i] = (*allrebased, cf, cl)
+        return results
+
+    def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
+        &#34;&#34;&#34;Merge all detected objects of subframes.
+
+        Right now we use a single heuristic:
+        If obj is embedded in another object with 90% or more of its area, discard it.
+        &#34;&#34;&#34;
+        results = []
+        while objs:
+            obj = objs.pop(0)
+            # First, check if obj is present in multiple subframes
+            # If not, we can add it directly
+            if subframes:
+                locations = locate(subframes, *obj[:4])
+                if len(locations) == 0:
+                    continue  # This should _never_ happen
+                if len(locations) == 1:
+                    results.append(obj)
+                    continue
+            # If yes, we need to do some filtering
+
+            # Check if object is embedded in other object (with &gt;80% of its area)
+            x0, y0, x1, y1 = obj[:4]
+            rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+            skip = False
+            for objtemp in objs + results:
+                xt0, yt0, xt1, yt1 = objtemp[:4]
+                rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
+                intersection = rect1.intersection(rect2)
+                if intersection.area &gt;= (ratio * rect1.area):
+                    # Our current obj is embedded, skip
+                    skip = True
+                    break
+
+            if not skip:
+                results.append(obj)
+
+            # TODO: This simple heuristic is by no means perfect yet.
+            # Especially when an object is right at the border of a subframe,
+            # the results can get inaccurate.
+            # Further filtering has to be done here
+            # Example:
+            # * If obj is at the border of a subframe, check if it is in the middle
+            #   of another one (and discard if so)
+        return results
+
+    def get_img(self, source) -&gt; np.ndarray:
+        if type(source) is str:
+            img = cv2.imread(source)
+            if img is None:
+                raise ValueError(&#34;File does not seem to exist&#34;)
+        elif type(source) is not np.ndarray:
+            raise ValueError(&#34;Source needs to be str or np.ndarray&#34;)
+        else:
+            img = source
+        return img
+
+    def draw(self, img: np.ndarray, results: list) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draw results on image.&#34;&#34;&#34;
+        for obj in results:
+            if len(obj) &gt; 8:
+                tlx, tly, trx, try_, brx, bry, blx, bly = obj[:8]
+                pts = np.array(
+                    [[x, y] for x, y in zip(obj[:8:2], obj[1:8:2])], dtype=np.int32
+                )
+                pts = pts.reshape((-1, 1, 2))
+                cv2.polylines(
+                    img,
+                    [pts],
+                    True,
+                    (255, 0, 0),
+                    5,
+                )
+            else:
+                tlx, tly, brx, bry = obj[:4]
+                cv2.rectangle(
+                    img,
+                    (tlx, tly),
+                    (brx, bry),
+                    (255, 0, 0),
+                    5,
+                )
+        return img
+
+    def show(self) -&gt; None:
+        &#34;&#34;&#34;Show concat of images.&#34;&#34;&#34;
+        if not len(self.printed):
+            raise ValueError(&#34;No results yet, run detection first!&#34;)
+        cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+        cv2.imshow(&#34;results&#34;, self.printed)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def write(self, filename=&#34;result.jpg&#34;) -&gt; None:
+        &#34;&#34;&#34;Write results to disk.&#34;&#34;&#34;
+        if not len(self.printed):
+            raise ValueError(&#34;No results yet, run detection first!&#34;)
+        cv2.imwrite(filename, self.printed)
+
+    def set_full_img(self):
+        imgs = []
+        for img in self.imgs:
+            imgs.append(self.get_img(img))
+        self.img = cv2.hconcat(imgs)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.img"><code class="name">var <span class="ident">img</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.imgs"><code class="name">var <span class="ident">imgs</span> : list</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.printed"><code class="name">var <span class="ident">printed</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.result"><code class="name">var <span class="ident">result</span> : list</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.detect_mid"><code class="name flex">
+<span>def <span class="ident">detect_mid</span></span>(<span>self, imgc) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def detect_mid(self, imgc) -&gt; list:
+    res = self.detector.detect(imgc)[0]
+    return res2int(res)</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.draw"><code class="name flex">
+<span>def <span class="ident">draw</span></span>(<span>self, img: numpy.ndarray, results: list) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw results on image.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, img: np.ndarray, results: list) -&gt; np.ndarray:
+    &#34;&#34;&#34;Draw results on image.&#34;&#34;&#34;
+    for obj in results:
+        if len(obj) &gt; 8:
+            tlx, tly, trx, try_, brx, bry, blx, bly = obj[:8]
+            pts = np.array(
+                [[x, y] for x, y in zip(obj[:8:2], obj[1:8:2])], dtype=np.int32
+            )
+            pts = pts.reshape((-1, 1, 2))
+            cv2.polylines(
+                img,
+                [pts],
+                True,
+                (255, 0, 0),
+                5,
+            )
+        else:
+            tlx, tly, brx, bry = obj[:4]
+            cv2.rectangle(
+                img,
+                (tlx, tly),
+                (brx, bry),
+                (255, 0, 0),
+                5,
+            )
+    return img</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.get_img"><code class="name flex">
+<span>def <span class="ident">get_img</span></span>(<span>self, source) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_img(self, source) -&gt; np.ndarray:
+    if type(source) is str:
+        img = cv2.imread(source)
+        if img is None:
+            raise ValueError(&#34;File does not seem to exist&#34;)
+    elif type(source) is not np.ndarray:
+        raise ValueError(&#34;Source needs to be str or np.ndarray&#34;)
+    else:
+        img = source
+    return img</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self, objs: list, subframes: list = None, ratio=0.8) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merge all detected objects of subframes.</p>
+<p>Right now we use a single heuristic:
+If obj is embedded in another object with 90% or more of its area, discard it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
+    &#34;&#34;&#34;Merge all detected objects of subframes.
+
+    Right now we use a single heuristic:
+    If obj is embedded in another object with 90% or more of its area, discard it.
+    &#34;&#34;&#34;
+    results = []
+    while objs:
+        obj = objs.pop(0)
+        # First, check if obj is present in multiple subframes
+        # If not, we can add it directly
+        if subframes:
+            locations = locate(subframes, *obj[:4])
+            if len(locations) == 0:
+                continue  # This should _never_ happen
+            if len(locations) == 1:
+                results.append(obj)
+                continue
+        # If yes, we need to do some filtering
+
+        # Check if object is embedded in other object (with &gt;80% of its area)
+        x0, y0, x1, y1 = obj[:4]
+        rect1 = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+        skip = False
+        for objtemp in objs + results:
+            xt0, yt0, xt1, yt1 = objtemp[:4]
+            rect2 = Polygon([(xt0, yt0), (xt1, yt0), (xt1, yt1), (xt0, yt1)])
+            intersection = rect1.intersection(rect2)
+            if intersection.area &gt;= (ratio * rect1.area):
+                # Our current obj is embedded, skip
+                skip = True
+                break
+
+        if not skip:
+            results.append(obj)
+
+        # TODO: This simple heuristic is by no means perfect yet.
+        # Especially when an object is right at the border of a subframe,
+        # the results can get inaccurate.
+        # Further filtering has to be done here
+        # Example:
+        # * If obj is at the border of a subframe, check if it is in the middle
+        #   of another one (and discard if so)
+    return results</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.partial"><code class="name flex">
+<span>def <span class="ident">partial</span></span>(<span>self, source, side: str = '', imshow: bool = False, imwrite: bool = False, imwrite_filename: str = 'partial.jpg', imwrite_interim: bool = False, imwrite_interim_filename: str = 'partial_interim.jpg') ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Detect objects on image by splitting and merging.</p>
+<p>:param source: filename or np.ndarray
+:param side: right or left side</p>
+<p>:param imshow: show image of results</p>
+<p>:param imwrite: write image of results to disk
+:param imwrite_filename: filename of image of results</p>
+<p>:return objs: list of tuples with objects and their coordinates</p>
+<p>The tuples of the return list have 6 values:
+x0: x-value top left corner
+y0: y-value top left corner
+x1: x-value bottom right corner
+y1: y-value bottom right corner
+conf: Confidence of detection, values between 0 and 1
+class id: Integer indicating the detected object type</p>
+<p>Modus operandi:
+* Rotate image (without cropping, i.e. adding padding)
+* Divide image into subframes
+* Detect objects on each subframe, saving classes and coordinates
+* Filter and merge objects
+* Calculate coordinates on original frame</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def partial(
+    self,
+    source,
+    side: str = &#34;&#34;,
+    imshow: bool = False,
+    imwrite: bool = False,
+    imwrite_filename: str = &#34;partial.jpg&#34;,
+    imwrite_interim: bool = False,
+    imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+) -&gt; list:
+    &#34;&#34;&#34;Detect objects on image by splitting and merging.
+
+    :param source: filename or np.ndarray
+    :param side: right or left side
+
+    :param imshow: show image of results
+
+    :param imwrite: write image of results to disk
+    :param imwrite_filename: filename of image of results
+
+    :return objs: list of tuples with objects and their coordinates
+
+    The tuples of the return list have 6 values:
+    x0: x-value top left corner
+    y0: y-value top left corner
+    x1: x-value bottom right corner
+    y1: y-value bottom right corner
+    conf: Confidence of detection, values between 0 and 1
+    class id: Integer indicating the detected object type
+
+    Modus operandi:
+    * Rotate image (without cropping, i.e. adding padding)
+    * Divide image into subframes
+    * Detect objects on each subframe, saving classes and coordinates
+    * Filter and merge objects
+    * Calculate coordinates on original frame
+    &#34;&#34;&#34;
+    img = self.get_img(source)
+
+    valid_side = [&#34;l&#34;, &#34;left&#34;, &#34;r&#34;, &#34;right&#34;]
+    if not side or side not in valid_side:
+        raise ValueError(f&#34;param side needs to be one of {valid_side}&#34;)
+    if side.startswith(&#34;l&#34;):
+        CONST = L_CONST
+    else:
+        CONST = R_CONST
+
+    orig_img = img.copy()
+    img = imutils.rotate_bound(img, CONST[&#34;ANGLE&#34;])
+
+    # Divide image into subframes
+    objs = []
+    subframes = []
+    subframes_imgs = []
+    const_tmp = CONST[&#34;SIDE&#34;]
+    for x in range(
+        CONST[&#34;START_X&#34;],
+        CONST[&#34;END_X&#34;],
+        -((CONST[&#34;START_X&#34;] - CONST[&#34;END_X&#34;]) // CONST[&#34;STEPS&#34;]),
+    ):
+        y = CONST[&#34;F&#34;](x)
+        const_tmp = int(1.1 * const_tmp)
+        # top left
+        tlx, tly = x - const_tmp, y - const_tmp
+        # bottom right
+        brx, bry = x + const_tmp, y + const_tmp
+        subframe = img[
+            tly:bry,
+            tlx:brx,
+        ]
+        subframes.append((tlx, tly, brx, bry))
+        subframes_imgs.append((subframe, tlx, tly))
+        cv2.rectangle(
+            img,
+            (tlx, tly),
+            (brx, bry),
+            (0, 0, 255),
+            5,
+        )
+
+    # Run batch detection on subframes
+    res = self.detector.detect([x[0] for x in subframes_imgs])
+    # Get real points
+    for i, sub in enumerate(res):
+        tlx, tly = subframes_imgs[i][1:]
+        for obj in sub:
+            x0, y0, x1, y1, conf, classid = obj
+            x0, y0, x1, y1, conf, classid = (
+                int(x0),
+                int(y0),
+                int(x1),
+                int(y1),
+                float(conf),
+                int(classid),
+            )
+            # top left
+            rtlx, rtly = tlx + x0, tly + y0
+            # bottom right
+            rbrx, rbry = tlx + x1, tly + y1
+            # save coords, conf, class
+            objs.append((rtlx, rtly, rbrx, rbry, conf, classid))
+
+    if imwrite_interim:
+        img_interim = self.draw(img, objs)
+        # Also draw center point for good measure
+        for obj in subframes:
+            center = (np.mean([obj[0], obj[2]]), np.mean([obj[1], obj[3]]))
+            center = (int(center[0]), int(center[1]))
+            cv2.circle(img_interim, center, 2, (255, 0, 0))
+        cv2.imwrite(side + imwrite_interim_filename, img_interim)
+
+    # Merge objects on subframes
+    results = self.merge(objs, subframes)
+
+    # Reverse rotation
+    # All object tuples now have all 4 corners!
+    results = self.rev_rotate(img, results, CONST[&#34;ANGLE&#34;])
+
+    # Draw results on image
+    if imshow or imwrite:
+        orig_img = self.draw(orig_img, results)
+
+    if imshow:
+        cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+        cv2.imshow(&#34;results&#34;, orig_img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    if imwrite:
+        if imwrite_filename == &#34;partial.jpg&#34;:
+            imwrite_filename = f&#34;partial_{side}.jpg&#34;
+        cv2.imwrite(imwrite_filename, orig_img)
+
+    return results</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.rev_rotate"><code class="name flex">
+<span>def <span class="ident">rev_rotate</span></span>(<span>self, img: numpy.ndarray, results: list, angle: int) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rev_rotate(self, img: np.ndarray, results: list, angle: int) -&gt; list:
+    h, w, _ = img.shape
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    tmpimg = imutils.rotate(img, angle)
+    htmp, wtmp, _ = tmpimg.shape
+    # original image(s) shape
+    h, w, _ = self.shape
+    xdiff = (wtmp - w) // 2
+    ydiff = (htmp - h) // 2
+
+    for i, obj in enumerate(results):
+        x0, y0, x1, y1, cf, cl = obj
+        area = Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]).area
+        ar = (x1 - x0) // (y1 - y0)  # aspect ratio
+        # Reverse rotation using rotation matrix
+        # Note that we will from this point on use all four corners!
+        ntl = M.dot([x0, y0, 1])
+        nbr = M.dot([x1, y1, 1])
+        ntr = M.dot([x1, y0, 1])
+        nbl = M.dot([x0, y1, 1])
+
+        allcords = [ntl] + [ntr] + [nbr] + [nbl]
+        allcords = [[int(a), int(b)] for a, b in allcords]
+        allrebased = []
+        for point in allcords:
+            point[0] -= xdiff
+            point[1] -= ydiff
+            allrebased += point
+
+        results[i] = (*allrebased, cf, cl)
+    return results</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.run_detection"><code class="name flex">
+<span>def <span class="ident">run_detection</span></span>(<span>self, imgl, imgc, imgr, imwrite_interim: bool = False, imwrite_interim_filename: str = 'partial_interim.jpg') ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Detect objects on Panorama images.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_detection(
+    self,
+    imgl,
+    imgc,
+    imgr,
+    imwrite_interim: bool = False,
+    imwrite_interim_filename: str = &#34;partial_interim.jpg&#34;,
+) -&gt; list:
+    &#34;&#34;&#34;Detect objects on Panorama images.&#34;&#34;&#34;
+    imgl = self.get_img(imgl)
+    imgc = self.get_img(imgc)
+    imgr = self.get_img(imgr)
+    assert imgl.shape == imgc.shape == imgr.shape
+    self.shape = imgl.shape
+    objs = []
+    objs += self.partial(
+        imgl,
+        side=&#34;l&#34;,
+        imwrite=self.write_partials,
+        imwrite_interim=imwrite_interim,
+        imwrite_interim_filename=imwrite_interim_filename,
+    )
+    rights = self.partial(
+        imgr,
+        side=&#34;r&#34;,
+        imwrite=self.write_partials,
+        imwrite_interim=imwrite_interim,
+        imwrite_interim_filename=imwrite_interim_filename,
+    )
+    mids = self.detect_mid(imgc)
+    # Add offsets to mid/right
+    h, w, _ = imgc.shape
+    mids = [(a + w, b, c + w, d, e, f) for a, b, c, d, e, f in mids]
+    rights = [
+        (a + (2 * w), b, c + (2 * w), d, e + (2 * w), f, g + (2 * w), h, i, j)
+        for a, b, c, d, e, f, g, h, i, j in rights
+    ]
+    objs += mids + rights
+
+    # TODO: Apply ROIs here
+
+    self.result = objs
+    self.imgs = [imgl, imgc, imgr]
+    self.set_full_img()  # set self.img
+    self.printed = self.draw(self.img, self.result)
+    return objs</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.set_full_img"><code class="name flex">
+<span>def <span class="ident">set_full_img</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_full_img(self):
+    imgs = []
+    for img in self.imgs:
+        imgs.append(self.get_img(img))
+    self.img = cv2.hconcat(imgs)</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.show"><code class="name flex">
+<span>def <span class="ident">show</span></span>(<span>self) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Show concat of images.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show(self) -&gt; None:
+    &#34;&#34;&#34;Show concat of images.&#34;&#34;&#34;
+    if not len(self.printed):
+        raise ValueError(&#34;No results yet, run detection first!&#34;)
+    cv2.namedWindow(&#34;results&#34;, cv2.WINDOW_NORMAL)
+    cv2.imshow(&#34;results&#34;, self.printed)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()</code></pre>
+</details>
+</dd>
+<dt id="pancake.misc.detect_wrapper.DetectWrapper.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, filename='result.jpg') ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write results to disk.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write(self, filename=&#34;result.jpg&#34;) -&gt; None:
+    &#34;&#34;&#34;Write results to disk.&#34;&#34;&#34;
+    if not len(self.printed):
+        raise ValueError(&#34;No results yet, run detection first!&#34;)
+    cv2.imwrite(filename, self.printed)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#detect-wrapper">Detect Wrapper</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pancake.misc" href="index.html">pancake.misc</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pancake.misc.detect_wrapper.f_l" href="#pancake.misc.detect_wrapper.f_l">f_l</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.f_r" href="#pancake.misc.detect_wrapper.f_r">f_r</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.locate" href="#pancake.misc.detect_wrapper.locate">locate</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.res2int" href="#pancake.misc.detect_wrapper.res2int">res2int</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pancake.misc.detect_wrapper.DetectWrapper" href="#pancake.misc.detect_wrapper.DetectWrapper">DetectWrapper</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.detect_mid" href="#pancake.misc.detect_wrapper.DetectWrapper.detect_mid">detect_mid</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.draw" href="#pancake.misc.detect_wrapper.DetectWrapper.draw">draw</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.get_img" href="#pancake.misc.detect_wrapper.DetectWrapper.get_img">get_img</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.img" href="#pancake.misc.detect_wrapper.DetectWrapper.img">img</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.imgs" href="#pancake.misc.detect_wrapper.DetectWrapper.imgs">imgs</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.merge" href="#pancake.misc.detect_wrapper.DetectWrapper.merge">merge</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.partial" href="#pancake.misc.detect_wrapper.DetectWrapper.partial">partial</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.printed" href="#pancake.misc.detect_wrapper.DetectWrapper.printed">printed</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.result" href="#pancake.misc.detect_wrapper.DetectWrapper.result">result</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.rev_rotate" href="#pancake.misc.detect_wrapper.DetectWrapper.rev_rotate">rev_rotate</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.run_detection" href="#pancake.misc.detect_wrapper.DetectWrapper.run_detection">run_detection</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.set_full_img" href="#pancake.misc.detect_wrapper.DetectWrapper.set_full_img">set_full_img</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.show" href="#pancake.misc.detect_wrapper.DetectWrapper.show">show</a></code></li>
+<li><code><a title="pancake.misc.detect_wrapper.DetectWrapper.write" href="#pancake.misc.detect_wrapper.DetectWrapper.write">write</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

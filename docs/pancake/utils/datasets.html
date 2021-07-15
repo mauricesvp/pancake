@@ -1,0 +1,3792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>pancake.utils.datasets API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pancake.utils.datasets</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Dataset utils and dataloaders
+
+import glob
+import math
+import os
+import random
+import shutil
+import time
+from itertools import repeat
+from multiprocessing.pool import ThreadPool
+from pathlib import Path
+from threading import Thread
+
+import cv2
+import numpy as np
+import torch
+import torch.nn.functional as F
+import re
+import reprlib
+
+from PIL import Image, ExifTags
+from torch.utils.data import Dataset
+from tqdm import tqdm
+
+from .general import (
+    check_requirements,
+    xyxy2xywh,
+    xywh2xyxy,
+    xywhn2xyxy,
+    xyn2xy,
+    segment2box,
+    segments2boxes,
+    resample_segments,
+    clean_str,
+)
+from .torch_utils import torch_distributed_zero_first
+
+from pancake.logger import setup_logger
+
+l = setup_logger(__name__)
+
+# Parameters
+help_url = &#34;https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data&#34;
+img_formats = [
+    &#34;bmp&#34;,
+    &#34;jpg&#34;,
+    &#34;jpeg&#34;,
+    &#34;png&#34;,
+    &#34;tif&#34;,
+    &#34;tiff&#34;,
+    &#34;dng&#34;,
+    &#34;webp&#34;,
+    &#34;mpo&#34;,
+]  # acceptable image suffixes
+vid_formats = [
+    &#34;mov&#34;,
+    &#34;avi&#34;,
+    &#34;mp4&#34;,
+    &#34;mpg&#34;,
+    &#34;mpeg&#34;,
+    &#34;m4v&#34;,
+    &#34;wmv&#34;,
+    &#34;mkv&#34;,
+]  # acceptable video suffixes
+
+# Get orientation exif tag
+for orientation in ExifTags.TAGS.keys():
+    if ExifTags.TAGS[orientation] == &#34;Orientation&#34;:
+        break
+
+
+def get_hash(files):
+    # Returns a single hash value of a list of files
+    return sum(os.path.getsize(f) for f in files if os.path.isfile(f))
+
+
+def exif_size(img):
+    # Returns exif-corrected PIL size
+    s = img.size  # (width, height)
+    try:
+        rotation = dict(img._getexif().items())[orientation]
+        if rotation == 6:  # rotation 270
+            s = (s[1], s[0])
+        elif rotation == 8:  # rotation 90
+            s = (s[1], s[0])
+    except:
+        pass
+
+    return s
+
+
+def create_dataloader(
+    path,
+    imgsz,
+    batch_size,
+    stride,
+    opt,
+    hyp=None,
+    augment=False,
+    cache=False,
+    pad=0.0,
+    rect=False,
+    rank=-1,
+    world_size=1,
+    workers=8,
+    image_weights=False,
+    quad=False,
+    prefix=&#34;&#34;,
+):
+    # Make sure only the first process in DDP process the dataset first, and the following others can use the cache
+    with torch_distributed_zero_first(rank):
+        dataset = LoadImagesAndLabels(
+            path,
+            imgsz,
+            batch_size,
+            augment=augment,  # augment images
+            hyp=hyp,  # augmentation hyperparameters
+            rect=rect,  # rectangular training
+            cache_images=cache,
+            single_cls=opt.single_cls,
+            stride=int(stride),
+            pad=pad,
+            image_weights=image_weights,
+            prefix=prefix,
+        )
+
+    batch_size = min(batch_size, len(dataset))
+    nw = min(
+        [os.cpu_count() // world_size, batch_size if batch_size &gt; 1 else 0, workers]
+    )  # number of workers
+    sampler = (
+        torch.utils.data.distributed.DistributedSampler(dataset) if rank != -1 else None
+    )
+    loader = torch.utils.data.DataLoader if image_weights else InfiniteDataLoader
+    # Use torch.utils.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
+    dataloader = loader(
+        dataset,
+        batch_size=batch_size,
+        num_workers=nw,
+        sampler=sampler,
+        pin_memory=True,
+        collate_fn=LoadImagesAndLabels.collate_fn4
+        if quad
+        else LoadImagesAndLabels.collate_fn,
+    )
+    return dataloader, dataset
+
+
+class InfiniteDataLoader(torch.utils.data.dataloader.DataLoader):
+    &#34;&#34;&#34;Dataloader that reuses workers
+
+    Uses same syntax as vanilla DataLoader
+    &#34;&#34;&#34;
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        object.__setattr__(self, &#34;batch_sampler&#34;, _RepeatSampler(self.batch_sampler))
+        self.iterator = super().__iter__()
+
+    def __len__(self):
+        return len(self.batch_sampler.sampler)
+
+    def __iter__(self):
+        for i in range(len(self)):
+            yield next(self.iterator)
+
+
+class _RepeatSampler(object):
+    &#34;&#34;&#34;Sampler that repeats forever
+
+    Args:
+        sampler (Sampler)
+    &#34;&#34;&#34;
+
+    def __init__(self, sampler):
+        self.sampler = sampler
+
+    def __iter__(self):
+        while True:
+            yield from iter(self.sampler)
+
+
+class LoadImages:  # for inference
+    def __init__(self, path):
+        p = str(Path(path).absolute())  # os-agnostic absolute path
+        if &#34;*&#34; in p:
+            files = sorted(glob.glob(p, recursive=True))  # glob
+        elif os.path.isdir(p):
+            files = sorted(glob.glob(os.path.join(p, &#34;*.*&#34;)))  # dir
+        elif os.path.isfile(p):
+            files = [p]  # files
+        else:
+            raise Exception(f&#34;ERROR: {p} does not exist&#34;)
+
+        images = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in img_formats]
+        videos = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in vid_formats]
+        ni, nv = len(images), len(videos)
+
+        self.files = images + videos
+        self.nf = ni + nv  # number of files
+        self.video_flag = [False] * ni + [True] * nv
+        self.mode = &#34;image&#34;
+        if any(videos):
+            self.new_video(videos[0])  # new video
+        else:
+            self.cap = None
+        assert self.nf &gt; 0, (
+            f&#34;No images or videos found in {p}. &#34;
+            f&#34;Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}&#34;
+        )
+        self.timestamp = None
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count == self.nf:
+            raise StopIteration
+        path = self.files[self.count]
+
+        if self.video_flag[self.count]:
+            # Read video
+            self.mode = &#34;video&#34;
+            ret_val, img0 = self.cap.read()
+            if not ret_val:
+                self.count += 1
+                self.cap.release()
+                if self.count == self.nf:  # last video
+                    raise StopIteration
+                else:
+                    path = self.files[self.count]
+                    self.new_video(path)
+                    ret_val, img0 = self.cap.read()
+
+            self.frame += 1
+            l.debug(
+                f&#34;video {self.count + 1}/{self.nf} ({self.frame}/{self.nframes}) {path}: &#34;,
+                end=&#34;&#34;,
+            )
+
+        else:
+            # Read image
+            self.count += 1
+            img0 = cv2.imread(path)  # BGR
+            self.timestamp = timestamp_from_path(path)
+            assert img0 is not None, &#34;Image Not Found &#34; + path
+            l.debug(f&#34;image {self.count}/{self.nf} {path}: &#34;)
+
+        return path, img0, self.cap, self.timestamp
+
+    def new_video(self, path):
+        self.frame = 0
+        self.cap = cv2.VideoCapture(path)
+        self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    def __len__(self):
+        return self.nf  # number of files
+
+
+class LoadImageDirs:
+    # TODO: The timestamps of each perspective extracted from server with
+    #      the CAM grabber tool slightly differ, as they got retrieved
+    #      seperately from each other.
+    #      !! Either mask the perspectives to a uniform timestamp or
+    #      alter the timestamps afterwards !!
+    #      Currently &#39;None&#39; is returned as timestamp.
+
+    def __init__(self, dirs, queue_size: int = 64, read_fps: float = 15):
+        n = len(dirs)
+        self.num_dirs = n
+        self.files = [None] * n
+        self.nf = [None] * n
+        self.video_flag = [None] * n
+        self.queue_size = queue_size
+
+        for i, path in enumerate(dirs):
+            p = str(Path(path).absolute())  # os-agnostic absolute path
+            if &#34;*&#34; in p:
+                files = sorted(glob.glob(p, recursive=True))  # glob
+            elif os.path.isdir(p):
+                files = sorted(glob.glob(os.path.join(p, &#34;*.*&#34;)))  # dir
+            elif os.path.isfile(p):
+                files = [p]  # files
+            else:
+                raise Exception(f&#34;ERROR: {p} does not exist&#34;)
+
+            images = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in img_formats]
+            videos = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in vid_formats]
+
+            ni, nv = len(images), len(videos)
+
+            assert (len(images) and not len(videos)) or (
+                not len(images) and len(videos)
+            ), (
+                f&#34;LoadImageDirs can only consider directories with one type of source,\n&#34;
+                f&#34;source can either be an image found or video!\n&#34;
+                f&#34;({ni} images and {nv} videos in {p})&#34;
+            )
+
+            assert ni or nv, (
+                f&#34;No images or videos found in {p}. &#34;
+                f&#34;Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}&#34;
+            )
+
+            self.files[i] = images + videos
+            self.nf[i] = ni + nv
+            self.video_flag[i] = [False] * ni + [True] * nv
+
+        # check if different source types are provided for each dir
+        all_videos = [all(flags) for flags in self.video_flag]
+        assert all(all_videos) or not any(
+            all_videos
+        ), &#34;Given directories possess different type of sources!&#34;
+
+        # loader mode
+        self.mode = &#34;image&#34; if not any(all_videos) else &#34;video&#34;
+        if self.mode == &#34;video&#34;:
+            # currently only one video per directory is supported
+            assert all(
+                [nf == 1 for nf in self.nf]
+            ), &#34;Currently only one video per directory is supported&#34;
+            self.new_videos([files[0] for files in self.files])  # init videos
+        else:
+            self.cap = [None]
+
+        # for each directory create queue threads use for storing the loaded frames
+        from queue import Queue
+
+        self.Qs = [Queue(maxsize=queue_size) for _ in range(self.num_dirs)]
+
+        # stop flag for threads
+        self.stopped = False
+        self.read_fps = read_fps  # retrieve frames at this rate
+
+        # start threads
+        for index in range(self.num_dirs):
+            self.start_threads(index)
+
+        # wait for the last thread to retrieve first frame
+        time.sleep(0.2)
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        # stop when last image/video was reached
+        if not all([self.more_queue(idx) for idx in range(self.num_dirs)]):
+            # stop threads
+            self.stop_threads()
+            raise StopIteration
+
+        # take images from queues
+        img0 = [self.read_queue(idx) for idx in range(self.num_dirs)]  # BGR
+
+        if l.level &lt;= 20:
+            s = &#34;&#34;
+            for i in range(self.num_dirs):
+                s += f&#34;{self.mode} {i+1}/{self.num_dirs}: ({self.count}/{self.nf[i]})&#34;
+                if i &lt; self.num_dirs - 1:
+                    s += &#34;, &#34;
+            l.info(f&#34;{s}&#34;)
+
+        self.count += 1
+
+        return None, img0, self.cap[0], None
+
+    def start_threads(self, index: int):
+        # start a thread to read frames from the source
+        t = Thread(target=self.update, args=(index,))
+        t.daemon = True
+        t.start()
+        return self
+
+    def update(self, index: int):
+        img_idx = 0
+
+        try:
+            # keep looping infinitely
+            while True:
+                # if the thread indicator variable is set, stop the thread
+                if self.stopped:
+                    return
+
+                # otherwise, ensure the queue has room in it
+                if not self.Qs[index].full():
+                    if self.mode == &#34;video&#34;:
+                        # read the next frame from the file
+                        (grabbed, frame) = self.cap[index].read()
+                        # if the `grabbed` boolean is `False`, then we have
+                        # reached the end of the video file
+                        if not grabbed:
+                            self.stop()
+                            l.debug(f&#34;Finished reading video with idx {index}&#34;)
+                            return
+                    else:
+                        # read image from the file
+                        frame = cv2.imread(self.files[index][img_idx])
+                        img_idx += 1
+
+                        if frame is None:
+                            l.warn(
+                                f&#34;Couldn&#39;t find image at {self.files[index][img_idx]}&#34;
+                            )
+                            continue
+
+                    # add the frame to the queue
+                    self.Qs[index].put(frame)
+                    time.sleep(1 / self.read_fps)
+                else:
+                    # when queue is full, sleep for a prolonged period
+                    time.sleep(self.queue_size / self.read_fps * 0.9)
+        except:
+            self.cap[index].release()
+
+    def new_videos(self, paths: list):
+        self.frame = 0
+        self.cap = [cv2.VideoCapture(path) for path in paths]
+        self.nf = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+        # check if all videos have same frame rate
+        fps = [vid_cap.get(cv2.CAP_PROP_FPS) for vid_cap in self.cap]
+        assert fps.count(fps[0]) == len(fps), &#34;Given videos have different fps rates&#34;
+
+    def read_queue(self, index):
+        # return next frame in the queue with given index
+        return self.Qs[index].get()
+
+    def more_queue(self, index):
+        # return True if there are still frames in the queue
+        return self.Qs[index].qsize() &gt; 0
+
+    def stop_threads(self):
+        # indicate that the threads should be stopped
+        self.stopped = True
+        # release video capture objects
+        if self.mode == &#34;video&#34;:
+            for cap in self.cap:
+                cap.release()
+
+    def __len__(self):
+        return self.nf  # number of files
+
+
+class LoadWebcam:  # for inference
+    def __init__(self, pipe=&#34;0&#34;):
+        if pipe.isnumeric():
+            pipe = eval(pipe)  # local camera
+        # pipe = &#39;rtsp://192.168.1.64/1&#39;  # IP camera
+        # pipe = &#39;rtsp://username:password@192.168.1.64/1&#39;  # IP camera with login
+        # pipe = &#39;http://wmccpinetop.axiscam.net/mjpg/video.mjpg&#39;  # IP golf camera
+
+        self.pipe = pipe
+        self.cap = cv2.VideoCapture(pipe)  # video capture object
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 3)  # set buffer size
+
+    def __iter__(self):
+        self.count = -1
+        return self
+
+    def __next__(self):
+        self.count += 1
+        if cv2.waitKey(1) == ord(&#34;q&#34;):  # q to quit
+            self.cap.release()
+            cv2.destroyAllWindows()
+            raise StopIteration
+
+        # Read frame
+        if self.pipe == 0:  # local camera
+            ret_val, img0 = self.cap.read()
+            img0 = cv2.flip(img0, 1)  # flip left-right
+        else:  # IP camera
+            n = 0
+            while True:
+                n += 1
+                self.cap.grab()
+                if n % 30 == 0:  # skip frames
+                    ret_val, img0 = self.cap.retrieve()
+                    if ret_val:
+                        break
+
+        # Print
+        assert ret_val, f&#34;Camera Error {self.pipe}&#34;
+        img_path = &#34;webcam.jpg&#34;
+        l.debug(f&#34;webcam {self.count}: &#34;, end=&#34;&#34;)
+
+        return img_path, img0, None
+
+    def __len__(self):
+        return 0
+
+
+class LoadStreams:  # multiple IP or RTSP cameras
+    def __init__(self, sources=&#34;streams.txt&#34;):
+        self.mode = &#34;stream&#34;
+
+        if os.path.isfile(sources):
+            with open(sources, &#34;r&#34;) as f:
+                sources = [
+                    x.strip() for x in f.read().strip().splitlines() if len(x.strip())
+                ]
+        else:
+            sources = [sources]
+
+        self.n = len(sources)
+        self.imgs = [None] * self.n
+        self.sources = [clean_str(x) for x in sources]  # clean source names for later
+        self.live_fps = [None] * self.n
+        self.timestamp = None
+
+        for i, s in enumerate(sources):  # index, source
+            # Start thread to read frames from video stream
+            print(f&#34;{i + 1}/{self.n}: {s}... &#34;, end=&#34;&#34;)
+            if &#34;youtube.com/&#34; in s or &#34;youtu.be/&#34; in s:  # if source is YouTube video
+                check_requirements((&#34;pafy&#34;, &#34;youtube_dl&#34;))
+                import pafy
+
+                s = pafy.new(s).getbest(preftype=&#34;mp4&#34;).url  # YouTube URL
+            s = eval(s) if s.isnumeric() else s  # i.e. s = &#39;0&#39; local webcam
+            cap = cv2.VideoCapture(s)
+            assert cap.isOpened(), f&#34;Failed to open {s}&#34;
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            self.fps = cap.get(cv2.CAP_PROP_FPS) % 100
+
+            _, self.imgs[i] = cap.read()  # guarantee first frame
+            thread = Thread(target=self.update, args=([i, cap]), daemon=True)
+            print(f&#34; success ({w}x{h} at {self.fps:.2f} FPS).&#34;)
+            thread.start()
+
+    def update(self, index, cap):
+        # Read next stream frame in a daemon thread
+        t1, t2 = 0, 0  #
+        while cap.isOpened():
+            # read frame
+            success, im = cap.read()
+            self.imgs[index] = im if success else self.imgs[index] * 0
+            self.timestamp = time.time()
+
+            t1 = time.time()
+            time.sleep(1 / self.fps)  # wait time
+
+            self.live_fps[index] = int(1 / (t1 - t2))
+            t2 = t1
+
+    def __iter__(self):
+        self.count = -1
+        return self
+
+    def __next__(self):
+        self.count += 1
+        img0 = self.imgs.copy()
+        if cv2.waitKey(1) == ord(&#34;q&#34;):  # q to quit
+            cv2.destroyAllWindows()
+            raise StopIteration
+
+        if l.level &lt;= 20:
+            s = &#34;&#34;
+            for i in range(self.n):
+                s += f&#34;{self.mode} {i+1}/{self.n}: ({self.live_fps[i]} FPS)&#34;
+                if i &lt; self.n - 1:
+                    s += &#34;, &#34;
+            l.info(f&#34;{s}&#34;)
+
+        return self.sources, img0, None, self.timestamp
+
+    def __len__(self):
+        return 0  # 1E12 frames = 32 streams at 30 FPS for 30 years
+
+
+def img2label_paths(img_paths):
+    # Define label paths as a function of image paths
+    sa, sb = (
+        os.sep + &#34;images&#34; + os.sep,
+        os.sep + &#34;labels&#34; + os.sep,
+    )  # /images/, /labels/ substrings
+    return [
+        &#34;txt&#34;.join(x.replace(sa, sb, 1).rsplit(x.split(&#34;.&#34;)[-1], 1)) for x in img_paths
+    ]
+
+
+class LoadImagesAndLabels(Dataset):  # for training/testing
+    def __init__(
+        self,
+        path,
+        img_size=640,
+        batch_size=16,
+        augment=False,
+        hyp=None,
+        rect=False,
+        image_weights=False,
+        cache_images=False,
+        single_cls=False,
+        stride=32,
+        pad=0.0,
+        prefix=&#34;&#34;,
+    ):
+        self.img_size = img_size
+        self.augment = augment
+        self.hyp = hyp
+        self.image_weights = image_weights
+        self.rect = False if image_weights else rect
+        self.mosaic = (
+            self.augment and not self.rect
+        )  # load 4 images at a time into a mosaic (only during training)
+        self.mosaic_border = [-img_size // 2, -img_size // 2]
+        self.stride = stride
+        self.path = path
+
+        try:
+            f = []  # image files
+            for p in path if isinstance(path, list) else [path]:
+                p = Path(p)  # os-agnostic
+                if p.is_dir():  # dir
+                    f += glob.glob(str(p / &#34;**&#34; / &#34;*.*&#34;), recursive=True)
+                    # f = list(p.rglob(&#39;**/*.*&#39;))  # pathlib
+                elif p.is_file():  # file
+                    with open(p, &#34;r&#34;) as t:
+                        t = t.read().strip().splitlines()
+                        parent = str(p.parent) + os.sep
+                        f += [
+                            x.replace(&#34;./&#34;, parent) if x.startswith(&#34;./&#34;) else x
+                            for x in t
+                        ]  # local to global path
+                        # f += [p.parent / x.lstrip(os.sep) for x in t]  # local to global path (pathlib)
+                else:
+                    raise Exception(f&#34;{prefix}{p} does not exist&#34;)
+            self.img_files = sorted(
+                [
+                    x.replace(&#34;/&#34;, os.sep)
+                    for x in f
+                    if x.split(&#34;.&#34;)[-1].lower() in img_formats
+                ]
+            )
+            # self.img_files = sorted([x for x in f if x.suffix[1:].lower() in img_formats])  # pathlib
+            assert self.img_files, f&#34;{prefix}No images found&#34;
+        except Exception as e:
+            raise Exception(
+                f&#34;{prefix}Error loading data from {path}: {e}\nSee {help_url}&#34;
+            )
+
+        # Check cache
+        self.label_files = img2label_paths(self.img_files)  # labels
+        cache_path = (
+            p if p.is_file() else Path(self.label_files[0]).parent
+        ).with_suffix(
+            &#34;.cache&#34;
+        )  # cached labels
+        if cache_path.is_file():
+            cache, exists = torch.load(cache_path), True  # load
+            if (
+                cache[&#34;hash&#34;] != get_hash(self.label_files + self.img_files)
+                or &#34;version&#34; not in cache
+            ):  # changed
+                cache, exists = self.cache_labels(cache_path, prefix), False  # re-cache
+        else:
+            cache, exists = self.cache_labels(cache_path, prefix), False  # cache
+
+        # Display cache
+        nf, nm, ne, nc, n = cache.pop(
+            &#34;results&#34;
+        )  # found, missing, empty, corrupted, total
+        if exists:
+            d = f&#34;Scanning &#39;{cache_path}&#39; images and labels... {nf} found, {nm} missing, {ne} empty, {nc} corrupted&#34;
+            tqdm(None, desc=prefix + d, total=n, initial=n)  # display cache results
+        assert (
+            nf &gt; 0 or not augment
+        ), f&#34;{prefix}No labels in {cache_path}. Can not train without labels. See {help_url}&#34;
+
+        # Read cache
+        cache.pop(&#34;hash&#34;)  # remove hash
+        cache.pop(&#34;version&#34;)  # remove version
+        labels, shapes, self.segments = zip(*cache.values())
+        self.labels = list(labels)
+        self.shapes = np.array(shapes, dtype=np.float64)
+        self.img_files = list(cache.keys())  # update
+        self.label_files = img2label_paths(cache.keys())  # update
+        if single_cls:
+            for x in self.labels:
+                x[:, 0] = 0
+
+        n = len(shapes)  # number of images
+        bi = np.floor(np.arange(n) / batch_size).astype(np.int)  # batch index
+        nb = bi[-1] + 1  # number of batches
+        self.batch = bi  # batch index of image
+        self.n = n
+        self.indices = range(n)
+
+        # Rectangular Training
+        if self.rect:
+            # Sort by aspect ratio
+            s = self.shapes  # wh
+            ar = s[:, 1] / s[:, 0]  # aspect ratio
+            irect = ar.argsort()
+            self.img_files = [self.img_files[i] for i in irect]
+            self.label_files = [self.label_files[i] for i in irect]
+            self.labels = [self.labels[i] for i in irect]
+            self.shapes = s[irect]  # wh
+            ar = ar[irect]
+
+            # Set training image shapes
+            shapes = [[1, 1]] * nb
+            for i in range(nb):
+                ari = ar[bi == i]
+                mini, maxi = ari.min(), ari.max()
+                if maxi &lt; 1:
+                    shapes[i] = [maxi, 1]
+                elif mini &gt; 1:
+                    shapes[i] = [1, 1 / mini]
+
+            self.batch_shapes = (
+                np.ceil(np.array(shapes) * img_size / stride + pad).astype(np.int)
+                * stride
+            )
+
+        # Cache images into memory for faster training (WARNING: large datasets may exceed system RAM)
+        self.imgs = [None] * n
+        if cache_images:
+            gb = 0  # Gigabytes of cached images
+            self.img_hw0, self.img_hw = [None] * n, [None] * n
+            results = ThreadPool(8).imap(
+                lambda x: load_image(*x), zip(repeat(self), range(n))
+            )  # 8 threads
+            pbar = tqdm(enumerate(results), total=n)
+            for i, x in pbar:
+                (
+                    self.imgs[i],
+                    self.img_hw0[i],
+                    self.img_hw[i],
+                ) = x  # img, hw_original, hw_resized = load_image(self, i)
+                gb += self.imgs[i].nbytes
+                pbar.desc = f&#34;{prefix}Caching images ({gb / 1E9:.1f}GB)&#34;
+            pbar.close()
+
+    def cache_labels(self, path=Path(&#34;./labels.cache&#34;), prefix=&#34;&#34;):
+        # Cache dataset labels, check images and read shapes
+        x = {}  # dict
+        nm, nf, ne, nc = 0, 0, 0, 0  # number missing, found, empty, duplicate
+        pbar = tqdm(
+            zip(self.img_files, self.label_files),
+            desc=&#34;Scanning images&#34;,
+            total=len(self.img_files),
+        )
+        for i, (im_file, lb_file) in enumerate(pbar):
+            try:
+                # verify images
+                im = Image.open(im_file)
+                im.verify()  # PIL verify
+                shape = exif_size(im)  # image size
+                segments = []  # instance segments
+                assert (shape[0] &gt; 9) &amp; (shape[1] &gt; 9), f&#34;image size {shape} &lt;10 pixels&#34;
+                assert (
+                    im.format.lower() in img_formats
+                ), f&#34;invalid image format {im.format}&#34;
+
+                # verify labels
+                if os.path.isfile(lb_file):
+                    nf += 1  # label found
+                    with open(lb_file, &#34;r&#34;) as f:
+                        l = [x.split() for x in f.read().strip().splitlines()]
+                        if any([len(x) &gt; 8 for x in l]):  # is segment
+                            classes = np.array([x[0] for x in l], dtype=np.float32)
+                            segments = [
+                                np.array(x[1:], dtype=np.float32).reshape(-1, 2)
+                                for x in l
+                            ]  # (cls, xy1...)
+                            l = np.concatenate(
+                                (classes.reshape(-1, 1), segments2boxes(segments)), 1
+                            )  # (cls, xywh)
+                        l = np.array(l, dtype=np.float32)
+                    if len(l):
+                        assert l.shape[1] == 5, &#34;labels require 5 columns each&#34;
+                        assert (l &gt;= 0).all(), &#34;negative labels&#34;
+                        assert (
+                            l[:, 1:] &lt;= 1
+                        ).all(), &#34;non-normalized or out of bounds coordinate labels&#34;
+                        assert (
+                            np.unique(l, axis=0).shape[0] == l.shape[0]
+                        ), &#34;duplicate labels&#34;
+                    else:
+                        ne += 1  # label empty
+                        l = np.zeros((0, 5), dtype=np.float32)
+                else:
+                    nm += 1  # label missing
+                    l = np.zeros((0, 5), dtype=np.float32)
+                x[im_file] = [l, shape, segments]
+            except Exception as e:
+                nc += 1
+                print(
+                    f&#34;{prefix}WARNING: Ignoring corrupted image and/or label {im_file}: {e}&#34;
+                )
+
+            pbar.desc = (
+                f&#34;{prefix}Scanning &#39;{path.parent / path.stem}&#39; images and labels... &#34;
+                f&#34;{nf} found, {nm} missing, {ne} empty, {nc} corrupted&#34;
+            )
+        pbar.close()
+
+        if nf == 0:
+            print(f&#34;{prefix}WARNING: No labels found in {path}. See {help_url}&#34;)
+
+        x[&#34;hash&#34;] = get_hash(self.label_files + self.img_files)
+        x[&#34;results&#34;] = nf, nm, ne, nc, i + 1
+        x[&#34;version&#34;] = 0.1  # cache version
+        try:
+            torch.save(x, path)  # save for next time
+            l.info(f&#34;{prefix}New cache created: {path}&#34;)
+        except Exception as e:
+            l.info(
+                f&#34;{prefix}WARNING: Cache directory {path.parent} is not writeable: {e}&#34;
+            )  # path not writeable
+        return x
+
+    def __len__(self):
+        return len(self.img_files)
+
+    # def __iter__(self):
+    #     self.count = -1
+    #     print(&#39;ran dataset iter&#39;)
+    #     #self.shuffled_vector = np.random.permutation(self.nF) if self.augment else np.arange(self.nF)
+    #     return self
+
+    def __getitem__(self, index):
+        index = self.indices[index]  # linear, shuffled, or image_weights
+
+        hyp = self.hyp
+        mosaic = self.mosaic and random.random() &lt; hyp[&#34;mosaic&#34;]
+        if mosaic:
+            # Load mosaic
+            img, labels = load_mosaic(self, index)
+            shapes = None
+
+            # MixUp https://arxiv.org/pdf/1710.09412.pdf
+            if random.random() &lt; hyp[&#34;mixup&#34;]:
+                img2, labels2 = load_mosaic(self, random.randint(0, self.n - 1))
+                r = np.random.beta(8.0, 8.0)  # mixup ratio, alpha=beta=8.0
+                img = (img * r + img2 * (1 - r)).astype(np.uint8)
+                labels = np.concatenate((labels, labels2), 0)
+
+        else:
+            # Load image
+            img, (h0, w0), (h, w) = load_image(self, index)
+
+            # Letterbox
+            shape = (
+                self.batch_shapes[self.batch[index]] if self.rect else self.img_size
+            )  # final letterboxed shape
+            img, ratio, pad = letterbox(img, shape, auto=False, scaleup=self.augment)
+            shapes = (h0, w0), ((h / h0, w / w0), pad)  # for COCO mAP rescaling
+
+            labels = self.labels[index].copy()
+            if labels.size:  # normalized xywh to pixel xyxy format
+                labels[:, 1:] = xywhn2xyxy(
+                    labels[:, 1:], ratio[0] * w, ratio[1] * h, padw=pad[0], padh=pad[1]
+                )
+
+        if self.augment:
+            # Augment imagespace
+            if not mosaic:
+                img, labels = random_perspective(
+                    img,
+                    labels,
+                    degrees=hyp[&#34;degrees&#34;],
+                    translate=hyp[&#34;translate&#34;],
+                    scale=hyp[&#34;scale&#34;],
+                    shear=hyp[&#34;shear&#34;],
+                    perspective=hyp[&#34;perspective&#34;],
+                )
+
+            # Augment colorspace
+            augment_hsv(img, hgain=hyp[&#34;hsv_h&#34;], sgain=hyp[&#34;hsv_s&#34;], vgain=hyp[&#34;hsv_v&#34;])
+
+            # Apply cutouts
+            # if random.random() &lt; 0.9:
+            #     labels = cutout(img, labels)
+
+        nL = len(labels)  # number of labels
+        if nL:
+            labels[:, 1:5] = xyxy2xywh(labels[:, 1:5])  # convert xyxy to xywh
+            labels[:, [2, 4]] /= img.shape[0]  # normalized height 0-1
+            labels[:, [1, 3]] /= img.shape[1]  # normalized width 0-1
+
+        if self.augment:
+            # flip up-down
+            if random.random() &lt; hyp[&#34;flipud&#34;]:
+                img = np.flipud(img)
+                if nL:
+                    labels[:, 2] = 1 - labels[:, 2]
+
+            # flip left-right
+            if random.random() &lt; hyp[&#34;fliplr&#34;]:
+                img = np.fliplr(img)
+                if nL:
+                    labels[:, 1] = 1 - labels[:, 1]
+
+        labels_out = torch.zeros((nL, 6))
+        if nL:
+            labels_out[:, 1:] = torch.from_numpy(labels)
+
+        # Convert
+        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+        img = np.ascontiguousarray(img)
+
+        return torch.from_numpy(img), labels_out, self.img_files[index], shapes
+
+    @staticmethod
+    def collate_fn(batch):
+        img, label, path, shapes = zip(*batch)  # transposed
+        for i, l in enumerate(label):
+            l[:, 0] = i  # add target image index for build_targets()
+        return torch.stack(img, 0), torch.cat(label, 0), path, shapes
+
+    @staticmethod
+    def collate_fn4(batch):
+        img, label, path, shapes = zip(*batch)  # transposed
+        n = len(shapes) // 4
+        img4, label4, path4, shapes4 = [], [], path[:n], shapes[:n]
+
+        ho = torch.tensor([[0.0, 0, 0, 1, 0, 0]])
+        wo = torch.tensor([[0.0, 0, 1, 0, 0, 0]])
+        s = torch.tensor([[1, 1, 0.5, 0.5, 0.5, 0.5]])  # scale
+        for i in range(n):  # zidane torch.zeros(16,3,720,1280)  # BCHW
+            i *= 4
+            if random.random() &lt; 0.5:
+                im = F.interpolate(
+                    img[i].unsqueeze(0).float(),
+                    scale_factor=2.0,
+                    mode=&#34;bilinear&#34;,
+                    align_corners=False,
+                )[0].type(img[i].type())
+                l = label[i]
+            else:
+                im = torch.cat(
+                    (
+                        torch.cat((img[i], img[i + 1]), 1),
+                        torch.cat((img[i + 2], img[i + 3]), 1),
+                    ),
+                    2,
+                )
+                l = (
+                    torch.cat(
+                        (
+                            label[i],
+                            label[i + 1] + ho,
+                            label[i + 2] + wo,
+                            label[i + 3] + ho + wo,
+                        ),
+                        0,
+                    )
+                    * s
+                )
+            img4.append(im)
+            label4.append(l)
+
+        for i, l in enumerate(label4):
+            l[:, 0] = i  # add target image index for build_targets()
+
+        return torch.stack(img4, 0), torch.cat(label4, 0), path4, shapes4
+
+
+# Ancillary functions --------------------------------------------------------------------------------------------------
+def load_image(self, index):
+    # loads 1 image from dataset, returns img, original hw, resized hw
+    img = self.imgs[index]
+    if img is None:  # not cached
+        path = self.img_files[index]
+        img = cv2.imread(path)  # BGR
+        assert img is not None, &#34;Image Not Found &#34; + path
+        h0, w0 = img.shape[:2]  # orig hw
+        r = self.img_size / max(h0, w0)  # ratio
+        if r != 1:  # if sizes are not equal
+            img = cv2.resize(
+                img,
+                (int(w0 * r), int(h0 * r)),
+                interpolation=cv2.INTER_AREA
+                if r &lt; 1 and not self.augment
+                else cv2.INTER_LINEAR,
+            )
+        return img, (h0, w0), img.shape[:2]  # img, hw_original, hw_resized
+    else:
+        return (
+            self.imgs[index],
+            self.img_hw0[index],
+            self.img_hw[index],
+        )  # img, hw_original, hw_resized
+
+
+def augment_hsv(img, hgain=0.5, sgain=0.5, vgain=0.5):
+    r = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain] + 1  # random gains
+    hue, sat, val = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2HSV))
+    dtype = img.dtype  # uint8
+
+    x = np.arange(0, 256, dtype=np.int16)
+    lut_hue = ((x * r[0]) % 180).astype(dtype)
+    lut_sat = np.clip(x * r[1], 0, 255).astype(dtype)
+    lut_val = np.clip(x * r[2], 0, 255).astype(dtype)
+
+    img_hsv = cv2.merge(
+        (cv2.LUT(hue, lut_hue), cv2.LUT(sat, lut_sat), cv2.LUT(val, lut_val))
+    ).astype(dtype)
+    cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR, dst=img)  # no return needed
+
+
+def hist_equalize(img, clahe=True, bgr=False):
+    # Equalize histogram on BGR image &#39;img&#39; with img.shape(n,m,3) and range 0-255
+    yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV if bgr else cv2.COLOR_RGB2YUV)
+    if clahe:
+        c = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        yuv[:, :, 0] = c.apply(yuv[:, :, 0])
+    else:
+        yuv[:, :, 0] = cv2.equalizeHist(yuv[:, :, 0])  # equalize Y channel histogram
+    return cv2.cvtColor(
+        yuv, cv2.COLOR_YUV2BGR if bgr else cv2.COLOR_YUV2RGB
+    )  # convert YUV image to RGB
+
+
+def load_mosaic(self, index):
+    # loads images in a 4-mosaic
+
+    labels4, segments4 = [], []
+    s = self.img_size
+    yc, xc = [
+        int(random.uniform(-x, 2 * s + x)) for x in self.mosaic_border
+    ]  # mosaic center x, y
+    indices = [index] + random.choices(self.indices, k=3)  # 3 additional image indices
+    for i, index in enumerate(indices):
+        # Load image
+        img, _, (h, w) = load_image(self, index)
+
+        # place img in img4
+        if i == 0:  # top left
+            img4 = np.full(
+                (s * 2, s * 2, img.shape[2]), 114, dtype=np.uint8
+            )  # base image with 4 tiles
+            x1a, y1a, x2a, y2a = (
+                max(xc - w, 0),
+                max(yc - h, 0),
+                xc,
+                yc,
+            )  # xmin, ymin, xmax, ymax (large image)
+            x1b, y1b, x2b, y2b = (
+                w - (x2a - x1a),
+                h - (y2a - y1a),
+                w,
+                h,
+            )  # xmin, ymin, xmax, ymax (small image)
+        elif i == 1:  # top right
+            x1a, y1a, x2a, y2a = xc, max(yc - h, 0), min(xc + w, s * 2), yc
+            x1b, y1b, x2b, y2b = 0, h - (y2a - y1a), min(w, x2a - x1a), h
+        elif i == 2:  # bottom left
+            x1a, y1a, x2a, y2a = max(xc - w, 0), yc, xc, min(s * 2, yc + h)
+            x1b, y1b, x2b, y2b = w - (x2a - x1a), 0, w, min(y2a - y1a, h)
+        elif i == 3:  # bottom right
+            x1a, y1a, x2a, y2a = xc, yc, min(xc + w, s * 2), min(s * 2, yc + h)
+            x1b, y1b, x2b, y2b = 0, 0, min(w, x2a - x1a), min(y2a - y1a, h)
+
+        img4[y1a:y2a, x1a:x2a] = img[y1b:y2b, x1b:x2b]  # img4[ymin:ymax, xmin:xmax]
+        padw = x1a - x1b
+        padh = y1a - y1b
+
+        # Labels
+        labels, segments = self.labels[index].copy(), self.segments[index].copy()
+        if labels.size:
+            labels[:, 1:] = xywhn2xyxy(
+                labels[:, 1:], w, h, padw, padh
+            )  # normalized xywh to pixel xyxy format
+            segments = [xyn2xy(x, w, h, padw, padh) for x in segments]
+        labels4.append(labels)
+        segments4.extend(segments)
+
+    # Concat/clip labels
+    labels4 = np.concatenate(labels4, 0)
+    for x in (labels4[:, 1:], *segments4):
+        np.clip(x, 0, 2 * s, out=x)  # clip when using random_perspective()
+    # img4, labels4 = replicate(img4, labels4)  # replicate
+
+    # Augment
+    img4, labels4 = random_perspective(
+        img4,
+        labels4,
+        segments4,
+        degrees=self.hyp[&#34;degrees&#34;],
+        translate=self.hyp[&#34;translate&#34;],
+        scale=self.hyp[&#34;scale&#34;],
+        shear=self.hyp[&#34;shear&#34;],
+        perspective=self.hyp[&#34;perspective&#34;],
+        border=self.mosaic_border,
+    )  # border to remove
+
+    return img4, labels4
+
+
+def load_mosaic9(self, index):
+    # loads images in a 9-mosaic
+
+    labels9, segments9 = [], []
+    s = self.img_size
+    indices = [index] + random.choices(self.indices, k=8)  # 8 additional image indices
+    for i, index in enumerate(indices):
+        # Load image
+        img, _, (h, w) = load_image(self, index)
+
+        # place img in img9
+        if i == 0:  # center
+            img9 = np.full(
+                (s * 3, s * 3, img.shape[2]), 114, dtype=np.uint8
+            )  # base image with 4 tiles
+            h0, w0 = h, w
+            c = s, s, s + w, s + h  # xmin, ymin, xmax, ymax (base) coordinates
+        elif i == 1:  # top
+            c = s, s - h, s + w, s
+        elif i == 2:  # top right
+            c = s + wp, s - h, s + wp + w, s
+        elif i == 3:  # right
+            c = s + w0, s, s + w0 + w, s + h
+        elif i == 4:  # bottom right
+            c = s + w0, s + hp, s + w0 + w, s + hp + h
+        elif i == 5:  # bottom
+            c = s + w0 - w, s + h0, s + w0, s + h0 + h
+        elif i == 6:  # bottom left
+            c = s + w0 - wp - w, s + h0, s + w0 - wp, s + h0 + h
+        elif i == 7:  # left
+            c = s - w, s + h0 - h, s, s + h0
+        elif i == 8:  # top left
+            c = s - w, s + h0 - hp - h, s, s + h0 - hp
+
+        padx, pady = c[:2]
+        x1, y1, x2, y2 = [max(x, 0) for x in c]  # allocate coords
+
+        # Labels
+        labels, segments = self.labels[index].copy(), self.segments[index].copy()
+        if labels.size:
+            labels[:, 1:] = xywhn2xyxy(
+                labels[:, 1:], w, h, padx, pady
+            )  # normalized xywh to pixel xyxy format
+            segments = [xyn2xy(x, w, h, padx, pady) for x in segments]
+        labels9.append(labels)
+        segments9.extend(segments)
+
+        # Image
+        img9[y1:y2, x1:x2] = img[y1 - pady :, x1 - padx :]  # img9[ymin:ymax, xmin:xmax]
+        hp, wp = h, w  # height, width previous
+
+    # Offset
+    yc, xc = [
+        int(random.uniform(0, s)) for _ in self.mosaic_border
+    ]  # mosaic center x, y
+    img9 = img9[yc : yc + 2 * s, xc : xc + 2 * s]
+
+    # Concat/clip labels
+    labels9 = np.concatenate(labels9, 0)
+    labels9[:, [1, 3]] -= xc
+    labels9[:, [2, 4]] -= yc
+    c = np.array([xc, yc])  # centers
+    segments9 = [x - c for x in segments9]
+
+    for x in (labels9[:, 1:], *segments9):
+        np.clip(x, 0, 2 * s, out=x)  # clip when using random_perspective()
+    # img9, labels9 = replicate(img9, labels9)  # replicate
+
+    # Augment
+    img9, labels9 = random_perspective(
+        img9,
+        labels9,
+        segments9,
+        degrees=self.hyp[&#34;degrees&#34;],
+        translate=self.hyp[&#34;translate&#34;],
+        scale=self.hyp[&#34;scale&#34;],
+        shear=self.hyp[&#34;shear&#34;],
+        perspective=self.hyp[&#34;perspective&#34;],
+        border=self.mosaic_border,
+    )  # border to remove
+
+    return img9, labels9
+
+
+def replicate(img, labels):
+    # Replicate labels
+    h, w = img.shape[:2]
+    boxes = labels[:, 1:].astype(int)
+    x1, y1, x2, y2 = boxes.T
+    s = ((x2 - x1) + (y2 - y1)) / 2  # side length (pixels)
+    for i in s.argsort()[: round(s.size * 0.5)]:  # smallest indices
+        x1b, y1b, x2b, y2b = boxes[i]
+        bh, bw = y2b - y1b, x2b - x1b
+        yc, xc = int(random.uniform(0, h - bh)), int(
+            random.uniform(0, w - bw)
+        )  # offset x, y
+        x1a, y1a, x2a, y2a = [xc, yc, xc + bw, yc + bh]
+        img[y1a:y2a, x1a:x2a] = img[y1b:y2b, x1b:x2b]  # img4[ymin:ymax, xmin:xmax]
+        labels = np.append(labels, [[labels[i, 0], x1a, y1a, x2a, y2a]], axis=0)
+
+    return img, labels
+
+
+def letterbox(
+    img,
+    new_shape=(640, 640),
+    color=(114, 114, 114),
+    auto=True,
+    scaleFill=False,
+    scaleup=True,
+    stride=32,
+    gpu=False,
+):
+    if not new_shape:
+        return img, 0, (0, 0)
+    if not stride:
+        stride = 32
+    # Resize and pad image while meeting stride-multiple constraints
+    shape = img.shape[:2]  # current shape [height, width]
+    if isinstance(new_shape, int):
+        new_shape = (new_shape, new_shape)
+
+    # Scale ratio (new / old)
+    r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
+    if not scaleup:  # only scale down, do not scale up (for better test mAP)
+        r = min(r, 1.0)
+
+    # Compute padding
+    ratio = r, r  # width, height ratios
+    new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+    dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]  # wh padding
+    if auto:  # minimum rectangle
+        dw, dh = np.mod(dw, stride), np.mod(dh, stride)  # wh padding
+    elif scaleFill:  # stretch
+        dw, dh = 0.0, 0.0
+        new_unpad = (new_shape[1], new_shape[0])
+        ratio = new_shape[1] / shape[1], new_shape[0] / shape[0]  # width, height ratios
+
+    dw /= 2  # divide padding into 2 sides
+    dh /= 2
+
+    if shape[::-1] != new_unpad:  # resize
+        if not gpu:
+            img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+        else:
+            input_data = cv2.cuda_GpuMat(img)
+
+            img = cv2.cuda.resize(input_data, new_unpad, interpolation=cv2.INTER_LINEAR)
+
+    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
+    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
+
+    if not gpu:
+        img = cv2.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+    else:
+        img = cv2.cuda.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+        img = img.download()
+    return img, ratio, (dw, dh)
+
+
+def random_perspective(
+    img,
+    targets=(),
+    segments=(),
+    degrees=10,
+    translate=0.1,
+    scale=0.1,
+    shear=10,
+    perspective=0.0,
+    border=(0, 0),
+):
+    # torchvision.transforms.RandomAffine(degrees=(-10, 10), translate=(.1, .1), scale=(.9, 1.1), shear=(-10, 10))
+    # targets = [cls, xyxy]
+
+    height = img.shape[0] + border[0] * 2  # shape(h,w,c)
+    width = img.shape[1] + border[1] * 2
+
+    # Center
+    C = np.eye(3)
+    C[0, 2] = -img.shape[1] / 2  # x translation (pixels)
+    C[1, 2] = -img.shape[0] / 2  # y translation (pixels)
+
+    # Perspective
+    P = np.eye(3)
+    P[2, 0] = random.uniform(-perspective, perspective)  # x perspective (about y)
+    P[2, 1] = random.uniform(-perspective, perspective)  # y perspective (about x)
+
+    # Rotation and Scale
+    R = np.eye(3)
+    a = random.uniform(-degrees, degrees)
+    # a += random.choice([-180, -90, 0, 90])  # add 90deg rotations to small rotations
+    s = random.uniform(1 - scale, 1 + scale)
+    # s = 2 ** random.uniform(-scale, scale)
+    R[:2] = cv2.getRotationMatrix2D(angle=a, center=(0, 0), scale=s)
+
+    # Shear
+    S = np.eye(3)
+    S[0, 1] = math.tan(random.uniform(-shear, shear) * math.pi / 180)  # x shear (deg)
+    S[1, 0] = math.tan(random.uniform(-shear, shear) * math.pi / 180)  # y shear (deg)
+
+    # Translation
+    T = np.eye(3)
+    T[0, 2] = (
+        random.uniform(0.5 - translate, 0.5 + translate) * width
+    )  # x translation (pixels)
+    T[1, 2] = (
+        random.uniform(0.5 - translate, 0.5 + translate) * height
+    )  # y translation (pixels)
+
+    # Combined rotation matrix
+    M = T @ S @ R @ P @ C  # order of operations (right to left) is IMPORTANT
+    if (border[0] != 0) or (border[1] != 0) or (M != np.eye(3)).any():  # image changed
+        if perspective:
+            img = cv2.warpPerspective(
+                img, M, dsize=(width, height), borderValue=(114, 114, 114)
+            )
+        else:  # affine
+            img = cv2.warpAffine(
+                img, M[:2], dsize=(width, height), borderValue=(114, 114, 114)
+            )
+
+    # Visualize
+    # import matplotlib.pyplot as plt
+    # ax = plt.subplots(1, 2, figsize=(12, 6))[1].ravel()
+    # ax[0].imshow(img[:, :, ::-1])  # base
+    # ax[1].imshow(img2[:, :, ::-1])  # warped
+
+    # Transform label coordinates
+    n = len(targets)
+    if n:
+        use_segments = any(x.any() for x in segments)
+        new = np.zeros((n, 4))
+        if use_segments:  # warp segments
+            segments = resample_segments(segments)  # upsample
+            for i, segment in enumerate(segments):
+                xy = np.ones((len(segment), 3))
+                xy[:, :2] = segment
+                xy = xy @ M.T  # transform
+                xy = (
+                    xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2]
+                )  # perspective rescale or affine
+
+                # clip
+                new[i] = segment2box(xy, width, height)
+
+        else:  # warp boxes
+            xy = np.ones((n * 4, 3))
+            xy[:, :2] = targets[:, [1, 2, 3, 4, 1, 4, 3, 2]].reshape(
+                n * 4, 2
+            )  # x1y1, x2y2, x1y2, x2y1
+            xy = xy @ M.T  # transform
+            xy = (xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2]).reshape(
+                n, 8
+            )  # perspective rescale or affine
+
+            # create new boxes
+            x = xy[:, [0, 2, 4, 6]]
+            y = xy[:, [1, 3, 5, 7]]
+            new = (
+                np.concatenate((x.min(1), y.min(1), x.max(1), y.max(1))).reshape(4, n).T
+            )
+
+            # clip
+            new[:, [0, 2]] = new[:, [0, 2]].clip(0, width)
+            new[:, [1, 3]] = new[:, [1, 3]].clip(0, height)
+
+        # filter candidates
+        i = box_candidates(
+            box1=targets[:, 1:5].T * s,
+            box2=new.T,
+            area_thr=0.01 if use_segments else 0.10,
+        )
+        targets = targets[i]
+        targets[:, 1:5] = new[i]
+
+    return img, targets
+
+
+def box_candidates(
+    box1, box2, wh_thr=2, ar_thr=20, area_thr=0.1, eps=1e-16
+):  # box1(4,n), box2(4,n)
+    # Compute candidate boxes: box1 before augment, box2 after augment, wh_thr (pixels), aspect_ratio_thr, area_ratio
+    w1, h1 = box1[2] - box1[0], box1[3] - box1[1]
+    w2, h2 = box2[2] - box2[0], box2[3] - box2[1]
+    ar = np.maximum(w2 / (h2 + eps), h2 / (w2 + eps))  # aspect ratio
+    return (
+        (w2 &gt; wh_thr)
+        &amp; (h2 &gt; wh_thr)
+        &amp; (w2 * h2 / (w1 * h1 + eps) &gt; area_thr)
+        &amp; (ar &lt; ar_thr)
+    )  # candidates
+
+
+def cutout(image, labels):
+    # Applies image cutout augmentation https://arxiv.org/abs/1708.04552
+    h, w = image.shape[:2]
+
+    def bbox_ioa(box1, box2):
+        # Returns the intersection over box2 area given box1, box2. box1 is 4, box2 is nx4. boxes are x1y1x2y2
+        box2 = box2.transpose()
+
+        # Get the coordinates of bounding boxes
+        b1_x1, b1_y1, b1_x2, b1_y2 = box1[0], box1[1], box1[2], box1[3]
+        b2_x1, b2_y1, b2_x2, b2_y2 = box2[0], box2[1], box2[2], box2[3]
+
+        # Intersection area
+        inter_area = (np.minimum(b1_x2, b2_x2) - np.maximum(b1_x1, b2_x1)).clip(0) * (
+            np.minimum(b1_y2, b2_y2) - np.maximum(b1_y1, b2_y1)
+        ).clip(0)
+
+        # box2 area
+        box2_area = (b2_x2 - b2_x1) * (b2_y2 - b2_y1) + 1e-16
+
+        # Intersection over box2 area
+        return inter_area / box2_area
+
+    # create random masks
+    scales = (
+        [0.5] * 1 + [0.25] * 2 + [0.125] * 4 + [0.0625] * 8 + [0.03125] * 16
+    )  # image size fraction
+    for s in scales:
+        mask_h = random.randint(1, int(h * s))
+        mask_w = random.randint(1, int(w * s))
+
+        # box
+        xmin = max(0, random.randint(0, w) - mask_w // 2)
+        ymin = max(0, random.randint(0, h) - mask_h // 2)
+        xmax = min(w, xmin + mask_w)
+        ymax = min(h, ymin + mask_h)
+
+        # apply random color mask
+        image[ymin:ymax, xmin:xmax] = [random.randint(64, 191) for _ in range(3)]
+
+        # return unobscured labels
+        if len(labels) and s &gt; 0.03:
+            box = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
+            ioa = bbox_ioa(box, labels[:, 1:5])  # intersection over area
+            labels = labels[ioa &lt; 0.60]  # remove &gt;60% obscured labels
+
+    return labels
+
+
+def create_folder(path=&#34;./new&#34;):
+    # Create folder
+    if os.path.exists(path):
+        shutil.rmtree(path)  # delete output folder
+    os.makedirs(path)  # make new output folder
+
+
+def flatten_recursive(path=&#34;../coco128&#34;):
+    # Flatten a recursive directory by bringing all files to top level
+    new_path = Path(path + &#34;_flat&#34;)
+    create_folder(new_path)
+    for file in tqdm(glob.glob(str(Path(path)) + &#34;/**/*.*&#34;, recursive=True)):
+        shutil.copyfile(file, new_path / Path(file).name)
+
+
+def extract_boxes(
+    path=&#34;../coco128/&#34;,
+):  # from utils.datasets import *; extract_boxes(&#39;../coco128&#39;)
+    # Convert detection dataset into classification dataset, with one directory per class
+
+    path = Path(path)  # images dir
+    shutil.rmtree(path / &#34;classifier&#34;) if (
+        path / &#34;classifier&#34;
+    ).is_dir() else None  # remove existing
+    files = list(path.rglob(&#34;*.*&#34;))
+    n = len(files)  # number of files
+    for im_file in tqdm(files, total=n):
+        if im_file.suffix[1:] in img_formats:
+            # image
+            im = cv2.imread(str(im_file))[..., ::-1]  # BGR to RGB
+            h, w = im.shape[:2]
+
+            # labels
+            lb_file = Path(img2label_paths([str(im_file)])[0])
+            if Path(lb_file).exists():
+                with open(lb_file, &#34;r&#34;) as f:
+                    lb = np.array(
+                        [x.split() for x in f.read().strip().splitlines()],
+                        dtype=np.float32,
+                    )  # labels
+
+                for j, x in enumerate(lb):
+                    c = int(x[0])  # class
+                    f = (
+                        (path / &#34;classifier&#34;)
+                        / f&#34;{c}&#34;
+                        / f&#34;{path.stem}_{im_file.stem}_{j}.jpg&#34;
+                    )  # new filename
+                    if not f.parent.is_dir():
+                        f.parent.mkdir(parents=True)
+
+                    b = x[1:] * [w, h, w, h]  # box
+                    # b[2:] = b[2:].max()  # rectangle to square
+                    b[2:] = b[2:] * 1.2 + 3  # pad
+                    b = xywh2xyxy(b.reshape(-1, 4)).ravel().astype(np.int)
+
+                    b[[0, 2]] = np.clip(b[[0, 2]], 0, w)  # clip boxes outside of image
+                    b[[1, 3]] = np.clip(b[[1, 3]], 0, h)
+                    assert cv2.imwrite(
+                        str(f), im[b[1] : b[3], b[0] : b[2]]
+                    ), f&#34;box failure in {f}&#34;
+
+
+def autosplit(path=&#34;../coco128&#34;, weights=(0.9, 0.1, 0.0), annotated_only=False):
+    &#34;&#34;&#34;Autosplit a dataset into train/val/test splits and save path/autosplit_*.txt files
+    Usage: from utils.datasets import *; autosplit(&#39;../coco128&#39;)
+    Arguments
+        path:           Path to images directory
+        weights:        Train, val, test weights (list)
+        annotated_only: Only use images with an annotated txt file
+    &#34;&#34;&#34;
+    path = Path(path)  # images dir
+    files = sum(
+        [list(path.rglob(f&#34;*.{img_ext}&#34;)) for img_ext in img_formats], []
+    )  # image files only
+    n = len(files)  # number of files
+    indices = random.choices(
+        [0, 1, 2], weights=weights, k=n
+    )  # assign each image to a split
+
+    txt = [
+        &#34;autosplit_train.txt&#34;,
+        &#34;autosplit_val.txt&#34;,
+        &#34;autosplit_test.txt&#34;,
+    ]  # 3 txt files
+    [(path / x).unlink() for x in txt if (path / x).exists()]  # remove existing
+
+    print(
+        f&#34;Autosplitting images from {path}&#34;
+        + &#34;, using *.txt labeled images only&#34; * annotated_only
+    )
+    for i, img in tqdm(zip(indices, files), total=n):
+        if (
+            not annotated_only or Path(img2label_paths([str(img)])[0]).exists()
+        ):  # check label
+            with open(path / txt[i], &#34;a&#34;) as f:
+                f.write(str(img) + &#34;\n&#34;)  # add image to txt file
+
+
+numeric_const_pattern = (
+    &#34;[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?&#34;
+)
+rx = re.compile(numeric_const_pattern, re.VERBOSE)
+
+
+def timestamp_from_path(path: str):
+    try:
+        timestamp = rx.findall(path)[-1]
+        return float(timestamp)
+    except:
+        return None</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pancake.utils.datasets.augment_hsv"><code class="name flex">
+<span>def <span class="ident">augment_hsv</span></span>(<span>img, hgain=0.5, sgain=0.5, vgain=0.5)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def augment_hsv(img, hgain=0.5, sgain=0.5, vgain=0.5):
+    r = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain] + 1  # random gains
+    hue, sat, val = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2HSV))
+    dtype = img.dtype  # uint8
+
+    x = np.arange(0, 256, dtype=np.int16)
+    lut_hue = ((x * r[0]) % 180).astype(dtype)
+    lut_sat = np.clip(x * r[1], 0, 255).astype(dtype)
+    lut_val = np.clip(x * r[2], 0, 255).astype(dtype)
+
+    img_hsv = cv2.merge(
+        (cv2.LUT(hue, lut_hue), cv2.LUT(sat, lut_sat), cv2.LUT(val, lut_val))
+    ).astype(dtype)
+    cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR, dst=img)  # no return needed</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.autosplit"><code class="name flex">
+<span>def <span class="ident">autosplit</span></span>(<span>path='../coco128', weights=(0.9, 0.1, 0.0), annotated_only=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Autosplit a dataset into train/val/test splits and save path/autosplit_<em>.txt files
+Usage: from utils.datasets import </em>; autosplit('../coco128')
+Arguments
+path:
+Path to images directory
+weights:
+Train, val, test weights (list)
+annotated_only: Only use images with an annotated txt file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def autosplit(path=&#34;../coco128&#34;, weights=(0.9, 0.1, 0.0), annotated_only=False):
+    &#34;&#34;&#34;Autosplit a dataset into train/val/test splits and save path/autosplit_*.txt files
+    Usage: from utils.datasets import *; autosplit(&#39;../coco128&#39;)
+    Arguments
+        path:           Path to images directory
+        weights:        Train, val, test weights (list)
+        annotated_only: Only use images with an annotated txt file
+    &#34;&#34;&#34;
+    path = Path(path)  # images dir
+    files = sum(
+        [list(path.rglob(f&#34;*.{img_ext}&#34;)) for img_ext in img_formats], []
+    )  # image files only
+    n = len(files)  # number of files
+    indices = random.choices(
+        [0, 1, 2], weights=weights, k=n
+    )  # assign each image to a split
+
+    txt = [
+        &#34;autosplit_train.txt&#34;,
+        &#34;autosplit_val.txt&#34;,
+        &#34;autosplit_test.txt&#34;,
+    ]  # 3 txt files
+    [(path / x).unlink() for x in txt if (path / x).exists()]  # remove existing
+
+    print(
+        f&#34;Autosplitting images from {path}&#34;
+        + &#34;, using *.txt labeled images only&#34; * annotated_only
+    )
+    for i, img in tqdm(zip(indices, files), total=n):
+        if (
+            not annotated_only or Path(img2label_paths([str(img)])[0]).exists()
+        ):  # check label
+            with open(path / txt[i], &#34;a&#34;) as f:
+                f.write(str(img) + &#34;\n&#34;)  # add image to txt file</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.box_candidates"><code class="name flex">
+<span>def <span class="ident">box_candidates</span></span>(<span>box1, box2, wh_thr=2, ar_thr=20, area_thr=0.1, eps=1e-16)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def box_candidates(
+    box1, box2, wh_thr=2, ar_thr=20, area_thr=0.1, eps=1e-16
+):  # box1(4,n), box2(4,n)
+    # Compute candidate boxes: box1 before augment, box2 after augment, wh_thr (pixels), aspect_ratio_thr, area_ratio
+    w1, h1 = box1[2] - box1[0], box1[3] - box1[1]
+    w2, h2 = box2[2] - box2[0], box2[3] - box2[1]
+    ar = np.maximum(w2 / (h2 + eps), h2 / (w2 + eps))  # aspect ratio
+    return (
+        (w2 &gt; wh_thr)
+        &amp; (h2 &gt; wh_thr)
+        &amp; (w2 * h2 / (w1 * h1 + eps) &gt; area_thr)
+        &amp; (ar &lt; ar_thr)
+    )  # candidates</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.create_dataloader"><code class="name flex">
+<span>def <span class="ident">create_dataloader</span></span>(<span>path, imgsz, batch_size, stride, opt, hyp=None, augment=False, cache=False, pad=0.0, rect=False, rank=-1, world_size=1, workers=8, image_weights=False, quad=False, prefix='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_dataloader(
+    path,
+    imgsz,
+    batch_size,
+    stride,
+    opt,
+    hyp=None,
+    augment=False,
+    cache=False,
+    pad=0.0,
+    rect=False,
+    rank=-1,
+    world_size=1,
+    workers=8,
+    image_weights=False,
+    quad=False,
+    prefix=&#34;&#34;,
+):
+    # Make sure only the first process in DDP process the dataset first, and the following others can use the cache
+    with torch_distributed_zero_first(rank):
+        dataset = LoadImagesAndLabels(
+            path,
+            imgsz,
+            batch_size,
+            augment=augment,  # augment images
+            hyp=hyp,  # augmentation hyperparameters
+            rect=rect,  # rectangular training
+            cache_images=cache,
+            single_cls=opt.single_cls,
+            stride=int(stride),
+            pad=pad,
+            image_weights=image_weights,
+            prefix=prefix,
+        )
+
+    batch_size = min(batch_size, len(dataset))
+    nw = min(
+        [os.cpu_count() // world_size, batch_size if batch_size &gt; 1 else 0, workers]
+    )  # number of workers
+    sampler = (
+        torch.utils.data.distributed.DistributedSampler(dataset) if rank != -1 else None
+    )
+    loader = torch.utils.data.DataLoader if image_weights else InfiniteDataLoader
+    # Use torch.utils.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
+    dataloader = loader(
+        dataset,
+        batch_size=batch_size,
+        num_workers=nw,
+        sampler=sampler,
+        pin_memory=True,
+        collate_fn=LoadImagesAndLabels.collate_fn4
+        if quad
+        else LoadImagesAndLabels.collate_fn,
+    )
+    return dataloader, dataset</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.create_folder"><code class="name flex">
+<span>def <span class="ident">create_folder</span></span>(<span>path='./new')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_folder(path=&#34;./new&#34;):
+    # Create folder
+    if os.path.exists(path):
+        shutil.rmtree(path)  # delete output folder
+    os.makedirs(path)  # make new output folder</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.cutout"><code class="name flex">
+<span>def <span class="ident">cutout</span></span>(<span>image, labels)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutout(image, labels):
+    # Applies image cutout augmentation https://arxiv.org/abs/1708.04552
+    h, w = image.shape[:2]
+
+    def bbox_ioa(box1, box2):
+        # Returns the intersection over box2 area given box1, box2. box1 is 4, box2 is nx4. boxes are x1y1x2y2
+        box2 = box2.transpose()
+
+        # Get the coordinates of bounding boxes
+        b1_x1, b1_y1, b1_x2, b1_y2 = box1[0], box1[1], box1[2], box1[3]
+        b2_x1, b2_y1, b2_x2, b2_y2 = box2[0], box2[1], box2[2], box2[3]
+
+        # Intersection area
+        inter_area = (np.minimum(b1_x2, b2_x2) - np.maximum(b1_x1, b2_x1)).clip(0) * (
+            np.minimum(b1_y2, b2_y2) - np.maximum(b1_y1, b2_y1)
+        ).clip(0)
+
+        # box2 area
+        box2_area = (b2_x2 - b2_x1) * (b2_y2 - b2_y1) + 1e-16
+
+        # Intersection over box2 area
+        return inter_area / box2_area
+
+    # create random masks
+    scales = (
+        [0.5] * 1 + [0.25] * 2 + [0.125] * 4 + [0.0625] * 8 + [0.03125] * 16
+    )  # image size fraction
+    for s in scales:
+        mask_h = random.randint(1, int(h * s))
+        mask_w = random.randint(1, int(w * s))
+
+        # box
+        xmin = max(0, random.randint(0, w) - mask_w // 2)
+        ymin = max(0, random.randint(0, h) - mask_h // 2)
+        xmax = min(w, xmin + mask_w)
+        ymax = min(h, ymin + mask_h)
+
+        # apply random color mask
+        image[ymin:ymax, xmin:xmax] = [random.randint(64, 191) for _ in range(3)]
+
+        # return unobscured labels
+        if len(labels) and s &gt; 0.03:
+            box = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
+            ioa = bbox_ioa(box, labels[:, 1:5])  # intersection over area
+            labels = labels[ioa &lt; 0.60]  # remove &gt;60% obscured labels
+
+    return labels</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.exif_size"><code class="name flex">
+<span>def <span class="ident">exif_size</span></span>(<span>img)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exif_size(img):
+    # Returns exif-corrected PIL size
+    s = img.size  # (width, height)
+    try:
+        rotation = dict(img._getexif().items())[orientation]
+        if rotation == 6:  # rotation 270
+            s = (s[1], s[0])
+        elif rotation == 8:  # rotation 90
+            s = (s[1], s[0])
+    except:
+        pass
+
+    return s</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.extract_boxes"><code class="name flex">
+<span>def <span class="ident">extract_boxes</span></span>(<span>path='../coco128/')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_boxes(
+    path=&#34;../coco128/&#34;,
+):  # from utils.datasets import *; extract_boxes(&#39;../coco128&#39;)
+    # Convert detection dataset into classification dataset, with one directory per class
+
+    path = Path(path)  # images dir
+    shutil.rmtree(path / &#34;classifier&#34;) if (
+        path / &#34;classifier&#34;
+    ).is_dir() else None  # remove existing
+    files = list(path.rglob(&#34;*.*&#34;))
+    n = len(files)  # number of files
+    for im_file in tqdm(files, total=n):
+        if im_file.suffix[1:] in img_formats:
+            # image
+            im = cv2.imread(str(im_file))[..., ::-1]  # BGR to RGB
+            h, w = im.shape[:2]
+
+            # labels
+            lb_file = Path(img2label_paths([str(im_file)])[0])
+            if Path(lb_file).exists():
+                with open(lb_file, &#34;r&#34;) as f:
+                    lb = np.array(
+                        [x.split() for x in f.read().strip().splitlines()],
+                        dtype=np.float32,
+                    )  # labels
+
+                for j, x in enumerate(lb):
+                    c = int(x[0])  # class
+                    f = (
+                        (path / &#34;classifier&#34;)
+                        / f&#34;{c}&#34;
+                        / f&#34;{path.stem}_{im_file.stem}_{j}.jpg&#34;
+                    )  # new filename
+                    if not f.parent.is_dir():
+                        f.parent.mkdir(parents=True)
+
+                    b = x[1:] * [w, h, w, h]  # box
+                    # b[2:] = b[2:].max()  # rectangle to square
+                    b[2:] = b[2:] * 1.2 + 3  # pad
+                    b = xywh2xyxy(b.reshape(-1, 4)).ravel().astype(np.int)
+
+                    b[[0, 2]] = np.clip(b[[0, 2]], 0, w)  # clip boxes outside of image
+                    b[[1, 3]] = np.clip(b[[1, 3]], 0, h)
+                    assert cv2.imwrite(
+                        str(f), im[b[1] : b[3], b[0] : b[2]]
+                    ), f&#34;box failure in {f}&#34;</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.flatten_recursive"><code class="name flex">
+<span>def <span class="ident">flatten_recursive</span></span>(<span>path='../coco128')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flatten_recursive(path=&#34;../coco128&#34;):
+    # Flatten a recursive directory by bringing all files to top level
+    new_path = Path(path + &#34;_flat&#34;)
+    create_folder(new_path)
+    for file in tqdm(glob.glob(str(Path(path)) + &#34;/**/*.*&#34;, recursive=True)):
+        shutil.copyfile(file, new_path / Path(file).name)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.get_hash"><code class="name flex">
+<span>def <span class="ident">get_hash</span></span>(<span>files)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_hash(files):
+    # Returns a single hash value of a list of files
+    return sum(os.path.getsize(f) for f in files if os.path.isfile(f))</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.hist_equalize"><code class="name flex">
+<span>def <span class="ident">hist_equalize</span></span>(<span>img, clahe=True, bgr=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hist_equalize(img, clahe=True, bgr=False):
+    # Equalize histogram on BGR image &#39;img&#39; with img.shape(n,m,3) and range 0-255
+    yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV if bgr else cv2.COLOR_RGB2YUV)
+    if clahe:
+        c = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        yuv[:, :, 0] = c.apply(yuv[:, :, 0])
+    else:
+        yuv[:, :, 0] = cv2.equalizeHist(yuv[:, :, 0])  # equalize Y channel histogram
+    return cv2.cvtColor(
+        yuv, cv2.COLOR_YUV2BGR if bgr else cv2.COLOR_YUV2RGB
+    )  # convert YUV image to RGB</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.img2label_paths"><code class="name flex">
+<span>def <span class="ident">img2label_paths</span></span>(<span>img_paths)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def img2label_paths(img_paths):
+    # Define label paths as a function of image paths
+    sa, sb = (
+        os.sep + &#34;images&#34; + os.sep,
+        os.sep + &#34;labels&#34; + os.sep,
+    )  # /images/, /labels/ substrings
+    return [
+        &#34;txt&#34;.join(x.replace(sa, sb, 1).rsplit(x.split(&#34;.&#34;)[-1], 1)) for x in img_paths
+    ]</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.letterbox"><code class="name flex">
+<span>def <span class="ident">letterbox</span></span>(<span>img, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleFill=False, scaleup=True, stride=32, gpu=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def letterbox(
+    img,
+    new_shape=(640, 640),
+    color=(114, 114, 114),
+    auto=True,
+    scaleFill=False,
+    scaleup=True,
+    stride=32,
+    gpu=False,
+):
+    if not new_shape:
+        return img, 0, (0, 0)
+    if not stride:
+        stride = 32
+    # Resize and pad image while meeting stride-multiple constraints
+    shape = img.shape[:2]  # current shape [height, width]
+    if isinstance(new_shape, int):
+        new_shape = (new_shape, new_shape)
+
+    # Scale ratio (new / old)
+    r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
+    if not scaleup:  # only scale down, do not scale up (for better test mAP)
+        r = min(r, 1.0)
+
+    # Compute padding
+    ratio = r, r  # width, height ratios
+    new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+    dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]  # wh padding
+    if auto:  # minimum rectangle
+        dw, dh = np.mod(dw, stride), np.mod(dh, stride)  # wh padding
+    elif scaleFill:  # stretch
+        dw, dh = 0.0, 0.0
+        new_unpad = (new_shape[1], new_shape[0])
+        ratio = new_shape[1] / shape[1], new_shape[0] / shape[0]  # width, height ratios
+
+    dw /= 2  # divide padding into 2 sides
+    dh /= 2
+
+    if shape[::-1] != new_unpad:  # resize
+        if not gpu:
+            img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+        else:
+            input_data = cv2.cuda_GpuMat(img)
+
+            img = cv2.cuda.resize(input_data, new_unpad, interpolation=cv2.INTER_LINEAR)
+
+    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
+    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
+
+    if not gpu:
+        img = cv2.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+    else:
+        img = cv2.cuda.copyMakeBorder(
+            img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )  # add border
+        img = img.download()
+    return img, ratio, (dw, dh)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.load_image"><code class="name flex">
+<span>def <span class="ident">load_image</span></span>(<span>self, index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_image(self, index):
+    # loads 1 image from dataset, returns img, original hw, resized hw
+    img = self.imgs[index]
+    if img is None:  # not cached
+        path = self.img_files[index]
+        img = cv2.imread(path)  # BGR
+        assert img is not None, &#34;Image Not Found &#34; + path
+        h0, w0 = img.shape[:2]  # orig hw
+        r = self.img_size / max(h0, w0)  # ratio
+        if r != 1:  # if sizes are not equal
+            img = cv2.resize(
+                img,
+                (int(w0 * r), int(h0 * r)),
+                interpolation=cv2.INTER_AREA
+                if r &lt; 1 and not self.augment
+                else cv2.INTER_LINEAR,
+            )
+        return img, (h0, w0), img.shape[:2]  # img, hw_original, hw_resized
+    else:
+        return (
+            self.imgs[index],
+            self.img_hw0[index],
+            self.img_hw[index],
+        )  # img, hw_original, hw_resized</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.load_mosaic"><code class="name flex">
+<span>def <span class="ident">load_mosaic</span></span>(<span>self, index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_mosaic(self, index):
+    # loads images in a 4-mosaic
+
+    labels4, segments4 = [], []
+    s = self.img_size
+    yc, xc = [
+        int(random.uniform(-x, 2 * s + x)) for x in self.mosaic_border
+    ]  # mosaic center x, y
+    indices = [index] + random.choices(self.indices, k=3)  # 3 additional image indices
+    for i, index in enumerate(indices):
+        # Load image
+        img, _, (h, w) = load_image(self, index)
+
+        # place img in img4
+        if i == 0:  # top left
+            img4 = np.full(
+                (s * 2, s * 2, img.shape[2]), 114, dtype=np.uint8
+            )  # base image with 4 tiles
+            x1a, y1a, x2a, y2a = (
+                max(xc - w, 0),
+                max(yc - h, 0),
+                xc,
+                yc,
+            )  # xmin, ymin, xmax, ymax (large image)
+            x1b, y1b, x2b, y2b = (
+                w - (x2a - x1a),
+                h - (y2a - y1a),
+                w,
+                h,
+            )  # xmin, ymin, xmax, ymax (small image)
+        elif i == 1:  # top right
+            x1a, y1a, x2a, y2a = xc, max(yc - h, 0), min(xc + w, s * 2), yc
+            x1b, y1b, x2b, y2b = 0, h - (y2a - y1a), min(w, x2a - x1a), h
+        elif i == 2:  # bottom left
+            x1a, y1a, x2a, y2a = max(xc - w, 0), yc, xc, min(s * 2, yc + h)
+            x1b, y1b, x2b, y2b = w - (x2a - x1a), 0, w, min(y2a - y1a, h)
+        elif i == 3:  # bottom right
+            x1a, y1a, x2a, y2a = xc, yc, min(xc + w, s * 2), min(s * 2, yc + h)
+            x1b, y1b, x2b, y2b = 0, 0, min(w, x2a - x1a), min(y2a - y1a, h)
+
+        img4[y1a:y2a, x1a:x2a] = img[y1b:y2b, x1b:x2b]  # img4[ymin:ymax, xmin:xmax]
+        padw = x1a - x1b
+        padh = y1a - y1b
+
+        # Labels
+        labels, segments = self.labels[index].copy(), self.segments[index].copy()
+        if labels.size:
+            labels[:, 1:] = xywhn2xyxy(
+                labels[:, 1:], w, h, padw, padh
+            )  # normalized xywh to pixel xyxy format
+            segments = [xyn2xy(x, w, h, padw, padh) for x in segments]
+        labels4.append(labels)
+        segments4.extend(segments)
+
+    # Concat/clip labels
+    labels4 = np.concatenate(labels4, 0)
+    for x in (labels4[:, 1:], *segments4):
+        np.clip(x, 0, 2 * s, out=x)  # clip when using random_perspective()
+    # img4, labels4 = replicate(img4, labels4)  # replicate
+
+    # Augment
+    img4, labels4 = random_perspective(
+        img4,
+        labels4,
+        segments4,
+        degrees=self.hyp[&#34;degrees&#34;],
+        translate=self.hyp[&#34;translate&#34;],
+        scale=self.hyp[&#34;scale&#34;],
+        shear=self.hyp[&#34;shear&#34;],
+        perspective=self.hyp[&#34;perspective&#34;],
+        border=self.mosaic_border,
+    )  # border to remove
+
+    return img4, labels4</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.load_mosaic9"><code class="name flex">
+<span>def <span class="ident">load_mosaic9</span></span>(<span>self, index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_mosaic9(self, index):
+    # loads images in a 9-mosaic
+
+    labels9, segments9 = [], []
+    s = self.img_size
+    indices = [index] + random.choices(self.indices, k=8)  # 8 additional image indices
+    for i, index in enumerate(indices):
+        # Load image
+        img, _, (h, w) = load_image(self, index)
+
+        # place img in img9
+        if i == 0:  # center
+            img9 = np.full(
+                (s * 3, s * 3, img.shape[2]), 114, dtype=np.uint8
+            )  # base image with 4 tiles
+            h0, w0 = h, w
+            c = s, s, s + w, s + h  # xmin, ymin, xmax, ymax (base) coordinates
+        elif i == 1:  # top
+            c = s, s - h, s + w, s
+        elif i == 2:  # top right
+            c = s + wp, s - h, s + wp + w, s
+        elif i == 3:  # right
+            c = s + w0, s, s + w0 + w, s + h
+        elif i == 4:  # bottom right
+            c = s + w0, s + hp, s + w0 + w, s + hp + h
+        elif i == 5:  # bottom
+            c = s + w0 - w, s + h0, s + w0, s + h0 + h
+        elif i == 6:  # bottom left
+            c = s + w0 - wp - w, s + h0, s + w0 - wp, s + h0 + h
+        elif i == 7:  # left
+            c = s - w, s + h0 - h, s, s + h0
+        elif i == 8:  # top left
+            c = s - w, s + h0 - hp - h, s, s + h0 - hp
+
+        padx, pady = c[:2]
+        x1, y1, x2, y2 = [max(x, 0) for x in c]  # allocate coords
+
+        # Labels
+        labels, segments = self.labels[index].copy(), self.segments[index].copy()
+        if labels.size:
+            labels[:, 1:] = xywhn2xyxy(
+                labels[:, 1:], w, h, padx, pady
+            )  # normalized xywh to pixel xyxy format
+            segments = [xyn2xy(x, w, h, padx, pady) for x in segments]
+        labels9.append(labels)
+        segments9.extend(segments)
+
+        # Image
+        img9[y1:y2, x1:x2] = img[y1 - pady :, x1 - padx :]  # img9[ymin:ymax, xmin:xmax]
+        hp, wp = h, w  # height, width previous
+
+    # Offset
+    yc, xc = [
+        int(random.uniform(0, s)) for _ in self.mosaic_border
+    ]  # mosaic center x, y
+    img9 = img9[yc : yc + 2 * s, xc : xc + 2 * s]
+
+    # Concat/clip labels
+    labels9 = np.concatenate(labels9, 0)
+    labels9[:, [1, 3]] -= xc
+    labels9[:, [2, 4]] -= yc
+    c = np.array([xc, yc])  # centers
+    segments9 = [x - c for x in segments9]
+
+    for x in (labels9[:, 1:], *segments9):
+        np.clip(x, 0, 2 * s, out=x)  # clip when using random_perspective()
+    # img9, labels9 = replicate(img9, labels9)  # replicate
+
+    # Augment
+    img9, labels9 = random_perspective(
+        img9,
+        labels9,
+        segments9,
+        degrees=self.hyp[&#34;degrees&#34;],
+        translate=self.hyp[&#34;translate&#34;],
+        scale=self.hyp[&#34;scale&#34;],
+        shear=self.hyp[&#34;shear&#34;],
+        perspective=self.hyp[&#34;perspective&#34;],
+        border=self.mosaic_border,
+    )  # border to remove
+
+    return img9, labels9</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.random_perspective"><code class="name flex">
+<span>def <span class="ident">random_perspective</span></span>(<span>img, targets=(), segments=(), degrees=10, translate=0.1, scale=0.1, shear=10, perspective=0.0, border=(0, 0))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def random_perspective(
+    img,
+    targets=(),
+    segments=(),
+    degrees=10,
+    translate=0.1,
+    scale=0.1,
+    shear=10,
+    perspective=0.0,
+    border=(0, 0),
+):
+    # torchvision.transforms.RandomAffine(degrees=(-10, 10), translate=(.1, .1), scale=(.9, 1.1), shear=(-10, 10))
+    # targets = [cls, xyxy]
+
+    height = img.shape[0] + border[0] * 2  # shape(h,w,c)
+    width = img.shape[1] + border[1] * 2
+
+    # Center
+    C = np.eye(3)
+    C[0, 2] = -img.shape[1] / 2  # x translation (pixels)
+    C[1, 2] = -img.shape[0] / 2  # y translation (pixels)
+
+    # Perspective
+    P = np.eye(3)
+    P[2, 0] = random.uniform(-perspective, perspective)  # x perspective (about y)
+    P[2, 1] = random.uniform(-perspective, perspective)  # y perspective (about x)
+
+    # Rotation and Scale
+    R = np.eye(3)
+    a = random.uniform(-degrees, degrees)
+    # a += random.choice([-180, -90, 0, 90])  # add 90deg rotations to small rotations
+    s = random.uniform(1 - scale, 1 + scale)
+    # s = 2 ** random.uniform(-scale, scale)
+    R[:2] = cv2.getRotationMatrix2D(angle=a, center=(0, 0), scale=s)
+
+    # Shear
+    S = np.eye(3)
+    S[0, 1] = math.tan(random.uniform(-shear, shear) * math.pi / 180)  # x shear (deg)
+    S[1, 0] = math.tan(random.uniform(-shear, shear) * math.pi / 180)  # y shear (deg)
+
+    # Translation
+    T = np.eye(3)
+    T[0, 2] = (
+        random.uniform(0.5 - translate, 0.5 + translate) * width
+    )  # x translation (pixels)
+    T[1, 2] = (
+        random.uniform(0.5 - translate, 0.5 + translate) * height
+    )  # y translation (pixels)
+
+    # Combined rotation matrix
+    M = T @ S @ R @ P @ C  # order of operations (right to left) is IMPORTANT
+    if (border[0] != 0) or (border[1] != 0) or (M != np.eye(3)).any():  # image changed
+        if perspective:
+            img = cv2.warpPerspective(
+                img, M, dsize=(width, height), borderValue=(114, 114, 114)
+            )
+        else:  # affine
+            img = cv2.warpAffine(
+                img, M[:2], dsize=(width, height), borderValue=(114, 114, 114)
+            )
+
+    # Visualize
+    # import matplotlib.pyplot as plt
+    # ax = plt.subplots(1, 2, figsize=(12, 6))[1].ravel()
+    # ax[0].imshow(img[:, :, ::-1])  # base
+    # ax[1].imshow(img2[:, :, ::-1])  # warped
+
+    # Transform label coordinates
+    n = len(targets)
+    if n:
+        use_segments = any(x.any() for x in segments)
+        new = np.zeros((n, 4))
+        if use_segments:  # warp segments
+            segments = resample_segments(segments)  # upsample
+            for i, segment in enumerate(segments):
+                xy = np.ones((len(segment), 3))
+                xy[:, :2] = segment
+                xy = xy @ M.T  # transform
+                xy = (
+                    xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2]
+                )  # perspective rescale or affine
+
+                # clip
+                new[i] = segment2box(xy, width, height)
+
+        else:  # warp boxes
+            xy = np.ones((n * 4, 3))
+            xy[:, :2] = targets[:, [1, 2, 3, 4, 1, 4, 3, 2]].reshape(
+                n * 4, 2
+            )  # x1y1, x2y2, x1y2, x2y1
+            xy = xy @ M.T  # transform
+            xy = (xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2]).reshape(
+                n, 8
+            )  # perspective rescale or affine
+
+            # create new boxes
+            x = xy[:, [0, 2, 4, 6]]
+            y = xy[:, [1, 3, 5, 7]]
+            new = (
+                np.concatenate((x.min(1), y.min(1), x.max(1), y.max(1))).reshape(4, n).T
+            )
+
+            # clip
+            new[:, [0, 2]] = new[:, [0, 2]].clip(0, width)
+            new[:, [1, 3]] = new[:, [1, 3]].clip(0, height)
+
+        # filter candidates
+        i = box_candidates(
+            box1=targets[:, 1:5].T * s,
+            box2=new.T,
+            area_thr=0.01 if use_segments else 0.10,
+        )
+        targets = targets[i]
+        targets[:, 1:5] = new[i]
+
+    return img, targets</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.replicate"><code class="name flex">
+<span>def <span class="ident">replicate</span></span>(<span>img, labels)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replicate(img, labels):
+    # Replicate labels
+    h, w = img.shape[:2]
+    boxes = labels[:, 1:].astype(int)
+    x1, y1, x2, y2 = boxes.T
+    s = ((x2 - x1) + (y2 - y1)) / 2  # side length (pixels)
+    for i in s.argsort()[: round(s.size * 0.5)]:  # smallest indices
+        x1b, y1b, x2b, y2b = boxes[i]
+        bh, bw = y2b - y1b, x2b - x1b
+        yc, xc = int(random.uniform(0, h - bh)), int(
+            random.uniform(0, w - bw)
+        )  # offset x, y
+        x1a, y1a, x2a, y2a = [xc, yc, xc + bw, yc + bh]
+        img[y1a:y2a, x1a:x2a] = img[y1b:y2b, x1b:x2b]  # img4[ymin:ymax, xmin:xmax]
+        labels = np.append(labels, [[labels[i, 0], x1a, y1a, x2a, y2a]], axis=0)
+
+    return img, labels</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.timestamp_from_path"><code class="name flex">
+<span>def <span class="ident">timestamp_from_path</span></span>(<span>path: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_from_path(path: str):
+    try:
+        timestamp = rx.findall(path)[-1]
+        return float(timestamp)
+    except:
+        return None</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pancake.utils.datasets.InfiniteDataLoader"><code class="flex name class">
+<span>class <span class="ident">InfiniteDataLoader</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dataloader that reuses workers</p>
+<p>Uses same syntax as vanilla DataLoader</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InfiniteDataLoader(torch.utils.data.dataloader.DataLoader):
+    &#34;&#34;&#34;Dataloader that reuses workers
+
+    Uses same syntax as vanilla DataLoader
+    &#34;&#34;&#34;
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        object.__setattr__(self, &#34;batch_sampler&#34;, _RepeatSampler(self.batch_sampler))
+        self.iterator = super().__iter__()
+
+    def __len__(self):
+        return len(self.batch_sampler.sampler)
+
+    def __iter__(self):
+        for i in range(len(self)):
+            yield next(self.iterator)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.utils.data.dataloader.DataLoader</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.batch_size"><code class="name">var <span class="ident">batch_size</span> : Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.dataset"><code class="name">var <span class="ident">dataset</span> : torch.utils.data.dataset.Dataset[+T_co]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.drop_last"><code class="name">var <span class="ident">drop_last</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.num_workers"><code class="name">var <span class="ident">num_workers</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.pin_memory"><code class="name">var <span class="ident">pin_memory</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.prefetch_factor"><code class="name">var <span class="ident">prefetch_factor</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.sampler"><code class="name">var <span class="ident">sampler</span> : torch.utils.data.sampler.Sampler</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="pancake.utils.datasets.InfiniteDataLoader.timeout"><code class="name">var <span class="ident">timeout</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs"><code class="flex name class">
+<span>class <span class="ident">LoadImageDirs</span></span>
+<span>(</span><span>dirs, queue_size: int = 64, read_fps: float = 15)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadImageDirs:
+    # TODO: The timestamps of each perspective extracted from server with
+    #      the CAM grabber tool slightly differ, as they got retrieved
+    #      seperately from each other.
+    #      !! Either mask the perspectives to a uniform timestamp or
+    #      alter the timestamps afterwards !!
+    #      Currently &#39;None&#39; is returned as timestamp.
+
+    def __init__(self, dirs, queue_size: int = 64, read_fps: float = 15):
+        n = len(dirs)
+        self.num_dirs = n
+        self.files = [None] * n
+        self.nf = [None] * n
+        self.video_flag = [None] * n
+        self.queue_size = queue_size
+
+        for i, path in enumerate(dirs):
+            p = str(Path(path).absolute())  # os-agnostic absolute path
+            if &#34;*&#34; in p:
+                files = sorted(glob.glob(p, recursive=True))  # glob
+            elif os.path.isdir(p):
+                files = sorted(glob.glob(os.path.join(p, &#34;*.*&#34;)))  # dir
+            elif os.path.isfile(p):
+                files = [p]  # files
+            else:
+                raise Exception(f&#34;ERROR: {p} does not exist&#34;)
+
+            images = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in img_formats]
+            videos = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in vid_formats]
+
+            ni, nv = len(images), len(videos)
+
+            assert (len(images) and not len(videos)) or (
+                not len(images) and len(videos)
+            ), (
+                f&#34;LoadImageDirs can only consider directories with one type of source,\n&#34;
+                f&#34;source can either be an image found or video!\n&#34;
+                f&#34;({ni} images and {nv} videos in {p})&#34;
+            )
+
+            assert ni or nv, (
+                f&#34;No images or videos found in {p}. &#34;
+                f&#34;Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}&#34;
+            )
+
+            self.files[i] = images + videos
+            self.nf[i] = ni + nv
+            self.video_flag[i] = [False] * ni + [True] * nv
+
+        # check if different source types are provided for each dir
+        all_videos = [all(flags) for flags in self.video_flag]
+        assert all(all_videos) or not any(
+            all_videos
+        ), &#34;Given directories possess different type of sources!&#34;
+
+        # loader mode
+        self.mode = &#34;image&#34; if not any(all_videos) else &#34;video&#34;
+        if self.mode == &#34;video&#34;:
+            # currently only one video per directory is supported
+            assert all(
+                [nf == 1 for nf in self.nf]
+            ), &#34;Currently only one video per directory is supported&#34;
+            self.new_videos([files[0] for files in self.files])  # init videos
+        else:
+            self.cap = [None]
+
+        # for each directory create queue threads use for storing the loaded frames
+        from queue import Queue
+
+        self.Qs = [Queue(maxsize=queue_size) for _ in range(self.num_dirs)]
+
+        # stop flag for threads
+        self.stopped = False
+        self.read_fps = read_fps  # retrieve frames at this rate
+
+        # start threads
+        for index in range(self.num_dirs):
+            self.start_threads(index)
+
+        # wait for the last thread to retrieve first frame
+        time.sleep(0.2)
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        # stop when last image/video was reached
+        if not all([self.more_queue(idx) for idx in range(self.num_dirs)]):
+            # stop threads
+            self.stop_threads()
+            raise StopIteration
+
+        # take images from queues
+        img0 = [self.read_queue(idx) for idx in range(self.num_dirs)]  # BGR
+
+        if l.level &lt;= 20:
+            s = &#34;&#34;
+            for i in range(self.num_dirs):
+                s += f&#34;{self.mode} {i+1}/{self.num_dirs}: ({self.count}/{self.nf[i]})&#34;
+                if i &lt; self.num_dirs - 1:
+                    s += &#34;, &#34;
+            l.info(f&#34;{s}&#34;)
+
+        self.count += 1
+
+        return None, img0, self.cap[0], None
+
+    def start_threads(self, index: int):
+        # start a thread to read frames from the source
+        t = Thread(target=self.update, args=(index,))
+        t.daemon = True
+        t.start()
+        return self
+
+    def update(self, index: int):
+        img_idx = 0
+
+        try:
+            # keep looping infinitely
+            while True:
+                # if the thread indicator variable is set, stop the thread
+                if self.stopped:
+                    return
+
+                # otherwise, ensure the queue has room in it
+                if not self.Qs[index].full():
+                    if self.mode == &#34;video&#34;:
+                        # read the next frame from the file
+                        (grabbed, frame) = self.cap[index].read()
+                        # if the `grabbed` boolean is `False`, then we have
+                        # reached the end of the video file
+                        if not grabbed:
+                            self.stop()
+                            l.debug(f&#34;Finished reading video with idx {index}&#34;)
+                            return
+                    else:
+                        # read image from the file
+                        frame = cv2.imread(self.files[index][img_idx])
+                        img_idx += 1
+
+                        if frame is None:
+                            l.warn(
+                                f&#34;Couldn&#39;t find image at {self.files[index][img_idx]}&#34;
+                            )
+                            continue
+
+                    # add the frame to the queue
+                    self.Qs[index].put(frame)
+                    time.sleep(1 / self.read_fps)
+                else:
+                    # when queue is full, sleep for a prolonged period
+                    time.sleep(self.queue_size / self.read_fps * 0.9)
+        except:
+            self.cap[index].release()
+
+    def new_videos(self, paths: list):
+        self.frame = 0
+        self.cap = [cv2.VideoCapture(path) for path in paths]
+        self.nf = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+        # check if all videos have same frame rate
+        fps = [vid_cap.get(cv2.CAP_PROP_FPS) for vid_cap in self.cap]
+        assert fps.count(fps[0]) == len(fps), &#34;Given videos have different fps rates&#34;
+
+    def read_queue(self, index):
+        # return next frame in the queue with given index
+        return self.Qs[index].get()
+
+    def more_queue(self, index):
+        # return True if there are still frames in the queue
+        return self.Qs[index].qsize() &gt; 0
+
+    def stop_threads(self):
+        # indicate that the threads should be stopped
+        self.stopped = True
+        # release video capture objects
+        if self.mode == &#34;video&#34;:
+            for cap in self.cap:
+                cap.release()
+
+    def __len__(self):
+        return self.nf  # number of files</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.utils.datasets.LoadImageDirs.more_queue"><code class="name flex">
+<span>def <span class="ident">more_queue</span></span>(<span>self, index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def more_queue(self, index):
+    # return True if there are still frames in the queue
+    return self.Qs[index].qsize() &gt; 0</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs.new_videos"><code class="name flex">
+<span>def <span class="ident">new_videos</span></span>(<span>self, paths: list)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_videos(self, paths: list):
+    self.frame = 0
+    self.cap = [cv2.VideoCapture(path) for path in paths]
+    self.nf = [int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) for cap in self.cap]
+    # check if all videos have same frame rate
+    fps = [vid_cap.get(cv2.CAP_PROP_FPS) for vid_cap in self.cap]
+    assert fps.count(fps[0]) == len(fps), &#34;Given videos have different fps rates&#34;</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs.read_queue"><code class="name flex">
+<span>def <span class="ident">read_queue</span></span>(<span>self, index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_queue(self, index):
+    # return next frame in the queue with given index
+    return self.Qs[index].get()</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs.start_threads"><code class="name flex">
+<span>def <span class="ident">start_threads</span></span>(<span>self, index: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_threads(self, index: int):
+    # start a thread to read frames from the source
+    t = Thread(target=self.update, args=(index,))
+    t.daemon = True
+    t.start()
+    return self</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs.stop_threads"><code class="name flex">
+<span>def <span class="ident">stop_threads</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop_threads(self):
+    # indicate that the threads should be stopped
+    self.stopped = True
+    # release video capture objects
+    if self.mode == &#34;video&#34;:
+        for cap in self.cap:
+            cap.release()</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImageDirs.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, index: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self, index: int):
+    img_idx = 0
+
+    try:
+        # keep looping infinitely
+        while True:
+            # if the thread indicator variable is set, stop the thread
+            if self.stopped:
+                return
+
+            # otherwise, ensure the queue has room in it
+            if not self.Qs[index].full():
+                if self.mode == &#34;video&#34;:
+                    # read the next frame from the file
+                    (grabbed, frame) = self.cap[index].read()
+                    # if the `grabbed` boolean is `False`, then we have
+                    # reached the end of the video file
+                    if not grabbed:
+                        self.stop()
+                        l.debug(f&#34;Finished reading video with idx {index}&#34;)
+                        return
+                else:
+                    # read image from the file
+                    frame = cv2.imread(self.files[index][img_idx])
+                    img_idx += 1
+
+                    if frame is None:
+                        l.warn(
+                            f&#34;Couldn&#39;t find image at {self.files[index][img_idx]}&#34;
+                        )
+                        continue
+
+                # add the frame to the queue
+                self.Qs[index].put(frame)
+                time.sleep(1 / self.read_fps)
+            else:
+                # when queue is full, sleep for a prolonged period
+                time.sleep(self.queue_size / self.read_fps * 0.9)
+    except:
+        self.cap[index].release()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pancake.utils.datasets.LoadImages"><code class="flex name class">
+<span>class <span class="ident">LoadImages</span></span>
+<span>(</span><span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadImages:  # for inference
+    def __init__(self, path):
+        p = str(Path(path).absolute())  # os-agnostic absolute path
+        if &#34;*&#34; in p:
+            files = sorted(glob.glob(p, recursive=True))  # glob
+        elif os.path.isdir(p):
+            files = sorted(glob.glob(os.path.join(p, &#34;*.*&#34;)))  # dir
+        elif os.path.isfile(p):
+            files = [p]  # files
+        else:
+            raise Exception(f&#34;ERROR: {p} does not exist&#34;)
+
+        images = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in img_formats]
+        videos = [x for x in files if x.split(&#34;.&#34;)[-1].lower() in vid_formats]
+        ni, nv = len(images), len(videos)
+
+        self.files = images + videos
+        self.nf = ni + nv  # number of files
+        self.video_flag = [False] * ni + [True] * nv
+        self.mode = &#34;image&#34;
+        if any(videos):
+            self.new_video(videos[0])  # new video
+        else:
+            self.cap = None
+        assert self.nf &gt; 0, (
+            f&#34;No images or videos found in {p}. &#34;
+            f&#34;Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}&#34;
+        )
+        self.timestamp = None
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count == self.nf:
+            raise StopIteration
+        path = self.files[self.count]
+
+        if self.video_flag[self.count]:
+            # Read video
+            self.mode = &#34;video&#34;
+            ret_val, img0 = self.cap.read()
+            if not ret_val:
+                self.count += 1
+                self.cap.release()
+                if self.count == self.nf:  # last video
+                    raise StopIteration
+                else:
+                    path = self.files[self.count]
+                    self.new_video(path)
+                    ret_val, img0 = self.cap.read()
+
+            self.frame += 1
+            l.debug(
+                f&#34;video {self.count + 1}/{self.nf} ({self.frame}/{self.nframes}) {path}: &#34;,
+                end=&#34;&#34;,
+            )
+
+        else:
+            # Read image
+            self.count += 1
+            img0 = cv2.imread(path)  # BGR
+            self.timestamp = timestamp_from_path(path)
+            assert img0 is not None, &#34;Image Not Found &#34; + path
+            l.debug(f&#34;image {self.count}/{self.nf} {path}: &#34;)
+
+        return path, img0, self.cap, self.timestamp
+
+    def new_video(self, path):
+        self.frame = 0
+        self.cap = cv2.VideoCapture(path)
+        self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    def __len__(self):
+        return self.nf  # number of files</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.utils.datasets.LoadImages.new_video"><code class="name flex">
+<span>def <span class="ident">new_video</span></span>(<span>self, path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_video(self, path):
+    self.frame = 0
+    self.cap = cv2.VideoCapture(path)
+    self.nframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pancake.utils.datasets.LoadImagesAndLabels"><code class="flex name class">
+<span>class <span class="ident">LoadImagesAndLabels</span></span>
+<span>(</span><span>path, img_size=640, batch_size=16, augment=False, hyp=None, rect=False, image_weights=False, cache_images=False, single_cls=False, stride=32, pad=0.0, prefix='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An abstract class representing a :class:<code>Dataset</code>.</p>
+<p>All datasets that represent a map from keys to data samples should subclass
+it. All subclasses should overwrite :meth:<code>__getitem__</code>, supporting fetching a
+data sample for a given key. Subclasses could also optionally overwrite
+:meth:<code>__len__</code>, which is expected to return the size of the dataset by many
+:class:<code>~torch.utils.data.Sampler</code> implementations and the default options
+of :class:<code>~torch.utils.data.DataLoader</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>:class:<code>~torch.utils.data.DataLoader</code> by default constructs a index
+sampler that yields integral indices.
+To make it work with a map-style
+dataset with non-integral indices/keys, a custom sampler must be provided.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadImagesAndLabels(Dataset):  # for training/testing
+    def __init__(
+        self,
+        path,
+        img_size=640,
+        batch_size=16,
+        augment=False,
+        hyp=None,
+        rect=False,
+        image_weights=False,
+        cache_images=False,
+        single_cls=False,
+        stride=32,
+        pad=0.0,
+        prefix=&#34;&#34;,
+    ):
+        self.img_size = img_size
+        self.augment = augment
+        self.hyp = hyp
+        self.image_weights = image_weights
+        self.rect = False if image_weights else rect
+        self.mosaic = (
+            self.augment and not self.rect
+        )  # load 4 images at a time into a mosaic (only during training)
+        self.mosaic_border = [-img_size // 2, -img_size // 2]
+        self.stride = stride
+        self.path = path
+
+        try:
+            f = []  # image files
+            for p in path if isinstance(path, list) else [path]:
+                p = Path(p)  # os-agnostic
+                if p.is_dir():  # dir
+                    f += glob.glob(str(p / &#34;**&#34; / &#34;*.*&#34;), recursive=True)
+                    # f = list(p.rglob(&#39;**/*.*&#39;))  # pathlib
+                elif p.is_file():  # file
+                    with open(p, &#34;r&#34;) as t:
+                        t = t.read().strip().splitlines()
+                        parent = str(p.parent) + os.sep
+                        f += [
+                            x.replace(&#34;./&#34;, parent) if x.startswith(&#34;./&#34;) else x
+                            for x in t
+                        ]  # local to global path
+                        # f += [p.parent / x.lstrip(os.sep) for x in t]  # local to global path (pathlib)
+                else:
+                    raise Exception(f&#34;{prefix}{p} does not exist&#34;)
+            self.img_files = sorted(
+                [
+                    x.replace(&#34;/&#34;, os.sep)
+                    for x in f
+                    if x.split(&#34;.&#34;)[-1].lower() in img_formats
+                ]
+            )
+            # self.img_files = sorted([x for x in f if x.suffix[1:].lower() in img_formats])  # pathlib
+            assert self.img_files, f&#34;{prefix}No images found&#34;
+        except Exception as e:
+            raise Exception(
+                f&#34;{prefix}Error loading data from {path}: {e}\nSee {help_url}&#34;
+            )
+
+        # Check cache
+        self.label_files = img2label_paths(self.img_files)  # labels
+        cache_path = (
+            p if p.is_file() else Path(self.label_files[0]).parent
+        ).with_suffix(
+            &#34;.cache&#34;
+        )  # cached labels
+        if cache_path.is_file():
+            cache, exists = torch.load(cache_path), True  # load
+            if (
+                cache[&#34;hash&#34;] != get_hash(self.label_files + self.img_files)
+                or &#34;version&#34; not in cache
+            ):  # changed
+                cache, exists = self.cache_labels(cache_path, prefix), False  # re-cache
+        else:
+            cache, exists = self.cache_labels(cache_path, prefix), False  # cache
+
+        # Display cache
+        nf, nm, ne, nc, n = cache.pop(
+            &#34;results&#34;
+        )  # found, missing, empty, corrupted, total
+        if exists:
+            d = f&#34;Scanning &#39;{cache_path}&#39; images and labels... {nf} found, {nm} missing, {ne} empty, {nc} corrupted&#34;
+            tqdm(None, desc=prefix + d, total=n, initial=n)  # display cache results
+        assert (
+            nf &gt; 0 or not augment
+        ), f&#34;{prefix}No labels in {cache_path}. Can not train without labels. See {help_url}&#34;
+
+        # Read cache
+        cache.pop(&#34;hash&#34;)  # remove hash
+        cache.pop(&#34;version&#34;)  # remove version
+        labels, shapes, self.segments = zip(*cache.values())
+        self.labels = list(labels)
+        self.shapes = np.array(shapes, dtype=np.float64)
+        self.img_files = list(cache.keys())  # update
+        self.label_files = img2label_paths(cache.keys())  # update
+        if single_cls:
+            for x in self.labels:
+                x[:, 0] = 0
+
+        n = len(shapes)  # number of images
+        bi = np.floor(np.arange(n) / batch_size).astype(np.int)  # batch index
+        nb = bi[-1] + 1  # number of batches
+        self.batch = bi  # batch index of image
+        self.n = n
+        self.indices = range(n)
+
+        # Rectangular Training
+        if self.rect:
+            # Sort by aspect ratio
+            s = self.shapes  # wh
+            ar = s[:, 1] / s[:, 0]  # aspect ratio
+            irect = ar.argsort()
+            self.img_files = [self.img_files[i] for i in irect]
+            self.label_files = [self.label_files[i] for i in irect]
+            self.labels = [self.labels[i] for i in irect]
+            self.shapes = s[irect]  # wh
+            ar = ar[irect]
+
+            # Set training image shapes
+            shapes = [[1, 1]] * nb
+            for i in range(nb):
+                ari = ar[bi == i]
+                mini, maxi = ari.min(), ari.max()
+                if maxi &lt; 1:
+                    shapes[i] = [maxi, 1]
+                elif mini &gt; 1:
+                    shapes[i] = [1, 1 / mini]
+
+            self.batch_shapes = (
+                np.ceil(np.array(shapes) * img_size / stride + pad).astype(np.int)
+                * stride
+            )
+
+        # Cache images into memory for faster training (WARNING: large datasets may exceed system RAM)
+        self.imgs = [None] * n
+        if cache_images:
+            gb = 0  # Gigabytes of cached images
+            self.img_hw0, self.img_hw = [None] * n, [None] * n
+            results = ThreadPool(8).imap(
+                lambda x: load_image(*x), zip(repeat(self), range(n))
+            )  # 8 threads
+            pbar = tqdm(enumerate(results), total=n)
+            for i, x in pbar:
+                (
+                    self.imgs[i],
+                    self.img_hw0[i],
+                    self.img_hw[i],
+                ) = x  # img, hw_original, hw_resized = load_image(self, i)
+                gb += self.imgs[i].nbytes
+                pbar.desc = f&#34;{prefix}Caching images ({gb / 1E9:.1f}GB)&#34;
+            pbar.close()
+
+    def cache_labels(self, path=Path(&#34;./labels.cache&#34;), prefix=&#34;&#34;):
+        # Cache dataset labels, check images and read shapes
+        x = {}  # dict
+        nm, nf, ne, nc = 0, 0, 0, 0  # number missing, found, empty, duplicate
+        pbar = tqdm(
+            zip(self.img_files, self.label_files),
+            desc=&#34;Scanning images&#34;,
+            total=len(self.img_files),
+        )
+        for i, (im_file, lb_file) in enumerate(pbar):
+            try:
+                # verify images
+                im = Image.open(im_file)
+                im.verify()  # PIL verify
+                shape = exif_size(im)  # image size
+                segments = []  # instance segments
+                assert (shape[0] &gt; 9) &amp; (shape[1] &gt; 9), f&#34;image size {shape} &lt;10 pixels&#34;
+                assert (
+                    im.format.lower() in img_formats
+                ), f&#34;invalid image format {im.format}&#34;
+
+                # verify labels
+                if os.path.isfile(lb_file):
+                    nf += 1  # label found
+                    with open(lb_file, &#34;r&#34;) as f:
+                        l = [x.split() for x in f.read().strip().splitlines()]
+                        if any([len(x) &gt; 8 for x in l]):  # is segment
+                            classes = np.array([x[0] for x in l], dtype=np.float32)
+                            segments = [
+                                np.array(x[1:], dtype=np.float32).reshape(-1, 2)
+                                for x in l
+                            ]  # (cls, xy1...)
+                            l = np.concatenate(
+                                (classes.reshape(-1, 1), segments2boxes(segments)), 1
+                            )  # (cls, xywh)
+                        l = np.array(l, dtype=np.float32)
+                    if len(l):
+                        assert l.shape[1] == 5, &#34;labels require 5 columns each&#34;
+                        assert (l &gt;= 0).all(), &#34;negative labels&#34;
+                        assert (
+                            l[:, 1:] &lt;= 1
+                        ).all(), &#34;non-normalized or out of bounds coordinate labels&#34;
+                        assert (
+                            np.unique(l, axis=0).shape[0] == l.shape[0]
+                        ), &#34;duplicate labels&#34;
+                    else:
+                        ne += 1  # label empty
+                        l = np.zeros((0, 5), dtype=np.float32)
+                else:
+                    nm += 1  # label missing
+                    l = np.zeros((0, 5), dtype=np.float32)
+                x[im_file] = [l, shape, segments]
+            except Exception as e:
+                nc += 1
+                print(
+                    f&#34;{prefix}WARNING: Ignoring corrupted image and/or label {im_file}: {e}&#34;
+                )
+
+            pbar.desc = (
+                f&#34;{prefix}Scanning &#39;{path.parent / path.stem}&#39; images and labels... &#34;
+                f&#34;{nf} found, {nm} missing, {ne} empty, {nc} corrupted&#34;
+            )
+        pbar.close()
+
+        if nf == 0:
+            print(f&#34;{prefix}WARNING: No labels found in {path}. See {help_url}&#34;)
+
+        x[&#34;hash&#34;] = get_hash(self.label_files + self.img_files)
+        x[&#34;results&#34;] = nf, nm, ne, nc, i + 1
+        x[&#34;version&#34;] = 0.1  # cache version
+        try:
+            torch.save(x, path)  # save for next time
+            l.info(f&#34;{prefix}New cache created: {path}&#34;)
+        except Exception as e:
+            l.info(
+                f&#34;{prefix}WARNING: Cache directory {path.parent} is not writeable: {e}&#34;
+            )  # path not writeable
+        return x
+
+    def __len__(self):
+        return len(self.img_files)
+
+    # def __iter__(self):
+    #     self.count = -1
+    #     print(&#39;ran dataset iter&#39;)
+    #     #self.shuffled_vector = np.random.permutation(self.nF) if self.augment else np.arange(self.nF)
+    #     return self
+
+    def __getitem__(self, index):
+        index = self.indices[index]  # linear, shuffled, or image_weights
+
+        hyp = self.hyp
+        mosaic = self.mosaic and random.random() &lt; hyp[&#34;mosaic&#34;]
+        if mosaic:
+            # Load mosaic
+            img, labels = load_mosaic(self, index)
+            shapes = None
+
+            # MixUp https://arxiv.org/pdf/1710.09412.pdf
+            if random.random() &lt; hyp[&#34;mixup&#34;]:
+                img2, labels2 = load_mosaic(self, random.randint(0, self.n - 1))
+                r = np.random.beta(8.0, 8.0)  # mixup ratio, alpha=beta=8.0
+                img = (img * r + img2 * (1 - r)).astype(np.uint8)
+                labels = np.concatenate((labels, labels2), 0)
+
+        else:
+            # Load image
+            img, (h0, w0), (h, w) = load_image(self, index)
+
+            # Letterbox
+            shape = (
+                self.batch_shapes[self.batch[index]] if self.rect else self.img_size
+            )  # final letterboxed shape
+            img, ratio, pad = letterbox(img, shape, auto=False, scaleup=self.augment)
+            shapes = (h0, w0), ((h / h0, w / w0), pad)  # for COCO mAP rescaling
+
+            labels = self.labels[index].copy()
+            if labels.size:  # normalized xywh to pixel xyxy format
+                labels[:, 1:] = xywhn2xyxy(
+                    labels[:, 1:], ratio[0] * w, ratio[1] * h, padw=pad[0], padh=pad[1]
+                )
+
+        if self.augment:
+            # Augment imagespace
+            if not mosaic:
+                img, labels = random_perspective(
+                    img,
+                    labels,
+                    degrees=hyp[&#34;degrees&#34;],
+                    translate=hyp[&#34;translate&#34;],
+                    scale=hyp[&#34;scale&#34;],
+                    shear=hyp[&#34;shear&#34;],
+                    perspective=hyp[&#34;perspective&#34;],
+                )
+
+            # Augment colorspace
+            augment_hsv(img, hgain=hyp[&#34;hsv_h&#34;], sgain=hyp[&#34;hsv_s&#34;], vgain=hyp[&#34;hsv_v&#34;])
+
+            # Apply cutouts
+            # if random.random() &lt; 0.9:
+            #     labels = cutout(img, labels)
+
+        nL = len(labels)  # number of labels
+        if nL:
+            labels[:, 1:5] = xyxy2xywh(labels[:, 1:5])  # convert xyxy to xywh
+            labels[:, [2, 4]] /= img.shape[0]  # normalized height 0-1
+            labels[:, [1, 3]] /= img.shape[1]  # normalized width 0-1
+
+        if self.augment:
+            # flip up-down
+            if random.random() &lt; hyp[&#34;flipud&#34;]:
+                img = np.flipud(img)
+                if nL:
+                    labels[:, 2] = 1 - labels[:, 2]
+
+            # flip left-right
+            if random.random() &lt; hyp[&#34;fliplr&#34;]:
+                img = np.fliplr(img)
+                if nL:
+                    labels[:, 1] = 1 - labels[:, 1]
+
+        labels_out = torch.zeros((nL, 6))
+        if nL:
+            labels_out[:, 1:] = torch.from_numpy(labels)
+
+        # Convert
+        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+        img = np.ascontiguousarray(img)
+
+        return torch.from_numpy(img), labels_out, self.img_files[index], shapes
+
+    @staticmethod
+    def collate_fn(batch):
+        img, label, path, shapes = zip(*batch)  # transposed
+        for i, l in enumerate(label):
+            l[:, 0] = i  # add target image index for build_targets()
+        return torch.stack(img, 0), torch.cat(label, 0), path, shapes
+
+    @staticmethod
+    def collate_fn4(batch):
+        img, label, path, shapes = zip(*batch)  # transposed
+        n = len(shapes) // 4
+        img4, label4, path4, shapes4 = [], [], path[:n], shapes[:n]
+
+        ho = torch.tensor([[0.0, 0, 0, 1, 0, 0]])
+        wo = torch.tensor([[0.0, 0, 1, 0, 0, 0]])
+        s = torch.tensor([[1, 1, 0.5, 0.5, 0.5, 0.5]])  # scale
+        for i in range(n):  # zidane torch.zeros(16,3,720,1280)  # BCHW
+            i *= 4
+            if random.random() &lt; 0.5:
+                im = F.interpolate(
+                    img[i].unsqueeze(0).float(),
+                    scale_factor=2.0,
+                    mode=&#34;bilinear&#34;,
+                    align_corners=False,
+                )[0].type(img[i].type())
+                l = label[i]
+            else:
+                im = torch.cat(
+                    (
+                        torch.cat((img[i], img[i + 1]), 1),
+                        torch.cat((img[i + 2], img[i + 3]), 1),
+                    ),
+                    2,
+                )
+                l = (
+                    torch.cat(
+                        (
+                            label[i],
+                            label[i + 1] + ho,
+                            label[i + 2] + wo,
+                            label[i + 3] + ho + wo,
+                        ),
+                        0,
+                    )
+                    * s
+                )
+            img4.append(im)
+            label4.append(l)
+
+        for i, l in enumerate(label4):
+            l[:, 0] = i  # add target image index for build_targets()
+
+        return torch.stack(img4, 0), torch.cat(label4, 0), path4, shapes4</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.utils.data.dataset.Dataset</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="pancake.utils.datasets.LoadImagesAndLabels.collate_fn"><code class="name flex">
+<span>def <span class="ident">collate_fn</span></span>(<span>batch)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def collate_fn(batch):
+    img, label, path, shapes = zip(*batch)  # transposed
+    for i, l in enumerate(label):
+        l[:, 0] = i  # add target image index for build_targets()
+    return torch.stack(img, 0), torch.cat(label, 0), path, shapes</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.datasets.LoadImagesAndLabels.collate_fn4"><code class="name flex">
+<span>def <span class="ident">collate_fn4</span></span>(<span>batch)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def collate_fn4(batch):
+    img, label, path, shapes = zip(*batch)  # transposed
+    n = len(shapes) // 4
+    img4, label4, path4, shapes4 = [], [], path[:n], shapes[:n]
+
+    ho = torch.tensor([[0.0, 0, 0, 1, 0, 0]])
+    wo = torch.tensor([[0.0, 0, 1, 0, 0, 0]])
+    s = torch.tensor([[1, 1, 0.5, 0.5, 0.5, 0.5]])  # scale
+    for i in range(n):  # zidane torch.zeros(16,3,720,1280)  # BCHW
+        i *= 4
+        if random.random() &lt; 0.5:
+            im = F.interpolate(
+                img[i].unsqueeze(0).float(),
+                scale_factor=2.0,
+                mode=&#34;bilinear&#34;,
+                align_corners=False,
+            )[0].type(img[i].type())
+            l = label[i]
+        else:
+            im = torch.cat(
+                (
+                    torch.cat((img[i], img[i + 1]), 1),
+                    torch.cat((img[i + 2], img[i + 3]), 1),
+                ),
+                2,
+            )
+            l = (
+                torch.cat(
+                    (
+                        label[i],
+                        label[i + 1] + ho,
+                        label[i + 2] + wo,
+                        label[i + 3] + ho + wo,
+                    ),
+                    0,
+                )
+                * s
+            )
+        img4.append(im)
+        label4.append(l)
+
+    for i, l in enumerate(label4):
+        l[:, 0] = i  # add target image index for build_targets()
+
+    return torch.stack(img4, 0), torch.cat(label4, 0), path4, shapes4</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.utils.datasets.LoadImagesAndLabels.cache_labels"><code class="name flex">
+<span>def <span class="ident">cache_labels</span></span>(<span>self, path=PosixPath('labels.cache'), prefix='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_labels(self, path=Path(&#34;./labels.cache&#34;), prefix=&#34;&#34;):
+    # Cache dataset labels, check images and read shapes
+    x = {}  # dict
+    nm, nf, ne, nc = 0, 0, 0, 0  # number missing, found, empty, duplicate
+    pbar = tqdm(
+        zip(self.img_files, self.label_files),
+        desc=&#34;Scanning images&#34;,
+        total=len(self.img_files),
+    )
+    for i, (im_file, lb_file) in enumerate(pbar):
+        try:
+            # verify images
+            im = Image.open(im_file)
+            im.verify()  # PIL verify
+            shape = exif_size(im)  # image size
+            segments = []  # instance segments
+            assert (shape[0] &gt; 9) &amp; (shape[1] &gt; 9), f&#34;image size {shape} &lt;10 pixels&#34;
+            assert (
+                im.format.lower() in img_formats
+            ), f&#34;invalid image format {im.format}&#34;
+
+            # verify labels
+            if os.path.isfile(lb_file):
+                nf += 1  # label found
+                with open(lb_file, &#34;r&#34;) as f:
+                    l = [x.split() for x in f.read().strip().splitlines()]
+                    if any([len(x) &gt; 8 for x in l]):  # is segment
+                        classes = np.array([x[0] for x in l], dtype=np.float32)
+                        segments = [
+                            np.array(x[1:], dtype=np.float32).reshape(-1, 2)
+                            for x in l
+                        ]  # (cls, xy1...)
+                        l = np.concatenate(
+                            (classes.reshape(-1, 1), segments2boxes(segments)), 1
+                        )  # (cls, xywh)
+                    l = np.array(l, dtype=np.float32)
+                if len(l):
+                    assert l.shape[1] == 5, &#34;labels require 5 columns each&#34;
+                    assert (l &gt;= 0).all(), &#34;negative labels&#34;
+                    assert (
+                        l[:, 1:] &lt;= 1
+                    ).all(), &#34;non-normalized or out of bounds coordinate labels&#34;
+                    assert (
+                        np.unique(l, axis=0).shape[0] == l.shape[0]
+                    ), &#34;duplicate labels&#34;
+                else:
+                    ne += 1  # label empty
+                    l = np.zeros((0, 5), dtype=np.float32)
+            else:
+                nm += 1  # label missing
+                l = np.zeros((0, 5), dtype=np.float32)
+            x[im_file] = [l, shape, segments]
+        except Exception as e:
+            nc += 1
+            print(
+                f&#34;{prefix}WARNING: Ignoring corrupted image and/or label {im_file}: {e}&#34;
+            )
+
+        pbar.desc = (
+            f&#34;{prefix}Scanning &#39;{path.parent / path.stem}&#39; images and labels... &#34;
+            f&#34;{nf} found, {nm} missing, {ne} empty, {nc} corrupted&#34;
+        )
+    pbar.close()
+
+    if nf == 0:
+        print(f&#34;{prefix}WARNING: No labels found in {path}. See {help_url}&#34;)
+
+    x[&#34;hash&#34;] = get_hash(self.label_files + self.img_files)
+    x[&#34;results&#34;] = nf, nm, ne, nc, i + 1
+    x[&#34;version&#34;] = 0.1  # cache version
+    try:
+        torch.save(x, path)  # save for next time
+        l.info(f&#34;{prefix}New cache created: {path}&#34;)
+    except Exception as e:
+        l.info(
+            f&#34;{prefix}WARNING: Cache directory {path.parent} is not writeable: {e}&#34;
+        )  # path not writeable
+    return x</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pancake.utils.datasets.LoadStreams"><code class="flex name class">
+<span>class <span class="ident">LoadStreams</span></span>
+<span>(</span><span>sources='streams.txt')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadStreams:  # multiple IP or RTSP cameras
+    def __init__(self, sources=&#34;streams.txt&#34;):
+        self.mode = &#34;stream&#34;
+
+        if os.path.isfile(sources):
+            with open(sources, &#34;r&#34;) as f:
+                sources = [
+                    x.strip() for x in f.read().strip().splitlines() if len(x.strip())
+                ]
+        else:
+            sources = [sources]
+
+        self.n = len(sources)
+        self.imgs = [None] * self.n
+        self.sources = [clean_str(x) for x in sources]  # clean source names for later
+        self.live_fps = [None] * self.n
+        self.timestamp = None
+
+        for i, s in enumerate(sources):  # index, source
+            # Start thread to read frames from video stream
+            print(f&#34;{i + 1}/{self.n}: {s}... &#34;, end=&#34;&#34;)
+            if &#34;youtube.com/&#34; in s or &#34;youtu.be/&#34; in s:  # if source is YouTube video
+                check_requirements((&#34;pafy&#34;, &#34;youtube_dl&#34;))
+                import pafy
+
+                s = pafy.new(s).getbest(preftype=&#34;mp4&#34;).url  # YouTube URL
+            s = eval(s) if s.isnumeric() else s  # i.e. s = &#39;0&#39; local webcam
+            cap = cv2.VideoCapture(s)
+            assert cap.isOpened(), f&#34;Failed to open {s}&#34;
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            self.fps = cap.get(cv2.CAP_PROP_FPS) % 100
+
+            _, self.imgs[i] = cap.read()  # guarantee first frame
+            thread = Thread(target=self.update, args=([i, cap]), daemon=True)
+            print(f&#34; success ({w}x{h} at {self.fps:.2f} FPS).&#34;)
+            thread.start()
+
+    def update(self, index, cap):
+        # Read next stream frame in a daemon thread
+        t1, t2 = 0, 0  #
+        while cap.isOpened():
+            # read frame
+            success, im = cap.read()
+            self.imgs[index] = im if success else self.imgs[index] * 0
+            self.timestamp = time.time()
+
+            t1 = time.time()
+            time.sleep(1 / self.fps)  # wait time
+
+            self.live_fps[index] = int(1 / (t1 - t2))
+            t2 = t1
+
+    def __iter__(self):
+        self.count = -1
+        return self
+
+    def __next__(self):
+        self.count += 1
+        img0 = self.imgs.copy()
+        if cv2.waitKey(1) == ord(&#34;q&#34;):  # q to quit
+            cv2.destroyAllWindows()
+            raise StopIteration
+
+        if l.level &lt;= 20:
+            s = &#34;&#34;
+            for i in range(self.n):
+                s += f&#34;{self.mode} {i+1}/{self.n}: ({self.live_fps[i]} FPS)&#34;
+                if i &lt; self.n - 1:
+                    s += &#34;, &#34;
+            l.info(f&#34;{s}&#34;)
+
+        return self.sources, img0, None, self.timestamp
+
+    def __len__(self):
+        return 0  # 1E12 frames = 32 streams at 30 FPS for 30 years</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.utils.datasets.LoadStreams.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, index, cap)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self, index, cap):
+    # Read next stream frame in a daemon thread
+    t1, t2 = 0, 0  #
+    while cap.isOpened():
+        # read frame
+        success, im = cap.read()
+        self.imgs[index] = im if success else self.imgs[index] * 0
+        self.timestamp = time.time()
+
+        t1 = time.time()
+        time.sleep(1 / self.fps)  # wait time
+
+        self.live_fps[index] = int(1 / (t1 - t2))
+        t2 = t1</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pancake.utils.datasets.LoadWebcam"><code class="flex name class">
+<span>class <span class="ident">LoadWebcam</span></span>
+<span>(</span><span>pipe='0')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadWebcam:  # for inference
+    def __init__(self, pipe=&#34;0&#34;):
+        if pipe.isnumeric():
+            pipe = eval(pipe)  # local camera
+        # pipe = &#39;rtsp://192.168.1.64/1&#39;  # IP camera
+        # pipe = &#39;rtsp://username:password@192.168.1.64/1&#39;  # IP camera with login
+        # pipe = &#39;http://wmccpinetop.axiscam.net/mjpg/video.mjpg&#39;  # IP golf camera
+
+        self.pipe = pipe
+        self.cap = cv2.VideoCapture(pipe)  # video capture object
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 3)  # set buffer size
+
+    def __iter__(self):
+        self.count = -1
+        return self
+
+    def __next__(self):
+        self.count += 1
+        if cv2.waitKey(1) == ord(&#34;q&#34;):  # q to quit
+            self.cap.release()
+            cv2.destroyAllWindows()
+            raise StopIteration
+
+        # Read frame
+        if self.pipe == 0:  # local camera
+            ret_val, img0 = self.cap.read()
+            img0 = cv2.flip(img0, 1)  # flip left-right
+        else:  # IP camera
+            n = 0
+            while True:
+                n += 1
+                self.cap.grab()
+                if n % 30 == 0:  # skip frames
+                    ret_val, img0 = self.cap.retrieve()
+                    if ret_val:
+                        break
+
+        # Print
+        assert ret_val, f&#34;Camera Error {self.pipe}&#34;
+        img_path = &#34;webcam.jpg&#34;
+        l.debug(f&#34;webcam {self.count}: &#34;, end=&#34;&#34;)
+
+        return img_path, img0, None
+
+    def __len__(self):
+        return 0</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pancake.utils" href="index.html">pancake.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="pancake.utils.datasets.augment_hsv" href="#pancake.utils.datasets.augment_hsv">augment_hsv</a></code></li>
+<li><code><a title="pancake.utils.datasets.autosplit" href="#pancake.utils.datasets.autosplit">autosplit</a></code></li>
+<li><code><a title="pancake.utils.datasets.box_candidates" href="#pancake.utils.datasets.box_candidates">box_candidates</a></code></li>
+<li><code><a title="pancake.utils.datasets.create_dataloader" href="#pancake.utils.datasets.create_dataloader">create_dataloader</a></code></li>
+<li><code><a title="pancake.utils.datasets.create_folder" href="#pancake.utils.datasets.create_folder">create_folder</a></code></li>
+<li><code><a title="pancake.utils.datasets.cutout" href="#pancake.utils.datasets.cutout">cutout</a></code></li>
+<li><code><a title="pancake.utils.datasets.exif_size" href="#pancake.utils.datasets.exif_size">exif_size</a></code></li>
+<li><code><a title="pancake.utils.datasets.extract_boxes" href="#pancake.utils.datasets.extract_boxes">extract_boxes</a></code></li>
+<li><code><a title="pancake.utils.datasets.flatten_recursive" href="#pancake.utils.datasets.flatten_recursive">flatten_recursive</a></code></li>
+<li><code><a title="pancake.utils.datasets.get_hash" href="#pancake.utils.datasets.get_hash">get_hash</a></code></li>
+<li><code><a title="pancake.utils.datasets.hist_equalize" href="#pancake.utils.datasets.hist_equalize">hist_equalize</a></code></li>
+<li><code><a title="pancake.utils.datasets.img2label_paths" href="#pancake.utils.datasets.img2label_paths">img2label_paths</a></code></li>
+<li><code><a title="pancake.utils.datasets.letterbox" href="#pancake.utils.datasets.letterbox">letterbox</a></code></li>
+<li><code><a title="pancake.utils.datasets.load_image" href="#pancake.utils.datasets.load_image">load_image</a></code></li>
+<li><code><a title="pancake.utils.datasets.load_mosaic" href="#pancake.utils.datasets.load_mosaic">load_mosaic</a></code></li>
+<li><code><a title="pancake.utils.datasets.load_mosaic9" href="#pancake.utils.datasets.load_mosaic9">load_mosaic9</a></code></li>
+<li><code><a title="pancake.utils.datasets.random_perspective" href="#pancake.utils.datasets.random_perspective">random_perspective</a></code></li>
+<li><code><a title="pancake.utils.datasets.replicate" href="#pancake.utils.datasets.replicate">replicate</a></code></li>
+<li><code><a title="pancake.utils.datasets.timestamp_from_path" href="#pancake.utils.datasets.timestamp_from_path">timestamp_from_path</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pancake.utils.datasets.InfiniteDataLoader" href="#pancake.utils.datasets.InfiniteDataLoader">InfiniteDataLoader</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.batch_size" href="#pancake.utils.datasets.InfiniteDataLoader.batch_size">batch_size</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.dataset" href="#pancake.utils.datasets.InfiniteDataLoader.dataset">dataset</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.drop_last" href="#pancake.utils.datasets.InfiniteDataLoader.drop_last">drop_last</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.num_workers" href="#pancake.utils.datasets.InfiniteDataLoader.num_workers">num_workers</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.pin_memory" href="#pancake.utils.datasets.InfiniteDataLoader.pin_memory">pin_memory</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.prefetch_factor" href="#pancake.utils.datasets.InfiniteDataLoader.prefetch_factor">prefetch_factor</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.sampler" href="#pancake.utils.datasets.InfiniteDataLoader.sampler">sampler</a></code></li>
+<li><code><a title="pancake.utils.datasets.InfiniteDataLoader.timeout" href="#pancake.utils.datasets.InfiniteDataLoader.timeout">timeout</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pancake.utils.datasets.LoadImageDirs" href="#pancake.utils.datasets.LoadImageDirs">LoadImageDirs</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.more_queue" href="#pancake.utils.datasets.LoadImageDirs.more_queue">more_queue</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.new_videos" href="#pancake.utils.datasets.LoadImageDirs.new_videos">new_videos</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.read_queue" href="#pancake.utils.datasets.LoadImageDirs.read_queue">read_queue</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.start_threads" href="#pancake.utils.datasets.LoadImageDirs.start_threads">start_threads</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.stop_threads" href="#pancake.utils.datasets.LoadImageDirs.stop_threads">stop_threads</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImageDirs.update" href="#pancake.utils.datasets.LoadImageDirs.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pancake.utils.datasets.LoadImages" href="#pancake.utils.datasets.LoadImages">LoadImages</a></code></h4>
+<ul class="">
+<li><code><a title="pancake.utils.datasets.LoadImages.new_video" href="#pancake.utils.datasets.LoadImages.new_video">new_video</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pancake.utils.datasets.LoadImagesAndLabels" href="#pancake.utils.datasets.LoadImagesAndLabels">LoadImagesAndLabels</a></code></h4>
+<ul class="">
+<li><code><a title="pancake.utils.datasets.LoadImagesAndLabels.cache_labels" href="#pancake.utils.datasets.LoadImagesAndLabels.cache_labels">cache_labels</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImagesAndLabels.collate_fn" href="#pancake.utils.datasets.LoadImagesAndLabels.collate_fn">collate_fn</a></code></li>
+<li><code><a title="pancake.utils.datasets.LoadImagesAndLabels.collate_fn4" href="#pancake.utils.datasets.LoadImagesAndLabels.collate_fn4">collate_fn4</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pancake.utils.datasets.LoadStreams" href="#pancake.utils.datasets.LoadStreams">LoadStreams</a></code></h4>
+<ul class="">
+<li><code><a title="pancake.utils.datasets.LoadStreams.update" href="#pancake.utils.datasets.LoadStreams.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pancake.utils.datasets.LoadWebcam" href="#pancake.utils.datasets.LoadWebcam">LoadWebcam</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
