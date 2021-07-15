@@ -12,7 +12,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 * Modular structure for extension of new functionalities and approaches
 
 ##### Documentation
-The most recent documentation can be found [here](https://mauricesvp.github.io/pancake/pancake/).
+[The most recent documentation can be found here](https://mauricesvp.github.io/pancake/pancake/).
 
 <!------------------------- ToC --------------------------->
 ## Table of Contents
