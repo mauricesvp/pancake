@@ -9,7 +9,8 @@ from .detector import backends as be
 from .config import pancake_config
 from .db import setup_database
 from .logger import setup_logger
-from .utils.common import fix_path, load_data, setup_result_processor
+from .utils.common import fix_path, load_data
+from .utils.result_processor import setup_result_processor
 
 
 l = setup_logger(__name__)
