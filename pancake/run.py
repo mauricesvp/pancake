@@ -94,6 +94,9 @@ def main(cfg_path: str = None, n: int = 0):
             DATABASE.insert_tracks(tracks, timestamp)
 
         if n and iteration >= n:
+            l.info(
+                f"Stop execution.. wait for the result processor to clear its queue.."
+            )
             break
 
 

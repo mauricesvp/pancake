@@ -87,10 +87,13 @@ class YOLOCustomDetector(Detector):
         Returns:
             List[torch.Tensor]: List of tensors, detections on (,6) tensors [xyxy, conf, cls]
         """
-        pr_imgs = self._preprocess(imgs)
+        if type(imgs) is not list:
+            imgs = [imgs]
+            
         img_sizes = [img.shape for img in imgs]
 
         # Inference
+        pr_imgs = self._preprocess(imgs)
         # l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
