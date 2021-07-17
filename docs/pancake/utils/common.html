@@ -39,7 +39,9 @@ from .general import resize_aspectratio
 from .plots import colors, plot_one_box
 
 
-def load_data(source: Union[List[str], str]) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
+def load_data(
+    source: Union[List[str], str]
+) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
     &#34;&#34;&#34; Sets up the data loader
 
     Description:
@@ -61,7 +63,7 @@ def load_data(source: Union[List[str], str]) -&gt; Union[LoadStreams, LoadImages
 
     Returns:
         Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     try:
         is_webcam = (
             source.isnumeric()
@@ -376,7 +378,9 @@ Pancake main loop.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load_data(source: Union[List[str], str]) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
+<pre><code class="python">def load_data(
+    source: Union[List[str], str]
+) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
     &#34;&#34;&#34; Sets up the data loader
 
     Description:
@@ -398,7 +402,7 @@ Pancake main loop.</p>
 
     Returns:
         Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     try:
         is_webcam = (
             source.isnumeric()

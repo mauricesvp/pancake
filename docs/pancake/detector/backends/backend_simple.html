@@ -122,8 +122,11 @@ class SIMPLE(Backend):
 <span>(</span><span>detector, roi: list = None, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Backends</p>
+<p><strong>Base Class</strong>:
+All Backends to be used within this framework have to inherit from this class.
+The inheritance will automatically register every subclass into the registry thus
+allowing for modular access to the detectors.</p>
 <p>:param detector: Detector which provides 'detect' method,
 which can take one or multiple images.</p></div>
 <details class="source">
@@ -245,6 +248,14 @@ which can take one or multiple images.</p></div>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pancake.detector.backends.backend.Backend" href="backend.html#pancake.detector.backends.backend.Backend">Backend</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pancake.detector.backends.backend.Backend.get_subclasses" href="backend.html#pancake.detector.backends.backend.Backend.get_subclasses">get_subclasses</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>

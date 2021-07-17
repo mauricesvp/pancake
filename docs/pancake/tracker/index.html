@@ -42,14 +42,14 @@ TRACKER_REGISTRY = BaseTracker.get_subclasses()
 
 
 def setup_tracker(config: dict) -&gt; Type[BaseTracker]:
-    &#34;&#34;&#34; Helper function to set up a tracker specified in the configurations.
+    &#34;&#34;&#34;Helper function to set up a tracker specified in the configurations.
 
     Args:
         config (dict): Dictionary containing configurations.
 
     Returns:
         Type[BaseTracker]: A Tracker subclass instance.
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
     tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))
@@ -121,14 +121,14 @@ def setup_tracker(config: dict) -&gt; Type[BaseTracker]:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setup_tracker(config: dict) -&gt; Type[BaseTracker]:
-    &#34;&#34;&#34; Helper function to set up a tracker specified in the configurations.
+    &#34;&#34;&#34;Helper function to set up a tracker specified in the configurations.
 
     Args:
         config (dict): Dictionary containing configurations.
 
     Returns:
         Type[BaseTracker]: A Tracker subclass instance.
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
     tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))

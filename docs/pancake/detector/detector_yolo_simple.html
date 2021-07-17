@@ -37,20 +37,20 @@ from .detector import Detector
 
 
 class YOLOSimpleDetector(Detector):
-    &#34;&#34;&#34; Very simple detector using pretrained YOLOv5 from torch.hub &#34;&#34;&#34;
+    &#34;&#34;&#34;Very simple detector using pretrained YOLOv5 from torch.hub&#34;&#34;&#34;
 
     def __init__(self, *args, **kwargs) -&gt; None:
         self.model = torch.hub.load(&#34;ultralytics/yolov5&#34;, f&#34;yolov5s&#34;, pretrained=True)
 
     def detect(self, imgs: List[np.ndarray]) -&gt; list:
-        &#34;&#34;&#34; Encapsulates the detection procedure.
+        &#34;&#34;&#34;Encapsulates the detection procedure.
 
         Args:
             imgs (List[np.ndarray]): List of images of shape [bs, channels, width, height]
 
         Returns:
             list: [description]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         if type(imgs) is not list:
             imgs = [imgs]
         res = self.model(imgs)
@@ -77,20 +77,20 @@ class YOLOSimpleDetector(Detector):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class YOLOSimpleDetector(Detector):
-    &#34;&#34;&#34; Very simple detector using pretrained YOLOv5 from torch.hub &#34;&#34;&#34;
+    &#34;&#34;&#34;Very simple detector using pretrained YOLOv5 from torch.hub&#34;&#34;&#34;
 
     def __init__(self, *args, **kwargs) -&gt; None:
         self.model = torch.hub.load(&#34;ultralytics/yolov5&#34;, f&#34;yolov5s&#34;, pretrained=True)
 
     def detect(self, imgs: List[np.ndarray]) -&gt; list:
-        &#34;&#34;&#34; Encapsulates the detection procedure.
+        &#34;&#34;&#34;Encapsulates the detection procedure.
 
         Args:
             imgs (List[np.ndarray]): List of images of shape [bs, channels, width, height]
 
         Returns:
             list: [description]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         if type(imgs) is not list:
             imgs = [imgs]
         res = self.model(imgs)
@@ -123,14 +123,14 @@ class YOLOSimpleDetector(Detector):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def detect(self, imgs: List[np.ndarray]) -&gt; list:
-    &#34;&#34;&#34; Encapsulates the detection procedure.
+    &#34;&#34;&#34;Encapsulates the detection procedure.
 
     Args:
         imgs (List[np.ndarray]): List of images of shape [bs, channels, width, height]
 
     Returns:
         list: [description]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     if type(imgs) is not list:
         imgs = [imgs]
     res = self.model(imgs)

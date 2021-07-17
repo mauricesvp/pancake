@@ -142,16 +142,16 @@ when the budget is reached. Defaults to 100.</dd>
     def __init__(
         self,
         model_path: str,
-        device: str=&#34;CPU&#34;,
-        max_dist: float=0.2,
-        min_confidence: float=0.3,
-        nms_max_overlap: float=1.0,
-        max_iou_distance: float=0.7,
-        max_age: int=70,
-        n_init: int=3,
-        nn_budget: int=100,
-        max_id: int=100,
-        use_cuda: bool=True,
+        device: str = &#34;CPU&#34;,
+        max_dist: float = 0.2,
+        min_confidence: float = 0.3,
+        nms_max_overlap: float = 1.0,
+        max_iou_distance: float = 0.7,
+        max_age: int = 70,
+        n_init: int = 3,
+        nn_budget: int = 100,
+        max_id: int = 100,
+        use_cuda: bool = True,
     ):
         &#34;&#34;&#34; DeepSort wrapper class
 
@@ -174,7 +174,7 @@ when the budget is reached. Defaults to 100.</dd>
                                         when the budget is reached. Defaults to 100.
             max_id (int, optional): Highest possible id for tracked entity. Defaults to 100.
             use_cuda (bool, optional): Fallback to CUDA device if possible. Defaults to True.
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         self.min_confidence = min_confidence
         self.nms_max_overlap = nms_max_overlap
 
@@ -191,13 +191,13 @@ when the budget is reached. Defaults to 100.</dd>
         )
 
     def update(
-        self, 
-        bbox_xyxy: np.ndarray, 
-        confidences: np.ndarray, 
-        ori_img: np.ndarray, 
-        cls: np.ndarray
+        self,
+        bbox_xyxy: np.ndarray,
+        confidences: np.ndarray,
+        ori_img: np.ndarray,
+        cls: np.ndarray,
     ) -&gt; np.ndarray:
-        &#34;&#34;&#34; Updates the internal state.
+        &#34;&#34;&#34;Updates the internal state.
 
         Description:
             - Runs NMS
@@ -213,7 +213,7 @@ when the budget is reached. Defaults to 100.</dd>
 
         Returns:
             np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)
@@ -350,13 +350,13 @@ when the budget is reached. Defaults to 100.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def update(
-    self, 
-    bbox_xyxy: np.ndarray, 
-    confidences: np.ndarray, 
-    ori_img: np.ndarray, 
-    cls: np.ndarray
+    self,
+    bbox_xyxy: np.ndarray,
+    confidences: np.ndarray,
+    ori_img: np.ndarray,
+    cls: np.ndarray,
 ) -&gt; np.ndarray:
-    &#34;&#34;&#34; Updates the internal state.
+    &#34;&#34;&#34;Updates the internal state.
 
     Description:
         - Runs NMS
@@ -372,7 +372,7 @@ when the budget is reached. Defaults to 100.</dd>
 
     Returns:
         np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     self.height, self.width = ori_img.shape[:2]
     # generate detections
     bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)

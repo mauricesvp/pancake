@@ -34,9 +34,12 @@ from functools import wraps
 
 
 def profile(
-    output_file: str=None, sort_by: str=&#34;cumulative&#34;, lines_to_print: int=None, strip_dirs: bool=False
+    output_file: str = None,
+    sort_by: str = &#34;cumulative&#34;,
+    lines_to_print: int = None,
+    strip_dirs: bool = False,
 ) -&gt; pstats.Stats:
-    &#34;&#34;&#34; A time profiler decorator.
+    &#34;&#34;&#34;A time profiler decorator.
 
     Description:
         Measures the time for all subcalls and documents it in a readable fashion.
@@ -48,23 +51,23 @@ def profile(
         profiled. (@profile(...))
 
     Args:
-        output_file (str, optional): 
+        output_file (str, optional):
             Path of the output file. If only name of the file is given, it&#39;s
             saved in the current directory.
-            If it&#39;s None, the name of the decorated function is used. 
+            If it&#39;s None, the name of the decorated function is used.
             Defaults to None.
-        sort_by (str, optional): 
+        sort_by (str, optional):
             Sorting criteria for the Stats object.
             For a list of valid string and SortKey refer to:
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats. 
+            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats.
             Defaults to &#34;cumulative&#34;.
-        lines_to_print (int, optional): 
+        lines_to_print (int, optional):
             Number of lines to print. Default (None) is for all the lines.
             This is useful in reducing the size of the printout, especially
             that sorting by &#39;cumulative&#39;, the time consuming operations
-            are printed toward the top of the file. 
+            are printed toward the top of the file.
             Defaults to None.
-        strip_dirs (bool, optional): 
+        strip_dirs (bool, optional):
             Whether to remove the leading path info from file names.
             This is also useful in reducing the size of the printout.
             Defaults to False.
@@ -72,6 +75,7 @@ def profile(
     Returns:
         pstats.Stats: Profile of the decorated function
     &#34;&#34;&#34;
+
     def inner(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -118,28 +122,26 @@ Inspired by and modified the profile decorator of Giampaolo Rodola:
 <p>Simply import this function and add it as a decorator to the method to be
 profiled. (@profile(&hellip;))</p>
 <h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>output_file</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>Path of the output file. If only name of the file is given, it's
+<p>output_file (str, optional):
+Path of the output file. If only name of the file is given, it's
 saved in the current directory.
 If it's None, the name of the decorated function is used.
-Defaults to None.</dd>
-<dt><strong><code>sort_by</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>Sorting criteria for the Stats object.
+Defaults to None.
+sort_by (str, optional):
+Sorting criteria for the Stats object.
 For a list of valid string and SortKey refer to:
 <a href="https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats.">https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats.</a>
-Defaults to "cumulative".</dd>
-<dt><strong><code>lines_to_print</code></strong> :&ensp;<code>int</code>, optional</dt>
-<dd>Number of lines to print. Default (None) is for all the lines.
+Defaults to "cumulative".
+lines_to_print (int, optional):
+Number of lines to print. Default (None) is for all the lines.
 This is useful in reducing the size of the printout, especially
 that sorting by 'cumulative', the time consuming operations
 are printed toward the top of the file.
-Defaults to None.</dd>
-<dt><strong><code>strip_dirs</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>Whether to remove the leading path info from file names.
+Defaults to None.
+strip_dirs (bool, optional):
+Whether to remove the leading path info from file names.
 This is also useful in reducing the size of the printout.
-Defaults to False.</dd>
-</dl>
+Defaults to False.</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>pstats.Stats</code></dt>
@@ -150,9 +152,12 @@ Defaults to False.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def profile(
-    output_file: str=None, sort_by: str=&#34;cumulative&#34;, lines_to_print: int=None, strip_dirs: bool=False
+    output_file: str = None,
+    sort_by: str = &#34;cumulative&#34;,
+    lines_to_print: int = None,
+    strip_dirs: bool = False,
 ) -&gt; pstats.Stats:
-    &#34;&#34;&#34; A time profiler decorator.
+    &#34;&#34;&#34;A time profiler decorator.
 
     Description:
         Measures the time for all subcalls and documents it in a readable fashion.
@@ -164,23 +169,23 @@ Defaults to False.</dd>
         profiled. (@profile(...))
 
     Args:
-        output_file (str, optional): 
+        output_file (str, optional):
             Path of the output file. If only name of the file is given, it&#39;s
             saved in the current directory.
-            If it&#39;s None, the name of the decorated function is used. 
+            If it&#39;s None, the name of the decorated function is used.
             Defaults to None.
-        sort_by (str, optional): 
+        sort_by (str, optional):
             Sorting criteria for the Stats object.
             For a list of valid string and SortKey refer to:
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats. 
+            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats.
             Defaults to &#34;cumulative&#34;.
-        lines_to_print (int, optional): 
+        lines_to_print (int, optional):
             Number of lines to print. Default (None) is for all the lines.
             This is useful in reducing the size of the printout, especially
             that sorting by &#39;cumulative&#39;, the time consuming operations
-            are printed toward the top of the file. 
+            are printed toward the top of the file.
             Defaults to None.
-        strip_dirs (bool, optional): 
+        strip_dirs (bool, optional):
             Whether to remove the leading path info from file names.
             This is also useful in reducing the size of the printout.
             Defaults to False.
@@ -188,6 +193,7 @@ Defaults to False.</dd>
     Returns:
         pstats.Stats: Profile of the decorated function
     &#34;&#34;&#34;
+
     def inner(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

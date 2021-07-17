@@ -87,7 +87,7 @@ class Yolov5TRT(BaseModel):
             ModuleNotFoundError: If TensorRT library is not installed
             ModuleNotFoundError: When invalid device index was provided
             ModuleNotFoundError: When loading of the engine and plugin failed
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         # if trt not available return standard yolov5 model
         if not trt_installed:
             l.info(&#34;TensorRT not installed, using standard Yolov5..&#34;)
@@ -126,11 +126,11 @@ class Yolov5TRT(BaseModel):
         self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
 
     def load_engine(self) -&gt; bool:
-        &#34;&#34;&#34; Loads the plugin library and TRT engine.
+        &#34;&#34;&#34;Loads the plugin library and TRT engine.
 
         Returns:
             bool: success flag
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         l.info(f&#34;Loading TRT engine from {self._engine_path}..&#34;)
         try:
             # Load trt plugin lib
@@ -163,12 +163,12 @@ class Yolov5TRT(BaseModel):
             return False
 
     def allocate_buffers(self, is_explicit_batch=True, dynamic_shapes=[]):
-        &#34;&#34;&#34; Allocates memory on the GPU according to the provided engine.
+        &#34;&#34;&#34;Allocates memory on the GPU according to the provided engine.
 
         Args:
             is_explicit_batch (bool, optional): Explicit batch flag. Defaults to True.
             dynamic_shapes (list, optional): Dynamic input shapes. Defaults to [].
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         self.host_inputs = []
         self.cuda_inputs = []
         self.host_outputs = []
@@ -214,11 +214,11 @@ class Yolov5TRT(BaseModel):
                 self.cuda_outputs.append(cuda_mem)
 
     def _init_infer(self, img_size):
-        &#34;&#34;&#34; Warms up the GPU.
+        &#34;&#34;&#34;Warms up the GPU.
 
         Args:
             img_size (Tuple): Image shape
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # Warm up
         iterations = 20
         sum_time = 0.0
@@ -242,7 +242,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             np.array: Normalized image
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
         img = img.astype(np.float32)
@@ -262,7 +262,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             List[np.ndarray]: List of image batches with processable batch size
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         modulo = imgs.shape[0] % self.batch_size
 
         # fill imgs array in order to be divisible by engine batch size
@@ -277,14 +277,14 @@ class Yolov5TRT(BaseModel):
         return batched_imgs, modulo
 
     def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
-        &#34;&#34;&#34; Inference wrapper
+        &#34;&#34;&#34;Inference wrapper
 
         Args:
             imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        &#34;&#34;&#34;             
+        &#34;&#34;&#34;
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -308,14 +308,14 @@ class Yolov5TRT(BaseModel):
         return pred, None
 
     def infer_on_batch(self, img: np.array) -&gt; List[torch.Tensor]:
-        &#34;&#34;&#34; Batched inference
+        &#34;&#34;&#34;Batched inference
 
         Args:
             img (np.array): Resized and padded image batch [1, c, w, h]
 
         Returns:
             list: List of tensors with the prediction results [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert img.shape[0] == self.batch_size, (
             f&#34;Provided batch size ({img.shape[0]}) doesn&#39;t allign with &#34;
             f&#34;the engines batch size ({self.batch_size})&#34;
@@ -373,7 +373,7 @@ class Yolov5TRT(BaseModel):
         return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -&gt; torch.Tensor:
-        &#34;&#34;&#34; Reshapes the model output to interpretable shape then applies NMS
+        &#34;&#34;&#34;Reshapes the model output to interpretable shape then applies NMS
 
         Args:
             output (np.ndarray): A tensor like [num_boxes, cx, cy, w, h, conf, cls_id]
@@ -382,7 +382,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             torch.Tensor: tensor with the prediction results [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # get the num of boxes detected
         num = int(output[0])
 
@@ -494,7 +494,7 @@ TensorRT engine and plugin library with this external repo:</p>
             ModuleNotFoundError: If TensorRT library is not installed
             ModuleNotFoundError: When invalid device index was provided
             ModuleNotFoundError: When loading of the engine and plugin failed
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         # if trt not available return standard yolov5 model
         if not trt_installed:
             l.info(&#34;TensorRT not installed, using standard Yolov5..&#34;)
@@ -533,11 +533,11 @@ TensorRT engine and plugin library with this external repo:</p>
         self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
 
     def load_engine(self) -&gt; bool:
-        &#34;&#34;&#34; Loads the plugin library and TRT engine.
+        &#34;&#34;&#34;Loads the plugin library and TRT engine.
 
         Returns:
             bool: success flag
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         l.info(f&#34;Loading TRT engine from {self._engine_path}..&#34;)
         try:
             # Load trt plugin lib
@@ -570,12 +570,12 @@ TensorRT engine and plugin library with this external repo:</p>
             return False
 
     def allocate_buffers(self, is_explicit_batch=True, dynamic_shapes=[]):
-        &#34;&#34;&#34; Allocates memory on the GPU according to the provided engine.
+        &#34;&#34;&#34;Allocates memory on the GPU according to the provided engine.
 
         Args:
             is_explicit_batch (bool, optional): Explicit batch flag. Defaults to True.
             dynamic_shapes (list, optional): Dynamic input shapes. Defaults to [].
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         self.host_inputs = []
         self.cuda_inputs = []
         self.host_outputs = []
@@ -621,11 +621,11 @@ TensorRT engine and plugin library with this external repo:</p>
                 self.cuda_outputs.append(cuda_mem)
 
     def _init_infer(self, img_size):
-        &#34;&#34;&#34; Warms up the GPU.
+        &#34;&#34;&#34;Warms up the GPU.
 
         Args:
             img_size (Tuple): Image shape
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # Warm up
         iterations = 20
         sum_time = 0.0
@@ -649,7 +649,7 @@ TensorRT engine and plugin library with this external repo:</p>
 
         Returns:
             np.array: Normalized image
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
         img = img.astype(np.float32)
@@ -669,7 +669,7 @@ TensorRT engine and plugin library with this external repo:</p>
 
         Returns:
             List[np.ndarray]: List of image batches with processable batch size
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         modulo = imgs.shape[0] % self.batch_size
 
         # fill imgs array in order to be divisible by engine batch size
@@ -684,14 +684,14 @@ TensorRT engine and plugin library with this external repo:</p>
         return batched_imgs, modulo
 
     def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
-        &#34;&#34;&#34; Inference wrapper
+        &#34;&#34;&#34;Inference wrapper
 
         Args:
             imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        &#34;&#34;&#34;             
+        &#34;&#34;&#34;
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -715,14 +715,14 @@ TensorRT engine and plugin library with this external repo:</p>
         return pred, None
 
     def infer_on_batch(self, img: np.array) -&gt; List[torch.Tensor]:
-        &#34;&#34;&#34; Batched inference
+        &#34;&#34;&#34;Batched inference
 
         Args:
             img (np.array): Resized and padded image batch [1, c, w, h]
 
         Returns:
             list: List of tensors with the prediction results [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert img.shape[0] == self.batch_size, (
             f&#34;Provided batch size ({img.shape[0]}) doesn&#39;t allign with &#34;
             f&#34;the engines batch size ({self.batch_size})&#34;
@@ -780,7 +780,7 @@ TensorRT engine and plugin library with this external repo:</p>
         return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -&gt; torch.Tensor:
-        &#34;&#34;&#34; Reshapes the model output to interpretable shape then applies NMS
+        &#34;&#34;&#34;Reshapes the model output to interpretable shape then applies NMS
 
         Args:
             output (np.ndarray): A tensor like [num_boxes, cx, cy, w, h, conf, cls_id]
@@ -789,7 +789,7 @@ TensorRT engine and plugin library with this external repo:</p>
 
         Returns:
             torch.Tensor: tensor with the prediction results [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # get the num of boxes detected
         num = int(output[0])
 
@@ -868,7 +868,7 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 
     Returns:
         np.array: Normalized image
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     if type(img) is torch.Tensor:
         img = img.cpu().numpy(np.float32)
     img = img.astype(np.float32)
@@ -899,12 +899,12 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def allocate_buffers(self, is_explicit_batch=True, dynamic_shapes=[]):
-    &#34;&#34;&#34; Allocates memory on the GPU according to the provided engine.
+    &#34;&#34;&#34;Allocates memory on the GPU according to the provided engine.
 
     Args:
         is_explicit_batch (bool, optional): Explicit batch flag. Defaults to True.
         dynamic_shapes (list, optional): Dynamic input shapes. Defaults to [].
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     self.host_inputs = []
     self.cuda_inputs = []
     self.host_outputs = []
@@ -970,14 +970,14 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def infer(self, imgs: np.array) -&gt; List[torch.Tensor]:
-    &#34;&#34;&#34; Inference wrapper
+    &#34;&#34;&#34;Inference wrapper
 
     Args:
         imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
 
     Returns:
         List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-    &#34;&#34;&#34;             
+    &#34;&#34;&#34;
     # prepare imgs for inference
     # t1 = time.time()
     imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -1021,14 +1021,14 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def infer_on_batch(self, img: np.array) -&gt; List[torch.Tensor]:
-    &#34;&#34;&#34; Batched inference
+    &#34;&#34;&#34;Batched inference
 
     Args:
         img (np.array): Resized and padded image batch [1, c, w, h]
 
     Returns:
         list: List of tensors with the prediction results [xyxy, conf, cls]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     assert img.shape[0] == self.batch_size, (
         f&#34;Provided batch size ({img.shape[0]}) doesn&#39;t allign with &#34;
         f&#34;the engines batch size ({self.batch_size})&#34;
@@ -1101,11 +1101,11 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def load_engine(self) -&gt; bool:
-    &#34;&#34;&#34; Loads the plugin library and TRT engine.
+    &#34;&#34;&#34;Loads the plugin library and TRT engine.
 
     Returns:
         bool: success flag
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     l.info(f&#34;Loading TRT engine from {self._engine_path}..&#34;)
     try:
         # Load trt plugin lib
@@ -1162,7 +1162,7 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -&gt; torch.Tensor:
-    &#34;&#34;&#34; Reshapes the model output to interpretable shape then applies NMS
+    &#34;&#34;&#34;Reshapes the model output to interpretable shape then applies NMS
 
     Args:
         output (np.ndarray): A tensor like [num_boxes, cx, cy, w, h, conf, cls_id]
@@ -1171,7 +1171,7 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
 
     Returns:
         torch.Tensor: tensor with the prediction results [xyxy, conf, cls]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     # get the num of boxes detected
     num = int(output[0])
 
@@ -1245,7 +1245,7 @@ TRT engine input layer.</p>
 
     Returns:
         List[np.ndarray]: List of image batches with processable batch size
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     modulo = imgs.shape[0] % self.batch_size
 
     # fill imgs array in order to be divisible by engine batch size

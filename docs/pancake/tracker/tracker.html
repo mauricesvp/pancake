@@ -41,7 +41,8 @@ class BaseTracker(ABC):
         All tracking algorithms to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
         allowing for modular access to the detectors.
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -&gt; None:
@@ -49,12 +50,12 @@ class BaseTracker(ABC):
 
     @classmethod
     def get_subclasses(cls):
-        &#34;&#34;&#34; Returns all subclasses of this base class. 
+        &#34;&#34;&#34;Returns all subclasses of this base class.
         The dictionary poses as Tracker registry.
 
         Returns:
             dict: Dictionary containing all child classes.
-        &#34;&#34;&#34;      
+        &#34;&#34;&#34;
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -66,7 +67,7 @@ class BaseTracker(ABC):
 
     @abstractmethod
     def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
-        &#34;&#34;&#34; Updates the internal tracker state.
+        &#34;&#34;&#34;Updates the internal tracker state.
 
         Args:
             det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
@@ -76,7 +77,7 @@ class BaseTracker(ABC):
 
         Returns:
             np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 </section>
@@ -110,7 +111,8 @@ allowing for modular access to the detectors.</p></div>
         All tracking algorithms to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
         allowing for modular access to the detectors.
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -&gt; None:
@@ -118,12 +120,12 @@ allowing for modular access to the detectors.</p></div>
 
     @classmethod
     def get_subclasses(cls):
-        &#34;&#34;&#34; Returns all subclasses of this base class. 
+        &#34;&#34;&#34;Returns all subclasses of this base class.
         The dictionary poses as Tracker registry.
 
         Returns:
             dict: Dictionary containing all child classes.
-        &#34;&#34;&#34;      
+        &#34;&#34;&#34;
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -135,7 +137,7 @@ allowing for modular access to the detectors.</p></div>
 
     @abstractmethod
     def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
-        &#34;&#34;&#34; Updates the internal tracker state.
+        &#34;&#34;&#34;Updates the internal tracker state.
 
         Args:
             det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
@@ -145,7 +147,7 @@ allowing for modular access to the detectors.</p></div>
 
         Returns:
             np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -178,12 +180,12 @@ The dictionary poses as Tracker registry.</p>
 </summary>
 <pre><code class="python">@classmethod
 def get_subclasses(cls):
-    &#34;&#34;&#34; Returns all subclasses of this base class. 
+    &#34;&#34;&#34;Returns all subclasses of this base class.
     The dictionary poses as Tracker registry.
 
     Returns:
         dict: Dictionary containing all child classes.
-    &#34;&#34;&#34;      
+    &#34;&#34;&#34;
     return dict(cls._subclasses)</code></pre>
 </details>
 </dd>
@@ -216,7 +218,7 @@ def get_subclasses(cls):
 </summary>
 <pre><code class="python">@abstractmethod
 def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
-    &#34;&#34;&#34; Updates the internal tracker state.
+    &#34;&#34;&#34;Updates the internal tracker state.
 
     Args:
         det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
@@ -226,7 +228,7 @@ def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
 
     Returns:
         np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     raise NotImplementedError</code></pre>
 </details>
 </dd>

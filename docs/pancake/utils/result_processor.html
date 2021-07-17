@@ -69,7 +69,7 @@ class ResultProcessor:
         *args,
         **kwargs,
     ):
-        &#34;&#34;&#34; This class encapsulates all result processing procedures.
+        &#34;&#34;&#34;This class encapsulates all result processing procedures.
 
         Functionalities:
             - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
@@ -100,7 +100,7 @@ class ResultProcessor:
                                         blocking
             async_put_timeout (float): Raise exception after timeout seconds waiting for spare slot
             debug (bool): Manual skipping when visualizing results
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         from pancake.run import setup_logger
 
         self.l = setup_logger(__name__)
@@ -139,7 +139,8 @@ class ResultProcessor:
             return
 
         if self._show_track_hist:
-            &#34;&#34;&#34; INIT THE TRACK HISTORY &#34;&#34;&#34;
+            &#34;&#34;&#34;INIT THE TRACK HISTORY&#34;&#34;&#34;
+
             class TrackHistory:
                 &#34;&#34;&#34;Track History Wrapper
                 - Store the latest tracking results
@@ -152,7 +153,7 @@ class ResultProcessor:
                     Args:
                         max_hist_len (int): Maximum age of tracks matrix considered for \
                                             trajectory visualization
-                    &#34;&#34;&#34;                    
+                    &#34;&#34;&#34;
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
@@ -174,7 +175,7 @@ class ResultProcessor:
             self.track_history = TrackHistory(max_hist_len=track_hist_size)
 
         if self._save_res:
-            &#34;&#34;&#34; INITIALIZE THE SAVING PROCEDURE &#34;&#34;&#34;
+            &#34;&#34;&#34;INITIALIZE THE SAVING PROCEDURE&#34;&#34;&#34;
             assert save_mode == &#34;video&#34; or save_mode == &#34;image&#34;
             from .general import increment_path
             from pathlib import Path
@@ -191,7 +192,7 @@ class ResultProcessor:
             )
 
         if self._async:
-            &#34;&#34;&#34; INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING &#34;&#34;&#34;
+            &#34;&#34;&#34;INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING&#34;&#34;&#34;
             import multiprocessing
 
             check_requirements([&#34;pathos&#34;])
@@ -223,7 +224,7 @@ class ResultProcessor:
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        &#34;&#34;&#34; Wraps the procedure for asynchronous and synchronous result processing.
+        &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
 
         This method acts as the entrypoint for the results originating from the run script.
 
@@ -232,7 +233,7 @@ class ResultProcessor:
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;   
+        &#34;&#34;&#34;
         if self._async:
             assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
 
@@ -260,7 +261,7 @@ class ResultProcessor:
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        &#34;&#34;&#34; Wraps the actual result processing procedures.
+        &#34;&#34;&#34;Wraps the actual result processing procedures.
         Takes the provided results from a detector and tracker in order to visualize
         them according to user config. Subsequently, visualizes and/or stores the
         enriched image/video.
@@ -270,7 +271,7 @@ class ResultProcessor:
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         if self._show_det:
             im0 = self.draw_detec_boxes(det, im0)
         if self._show_tracks:
@@ -288,7 +289,7 @@ class ResultProcessor:
                 self.save_vid(im0)
 
     def async_update_worker(self):
-        &#34;&#34;&#34; The slave process loop &#34;&#34;&#34;        
+        &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
         assert self.queue, &#34;Queue is not initialized!&#34;
         import traceback
 
@@ -319,7 +320,7 @@ class ResultProcessor:
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws bounding boxes, class labels and confidences according to a
+        &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
         detection matix on the provided image.
 
         Args:
@@ -328,7 +329,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with detection boxes
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
             c = int(cls)  # integer class
@@ -352,7 +353,7 @@ class ResultProcessor:
         return im0
 
     def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+        &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -360,7 +361,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with tracked object boxes
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         for *xyxy, _, _, id, _ in tracks:
             id = None if self._hide_labels else str(id)
             plot_one_box(
@@ -373,7 +374,7 @@ class ResultProcessor:
         return im0
 
     def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws a line for each tracked ID according to the stored history.
+        &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -381,7 +382,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with tracked object trajectories
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert self.track_history, &#34;No track history object initialized!&#34;
         self.track_history.update(tracks)
 
@@ -394,11 +395,11 @@ class ResultProcessor:
         return im0
 
     def save_img(self, im0: np.ndarray):
-        &#34;&#34;&#34; Saves an image with current timestamp as name.
+        &#34;&#34;&#34;Saves an image with current timestamp as name.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
 
         # image named after current timestamp
@@ -408,12 +409,12 @@ class ResultProcessor:
         cv2.imwrite(save_path, im0)
 
     def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
-        &#34;&#34;&#34; Appends an image to the current videopointer.
+        &#34;&#34;&#34;Appends an image to the current videopointer.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # resize frame if its too large for .avi
         if im0.shape[1] &gt; 3200:
             im0 = resize_aspectratio(im0, width=3200)
@@ -443,11 +444,11 @@ class ResultProcessor:
         self.vid_writer.write(im0)
 
     def visualize(self, im0: np.ndarray):
-        &#34;&#34;&#34; Visualizes the passed image.
+        &#34;&#34;&#34;Visualizes the passed image.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
         cv2.imshow(&#34;Pancake&#34;, im0)
         cv2.waitKey(0 if self._debug else 1)
@@ -458,7 +459,7 @@ class ResultProcessor:
 
 
 def setup_result_processor(config: dict, labels: list) -&gt; ResultProcessor:
-    &#34;&#34;&#34; Helper function to retrieve the configs and parse it to the 
+    &#34;&#34;&#34;Helper function to retrieve the configs and parse it to the
         ResultProcessor class initialization.
 
     Args:
@@ -467,7 +468,7 @@ def setup_result_processor(config: dict, labels: list) -&gt; ResultProcessor:
 
     Returns:
         ResultProcessor: An instance of the ResultProcessor
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     return ResultProcessor(
         show_res=config.VIEW_RES,
         save_res=config.SAVE_RES,
@@ -522,7 +523,7 @@ ResultProcessor class initialization.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setup_result_processor(config: dict, labels: list) -&gt; ResultProcessor:
-    &#34;&#34;&#34; Helper function to retrieve the configs and parse it to the 
+    &#34;&#34;&#34;Helper function to retrieve the configs and parse it to the
         ResultProcessor class initialization.
 
     Args:
@@ -531,7 +532,7 @@ ResultProcessor class initialization.</p>
 
     Returns:
         ResultProcessor: An instance of the ResultProcessor
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     return ResultProcessor(
         show_res=config.VIEW_RES,
         save_res=config.SAVE_RES,
@@ -647,7 +648,7 @@ blocking</dd>
         *args,
         **kwargs,
     ):
-        &#34;&#34;&#34; This class encapsulates all result processing procedures.
+        &#34;&#34;&#34;This class encapsulates all result processing procedures.
 
         Functionalities:
             - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
@@ -678,7 +679,7 @@ blocking</dd>
                                         blocking
             async_put_timeout (float): Raise exception after timeout seconds waiting for spare slot
             debug (bool): Manual skipping when visualizing results
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         from pancake.run import setup_logger
 
         self.l = setup_logger(__name__)
@@ -717,7 +718,8 @@ blocking</dd>
             return
 
         if self._show_track_hist:
-            &#34;&#34;&#34; INIT THE TRACK HISTORY &#34;&#34;&#34;
+            &#34;&#34;&#34;INIT THE TRACK HISTORY&#34;&#34;&#34;
+
             class TrackHistory:
                 &#34;&#34;&#34;Track History Wrapper
                 - Store the latest tracking results
@@ -730,7 +732,7 @@ blocking</dd>
                     Args:
                         max_hist_len (int): Maximum age of tracks matrix considered for \
                                             trajectory visualization
-                    &#34;&#34;&#34;                    
+                    &#34;&#34;&#34;
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
@@ -752,7 +754,7 @@ blocking</dd>
             self.track_history = TrackHistory(max_hist_len=track_hist_size)
 
         if self._save_res:
-            &#34;&#34;&#34; INITIALIZE THE SAVING PROCEDURE &#34;&#34;&#34;
+            &#34;&#34;&#34;INITIALIZE THE SAVING PROCEDURE&#34;&#34;&#34;
             assert save_mode == &#34;video&#34; or save_mode == &#34;image&#34;
             from .general import increment_path
             from pathlib import Path
@@ -769,7 +771,7 @@ blocking</dd>
             )
 
         if self._async:
-            &#34;&#34;&#34; INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING &#34;&#34;&#34;
+            &#34;&#34;&#34;INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING&#34;&#34;&#34;
             import multiprocessing
 
             check_requirements([&#34;pathos&#34;])
@@ -801,7 +803,7 @@ blocking</dd>
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        &#34;&#34;&#34; Wraps the procedure for asynchronous and synchronous result processing.
+        &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
 
         This method acts as the entrypoint for the results originating from the run script.
 
@@ -810,7 +812,7 @@ blocking</dd>
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;   
+        &#34;&#34;&#34;
         if self._async:
             assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
 
@@ -838,7 +840,7 @@ blocking</dd>
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        &#34;&#34;&#34; Wraps the actual result processing procedures.
+        &#34;&#34;&#34;Wraps the actual result processing procedures.
         Takes the provided results from a detector and tracker in order to visualize
         them according to user config. Subsequently, visualizes and/or stores the
         enriched image/video.
@@ -848,7 +850,7 @@ blocking</dd>
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         if self._show_det:
             im0 = self.draw_detec_boxes(det, im0)
         if self._show_tracks:
@@ -866,7 +868,7 @@ blocking</dd>
                 self.save_vid(im0)
 
     def async_update_worker(self):
-        &#34;&#34;&#34; The slave process loop &#34;&#34;&#34;        
+        &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
         assert self.queue, &#34;Queue is not initialized!&#34;
         import traceback
 
@@ -897,7 +899,7 @@ blocking</dd>
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws bounding boxes, class labels and confidences according to a
+        &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
         detection matix on the provided image.
 
         Args:
@@ -906,7 +908,7 @@ blocking</dd>
 
         Returns:
             np.ndarray: Image enriched with detection boxes
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
             c = int(cls)  # integer class
@@ -930,7 +932,7 @@ blocking</dd>
         return im0
 
     def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+        &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -938,7 +940,7 @@ blocking</dd>
 
         Returns:
             np.ndarray: Image enriched with tracked object boxes
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         for *xyxy, _, _, id, _ in tracks:
             id = None if self._hide_labels else str(id)
             plot_one_box(
@@ -951,7 +953,7 @@ blocking</dd>
         return im0
 
     def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-        &#34;&#34;&#34; Draws a line for each tracked ID according to the stored history.
+        &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -959,7 +961,7 @@ blocking</dd>
 
         Returns:
             np.ndarray: Image enriched with tracked object trajectories
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert self.track_history, &#34;No track history object initialized!&#34;
         self.track_history.update(tracks)
 
@@ -972,11 +974,11 @@ blocking</dd>
         return im0
 
     def save_img(self, im0: np.ndarray):
-        &#34;&#34;&#34; Saves an image with current timestamp as name.
+        &#34;&#34;&#34;Saves an image with current timestamp as name.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
 
         # image named after current timestamp
@@ -986,12 +988,12 @@ blocking</dd>
         cv2.imwrite(save_path, im0)
 
     def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
-        &#34;&#34;&#34; Appends an image to the current videopointer.
+        &#34;&#34;&#34;Appends an image to the current videopointer.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         # resize frame if its too large for .avi
         if im0.shape[1] &gt; 3200:
             im0 = resize_aspectratio(im0, width=3200)
@@ -1021,11 +1023,11 @@ blocking</dd>
         self.vid_writer.write(im0)
 
     def visualize(self, im0: np.ndarray):
-        &#34;&#34;&#34; Visualizes the passed image.
+        &#34;&#34;&#34;Visualizes the passed image.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
         cv2.imshow(&#34;Pancake&#34;, im0)
         cv2.waitKey(0 if self._debug else 1)
@@ -1046,7 +1048,7 @@ blocking</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def async_update_worker(self):
-    &#34;&#34;&#34; The slave process loop &#34;&#34;&#34;        
+    &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
     assert self.queue, &#34;Queue is not initialized!&#34;
     import traceback
 
@@ -1092,7 +1094,7 @@ detection matix on the provided image.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
-    &#34;&#34;&#34; Draws bounding boxes, class labels and confidences according to a
+    &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
     detection matix on the provided image.
 
     Args:
@@ -1101,7 +1103,7 @@ detection matix on the provided image.</p>
 
     Returns:
         np.ndarray: Image enriched with detection boxes
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     for *xyxy, conf, cls in reversed(det):
         # Add bbox to image
         c = int(cls)  # integer class
@@ -1147,7 +1149,7 @@ detection matix on the provided image.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-    &#34;&#34;&#34; Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+    &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
 
     Args:
         tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -1155,7 +1157,7 @@ detection matix on the provided image.</p>
 
     Returns:
         np.ndarray: Image enriched with tracked object boxes
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     for *xyxy, _, _, id, _ in tracks:
         id = None if self._hide_labels else str(id)
         plot_one_box(
@@ -1190,7 +1192,7 @@ detection matix on the provided image.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
-    &#34;&#34;&#34; Draws a line for each tracked ID according to the stored history.
+    &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
 
     Args:
         tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -1198,7 +1200,7 @@ detection matix on the provided image.</p>
 
     Returns:
         np.ndarray: Image enriched with tracked object trajectories
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     assert self.track_history, &#34;No track history object initialized!&#34;
     self.track_history.update(tracks)
 
@@ -1258,7 +1260,7 @@ the worker process.</p></div>
     im0: np.ndarray,
     vid_cap: cv2.VideoCapture = None,
 ):
-    &#34;&#34;&#34; Wraps the procedure for asynchronous and synchronous result processing.
+    &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
 
     This method acts as the entrypoint for the results originating from the run script.
 
@@ -1267,7 +1269,7 @@ the worker process.</p></div>
         tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
         im0 (np.array): Image in BGR (,3) [c, w, h]
         vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-    &#34;&#34;&#34;   
+    &#34;&#34;&#34;
     if self._async:
         assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
 
@@ -1318,11 +1320,11 @@ the worker process.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def save_img(self, im0: np.ndarray):
-    &#34;&#34;&#34; Saves an image with current timestamp as name.
+    &#34;&#34;&#34;Saves an image with current timestamp as name.
 
     Args:
         im0 (np.ndarray): Image in BGR [3, w, h]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
 
     # image named after current timestamp
@@ -1349,12 +1351,12 @@ the worker process.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
-    &#34;&#34;&#34; Appends an image to the current videopointer.
+    &#34;&#34;&#34;Appends an image to the current videopointer.
 
     Args:
         im0 (np.ndarray): Image in BGR [3, w, h]
         vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     # resize frame if its too large for .avi
     if im0.shape[1] &gt; 3200:
         im0 = resize_aspectratio(im0, width=3200)
@@ -1414,7 +1416,7 @@ enriched image/video.</p>
     im0: np.ndarray,
     vid_cap: cv2.VideoCapture = None,
 ):
-    &#34;&#34;&#34; Wraps the actual result processing procedures.
+    &#34;&#34;&#34;Wraps the actual result processing procedures.
     Takes the provided results from a detector and tracker in order to visualize
     them according to user config. Subsequently, visualizes and/or stores the
     enriched image/video.
@@ -1424,7 +1426,7 @@ enriched image/video.</p>
         tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
         im0 (np.array): Image in BGR (,3) [c, w, h]
         vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     if self._show_det:
         im0 = self.draw_detec_boxes(det, im0)
     if self._show_tracks:
@@ -1457,11 +1459,11 @@ enriched image/video.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def visualize(self, im0: np.ndarray):
-    &#34;&#34;&#34; Visualizes the passed image.
+    &#34;&#34;&#34;Visualizes the passed image.
 
     Args:
         im0 (np.ndarray): Image in BGR [3, w, h]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
     cv2.imshow(&#34;Pancake&#34;, im0)
     cv2.waitKey(0 if self._debug else 1)</code></pre>
