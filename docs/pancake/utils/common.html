@@ -39,10 +39,29 @@ from .general import resize_aspectratio
 from .plots import colors, plot_one_box
 
 
-def load_data(source: str) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
-    &#34;&#34;&#34;
-    :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
-    &#34;&#34;&#34;
+def load_data(source: Union[List[str], str]) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
+    &#34;&#34;&#34; Sets up the data loader
+
+    Description:
+        Depending on the source, returns a class responsible for providing image frames to the
+        Pancake main loop.
+    
+    Source Types
+    ------------
+        - Single image: source contains path to single image (e.g. &#34;../samples/r45/1c/1621796022.9767.jpg&#34;)
+        - Single video: source contains path to single video (e.g. &#34;../samples/output.avi&#34;)
+        - Sequence of images: source contains path to a directory (e.g. &#34;../samples/r45/1c&#34;)
+        - Multiple directories with images/videos: source is a list containing paths to different directories \
+            (e.g. List[&#34;../samples/r45/1l&#34;, &#34;../samples/r45/1c&#34;, &#34;../samples/r45/1r&#34;])
+        - Multiple web streams: source is a .txt file containing different web adresses
+            (stream could be from e.g. YouTube, webcam, Twitch, ...)
+
+    Args:
+        source (Union[List[str], str]): Data source
+
+    Returns:
+        Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
+    &#34;&#34;&#34;    
     try:
         is_webcam = (
             source.isnumeric()
@@ -328,18 +347,58 @@ def fix_path(path: Union[str, list]) -&gt; str:
 </details>
 </dd>
 <dt id="pancake.utils.common.load_data"><code class="name flex">
-<span>def <span class="ident">load_data</span></span>(<span>source: str) ‑> Union[<a title="pancake.utils.datasets.LoadStreams" href="datasets.html#pancake.utils.datasets.LoadStreams">LoadStreams</a>, <a title="pancake.utils.datasets.LoadImages" href="datasets.html#pancake.utils.datasets.LoadImages">LoadImages</a>, <a title="pancake.utils.datasets.LoadImageDirs" href="datasets.html#pancake.utils.datasets.LoadImageDirs">LoadImageDirs</a>]</span>
+<span>def <span class="ident">load_data</span></span>(<span>source: Union[List[str], str]) ‑> Union[<a title="pancake.utils.datasets.LoadStreams" href="datasets.html#pancake.utils.datasets.LoadStreams">LoadStreams</a>, <a title="pancake.utils.datasets.LoadImages" href="datasets.html#pancake.utils.datasets.LoadImages">LoadImages</a>, <a title="pancake.utils.datasets.LoadImageDirs" href="datasets.html#pancake.utils.datasets.LoadImageDirs">LoadImageDirs</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>:param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)</p></div>
+<div class="desc"><p>Sets up the data loader</p>
+<h2 id="description">Description</h2>
+<p>Depending on the source, returns a class responsible for providing image frames to the
+Pancake main loop.</p>
+<h2 id="source-types">Source Types</h2>
+<pre><code>- Single image: source contains path to single image (e.g. "../samples/r45/1c/1621796022.9767.jpg")
+- Single video: source contains path to single video (e.g. "../samples/output.avi")
+- Sequence of images: source contains path to a directory (e.g. "../samples/r45/1c")
+- Multiple directories with images/videos: source is a list containing paths to different directories             (e.g. List["../samples/r45/1l", "../samples/r45/1c", "../samples/r45/1r"])
+- Multiple web streams: source is a .txt file containing different web adresses
+    (stream could be from e.g. YouTube, webcam, Twitch, ...)
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>Union[List[str], str]</code></dt>
+<dd>Data source</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Union[LoadStreams, LoadImages, LoadImageDirs]</code></dt>
+<dd>A data loader object</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load_data(source: str) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
-    &#34;&#34;&#34;
-    :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
-    &#34;&#34;&#34;
+<pre><code class="python">def load_data(source: Union[List[str], str]) -&gt; Union[LoadStreams, LoadImages, LoadImageDirs]:
+    &#34;&#34;&#34; Sets up the data loader
+
+    Description:
+        Depending on the source, returns a class responsible for providing image frames to the
+        Pancake main loop.
+    
+    Source Types
+    ------------
+        - Single image: source contains path to single image (e.g. &#34;../samples/r45/1c/1621796022.9767.jpg&#34;)
+        - Single video: source contains path to single video (e.g. &#34;../samples/output.avi&#34;)
+        - Sequence of images: source contains path to a directory (e.g. &#34;../samples/r45/1c&#34;)
+        - Multiple directories with images/videos: source is a list containing paths to different directories \
+            (e.g. List[&#34;../samples/r45/1l&#34;, &#34;../samples/r45/1c&#34;, &#34;../samples/r45/1r&#34;])
+        - Multiple web streams: source is a .txt file containing different web adresses
+            (stream could be from e.g. YouTube, webcam, Twitch, ...)
+
+    Args:
+        source (Union[List[str], str]): Data source
+
+    Returns:
+        Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
+    &#34;&#34;&#34;    
     try:
         is_webcam = (
             source.isnumeric()

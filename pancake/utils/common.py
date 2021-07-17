@@ -11,10 +11,29 @@ from .general import resize_aspectratio
 from .plots import colors, plot_one_box
 
 
-def load_data(source: str) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
-    """
-    :param source (str): data source (webcam, image, video, directory, glob, youtube video, HTTP stream)
-    """
+def load_data(source: Union[List[str], str]) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
+    """ Sets up the data loader
+
+    Description:
+        Depending on the source, returns a class responsible for providing image frames to the
+        Pancake main loop.
+    
+    Source Types
+    ------------
+        - Single image: source contains path to single image (e.g. "../samples/r45/1c/1621796022.9767.jpg")
+        - Single video: source contains path to single video (e.g. "../samples/output.avi")
+        - Sequence of images: source contains path to a directory (e.g. "../samples/r45/1c")
+        - Multiple directories with images/videos: source is a list containing paths to different directories \
+            (e.g. List["../samples/r45/1l", "../samples/r45/1c", "../samples/r45/1r"])
+        - Multiple web streams: source is a .txt file containing different web adresses
+            (stream could be from e.g. YouTube, webcam, Twitch, ...)
+
+    Args:
+        source (Union[List[str], str]): Data source
+
+    Returns:
+        Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
+    """    
     try:
         is_webcam = (
             source.isnumeric()

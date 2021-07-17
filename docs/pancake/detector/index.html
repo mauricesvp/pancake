@@ -26,7 +26,9 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import torch
+<pre><code class="python">from typing import Type
+
+import torch
 from .detector import Detector
 from .detector_yolo_custom import YOLOCustomDetector
 from .detector_yolo_simple import YOLOSimpleDetector
@@ -37,7 +39,19 @@ __all__ = [&#34;DETECTOR_REGISTRY&#34;, &#34;setup_detector&#34;]
 DETECTOR_REGISTRY = Detector.get_subclasses()
 
 
-def setup_detector(config):
+def setup_detector(config: dict) -&gt; Type[Detector]:
+    &#34;&#34;&#34; Helper function to set up a detector specified in the configurations.
+
+    Description:
+        Retrieves the configs, sets the device if possible and 
+        initializes a detector from the detector registry.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+
+    Returns:
+        Type[Detector]: A Detector subclass instance.
+    &#34;&#34;&#34;    
     name = config.DETECTOR.NAME
     params = getattr(config.DETECTOR, name.upper())
 
@@ -84,15 +98,40 @@ def setup_detector(config):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pancake.detector.setup_detector"><code class="name flex">
-<span>def <span class="ident">setup_detector</span></span>(<span>config)</span>
+<span>def <span class="ident">setup_detector</span></span>(<span>config: dict) ‑> Type[<a title="pancake.detector.detector.Detector" href="detector.html#pancake.detector.detector.Detector">Detector</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Helper function to set up a detector specified in the configurations.</p>
+<h2 id="description">Description</h2>
+<p>Retrieves the configs, sets the device if possible and
+initializes a detector from the detector registry.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>config</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing configurations.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Type[Detector]</code></dt>
+<dd>A Detector subclass instance.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setup_detector(config):
+<pre><code class="python">def setup_detector(config: dict) -&gt; Type[Detector]:
+    &#34;&#34;&#34; Helper function to set up a detector specified in the configurations.
+
+    Description:
+        Retrieves the configs, sets the device if possible and 
+        initializes a detector from the detector registry.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+
+    Returns:
+        Type[Detector]: A Detector subclass instance.
+    &#34;&#34;&#34;    
     name = config.DETECTOR.NAME
     params = getattr(config.DETECTOR, name.upper())
 

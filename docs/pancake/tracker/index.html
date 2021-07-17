@@ -26,7 +26,9 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import torch
+<pre><code class="python">from typing import Type
+
+import torch
 from .tracker import BaseTracker
 from .tracker_deepsort import DEEPSORT
 from .tracker_centroid import CentroidTracker
@@ -39,7 +41,15 @@ __all__ = [&#34;TRACKER_REGISTRY&#34;, &#34;setup_tracker&#34;]
 TRACKER_REGISTRY = BaseTracker.get_subclasses()
 
 
-def setup_tracker(config):
+def setup_tracker(config: dict) -&gt; Type[BaseTracker]:
+    &#34;&#34;&#34; Helper function to set up a tracker specified in the configurations.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+
+    Returns:
+        Type[BaseTracker]: A Tracker subclass instance.
+    &#34;&#34;&#34;    
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
     tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))
@@ -92,15 +102,33 @@ def setup_tracker(config):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pancake.tracker.setup_tracker"><code class="name flex">
-<span>def <span class="ident">setup_tracker</span></span>(<span>config)</span>
+<span>def <span class="ident">setup_tracker</span></span>(<span>config: dict) ‑> Type[<a title="pancake.tracker.tracker.BaseTracker" href="tracker.html#pancake.tracker.tracker.BaseTracker">BaseTracker</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Helper function to set up a tracker specified in the configurations.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>config</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing configurations.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Type[BaseTracker]</code></dt>
+<dd>A Tracker subclass instance.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setup_tracker(config):
+<pre><code class="python">def setup_tracker(config: dict) -&gt; Type[BaseTracker]:
+    &#34;&#34;&#34; Helper function to set up a tracker specified in the configurations.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+
+    Returns:
+        Type[BaseTracker]: A Tracker subclass instance.
+    &#34;&#34;&#34;    
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
     tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))
