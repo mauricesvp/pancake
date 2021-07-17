@@ -11,7 +11,9 @@ from .general import resize_aspectratio
 from .plots import colors, plot_one_box
 
 
-def load_data(source: Union[List[str], str]) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
+def load_data(
+    source: Union[List[str], str]
+) -> Union[LoadStreams, LoadImages, LoadImageDirs]:
     """ Sets up the data loader
 
     Description:
@@ -33,7 +35,7 @@ def load_data(source: Union[List[str], str]) -> Union[LoadStreams, LoadImages, L
 
     Returns:
         Union[LoadStreams, LoadImages, LoadImageDirs]: A data loader object
-    """    
+    """
     try:
         is_webcam = (
             source.isnumeric()

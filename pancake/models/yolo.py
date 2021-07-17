@@ -1,4 +1,4 @@
-""" YOLOv5 model specific classes """ 
+""" YOLOv5 model specific classes """
 
 import argparse
 import sys

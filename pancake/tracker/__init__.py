@@ -14,14 +14,14 @@ TRACKER_REGISTRY = BaseTracker.get_subclasses()
 
 
 def setup_tracker(config: dict) -> Type[BaseTracker]:
-    """ Helper function to set up a tracker specified in the configurations.
+    """Helper function to set up a tracker specified in the configurations.
 
     Args:
         config (dict): Dictionary containing configurations.
 
     Returns:
         Type[BaseTracker]: A Tracker subclass instance.
-    """    
+    """
     name = config.TRACKER.NAME
     params = getattr(config.TRACKER, name.upper())
     tracker_cfg = get_config(config_file=fix_path(params.TRACKER_CFG_PATH))

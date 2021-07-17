@@ -12,10 +12,10 @@ DETECTOR_REGISTRY = Detector.get_subclasses()
 
 
 def setup_detector(config: dict) -> Type[Detector]:
-    """ Helper function to set up a detector specified in the configurations.
+    """Helper function to set up a detector specified in the configurations.
 
     Description:
-        Retrieves the configs, sets the device if possible and 
+        Retrieves the configs, sets the device if possible and
         initializes a detector from the detector registry.
 
     Args:
@@ -23,7 +23,7 @@ def setup_detector(config: dict) -> Type[Detector]:
 
     Returns:
         Type[Detector]: A Detector subclass instance.
-    """    
+    """
     name = config.DETECTOR.NAME
     params = getattr(config.DETECTOR, name.upper())
 

@@ -58,7 +58,7 @@ class Yolov5TRT(BaseModel):
             ModuleNotFoundError: If TensorRT library is not installed
             ModuleNotFoundError: When invalid device index was provided
             ModuleNotFoundError: When loading of the engine and plugin failed
-        """    
+        """
         # if trt not available return standard yolov5 model
         if not trt_installed:
             l.info("TensorRT not installed, using standard Yolov5..")
@@ -97,11 +97,11 @@ class Yolov5TRT(BaseModel):
         self._init_infer([self.batch_size, 3, self.input_h, self.input_w])
 
     def load_engine(self) -> bool:
-        """ Loads the plugin library and TRT engine.
+        """Loads the plugin library and TRT engine.
 
         Returns:
             bool: success flag
-        """        
+        """
         l.info(f"Loading TRT engine from {self._engine_path}..")
         try:
             # Load trt plugin lib
@@ -134,12 +134,12 @@ class Yolov5TRT(BaseModel):
             return False
 
     def allocate_buffers(self, is_explicit_batch=True, dynamic_shapes=[]):
-        """ Allocates memory on the GPU according to the provided engine.
+        """Allocates memory on the GPU according to the provided engine.
 
         Args:
             is_explicit_batch (bool, optional): Explicit batch flag. Defaults to True.
             dynamic_shapes (list, optional): Dynamic input shapes. Defaults to [].
-        """        
+        """
         self.host_inputs = []
         self.cuda_inputs = []
         self.host_outputs = []
@@ -185,11 +185,11 @@ class Yolov5TRT(BaseModel):
                 self.cuda_outputs.append(cuda_mem)
 
     def _init_infer(self, img_size):
-        """ Warms up the GPU.
+        """Warms up the GPU.
 
         Args:
             img_size (Tuple): Image shape
-        """        
+        """
         # Warm up
         iterations = 20
         sum_time = 0.0
@@ -213,7 +213,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             np.array: Normalized image
-        """        
+        """
         if type(img) is torch.Tensor:
             img = img.cpu().numpy(np.float32)
         img = img.astype(np.float32)
@@ -233,7 +233,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             List[np.ndarray]: List of image batches with processable batch size
-        """        
+        """
         modulo = imgs.shape[0] % self.batch_size
 
         # fill imgs array in order to be divisible by engine batch size
@@ -248,14 +248,14 @@ class Yolov5TRT(BaseModel):
         return batched_imgs, modulo
 
     def infer(self, imgs: np.array) -> List[torch.Tensor]:
-        """ Inference wrapper
+        """Inference wrapper
 
         Args:
             imgs (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        """             
+        """
         # prepare imgs for inference
         # t1 = time.time()
         imgs = Yolov5TRT.prep_image_infer(imgs)
@@ -279,14 +279,14 @@ class Yolov5TRT(BaseModel):
         return pred, None
 
     def infer_on_batch(self, img: np.array) -> List[torch.Tensor]:
-        """ Batched inference
+        """Batched inference
 
         Args:
             img (np.array): Resized and padded image batch [1, c, w, h]
 
         Returns:
             list: List of tensors with the prediction results [xyxy, conf, cls]
-        """        
+        """
         assert img.shape[0] == self.batch_size, (
             f"Provided batch size ({img.shape[0]}) doesn't allign with "
             f"the engines batch size ({self.batch_size})"
@@ -344,7 +344,7 @@ class Yolov5TRT(BaseModel):
         return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -> torch.Tensor:
-        """ Reshapes the model output to interpretable shape then applies NMS
+        """Reshapes the model output to interpretable shape then applies NMS
 
         Args:
             output (np.ndarray): A tensor like [num_boxes, cx, cy, w, h, conf, cls_id]
@@ -353,7 +353,7 @@ class Yolov5TRT(BaseModel):
 
         Returns:
             torch.Tensor: tensor with the prediction results [xyxy, conf, cls]
-        """        
+        """
         # get the num of boxes detected
         num = int(output[0])
 

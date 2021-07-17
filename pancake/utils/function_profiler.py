@@ -5,9 +5,12 @@ from functools import wraps
 
 
 def profile(
-    output_file: str=None, sort_by: str="cumulative", lines_to_print: int=None, strip_dirs: bool=False
+    output_file: str = None,
+    sort_by: str = "cumulative",
+    lines_to_print: int = None,
+    strip_dirs: bool = False,
 ) -> pstats.Stats:
-    """ A time profiler decorator.
+    """A time profiler decorator.
 
     Description:
         Measures the time for all subcalls and documents it in a readable fashion.
@@ -19,23 +22,23 @@ def profile(
         profiled. (@profile(...))
 
     Args:
-        output_file (str, optional): 
+        output_file (str, optional):
             Path of the output file. If only name of the file is given, it's
             saved in the current directory.
-            If it's None, the name of the decorated function is used. 
+            If it's None, the name of the decorated function is used.
             Defaults to None.
-        sort_by (str, optional): 
+        sort_by (str, optional):
             Sorting criteria for the Stats object.
             For a list of valid string and SortKey refer to:
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats. 
+            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats.
             Defaults to "cumulative".
-        lines_to_print (int, optional): 
+        lines_to_print (int, optional):
             Number of lines to print. Default (None) is for all the lines.
             This is useful in reducing the size of the printout, especially
             that sorting by 'cumulative', the time consuming operations
-            are printed toward the top of the file. 
+            are printed toward the top of the file.
             Defaults to None.
-        strip_dirs (bool, optional): 
+        strip_dirs (bool, optional):
             Whether to remove the leading path info from file names.
             This is also useful in reducing the size of the printout.
             Defaults to False.
@@ -43,6 +46,7 @@ def profile(
     Returns:
         pstats.Stats: Profile of the decorated function
     """
+
     def inner(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

@@ -40,7 +40,7 @@ class ResultProcessor:
         *args,
         **kwargs,
     ):
-        """ This class encapsulates all result processing procedures.
+        """This class encapsulates all result processing procedures.
 
         Functionalities:
             - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
@@ -71,7 +71,7 @@ class ResultProcessor:
                                         blocking
             async_put_timeout (float): Raise exception after timeout seconds waiting for spare slot
             debug (bool): Manual skipping when visualizing results
-        """    
+        """
         from pancake.run import setup_logger
 
         self.l = setup_logger(__name__)
@@ -110,7 +110,8 @@ class ResultProcessor:
             return
 
         if self._show_track_hist:
-            """ INIT THE TRACK HISTORY """
+            """INIT THE TRACK HISTORY"""
+
             class TrackHistory:
                 """Track History Wrapper
                 - Store the latest tracking results
@@ -123,7 +124,7 @@ class ResultProcessor:
                     Args:
                         max_hist_len (int): Maximum age of tracks matrix considered for \
                                             trajectory visualization
-                    """                    
+                    """
                     self.tracks = []
                     self.ids = {}
                     self._max_hist_len = max_hist_len
@@ -145,7 +146,7 @@ class ResultProcessor:
             self.track_history = TrackHistory(max_hist_len=track_hist_size)
 
         if self._save_res:
-            """ INITIALIZE THE SAVING PROCEDURE """
+            """INITIALIZE THE SAVING PROCEDURE"""
             assert save_mode == "video" or save_mode == "image"
             from .general import increment_path
             from pathlib import Path
@@ -162,7 +163,7 @@ class ResultProcessor:
             )
 
         if self._async:
-            """ INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING """
+            """INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING"""
             import multiprocessing
 
             check_requirements(["pathos"])
@@ -194,7 +195,7 @@ class ResultProcessor:
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        """ Wraps the procedure for asynchronous and synchronous result processing.
+        """Wraps the procedure for asynchronous and synchronous result processing.
 
         This method acts as the entrypoint for the results originating from the run script.
 
@@ -203,7 +204,7 @@ class ResultProcessor:
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        """   
+        """
         if self._async:
             assert self.worker_process.is_alive(), "Worker process died!"
 
@@ -231,7 +232,7 @@ class ResultProcessor:
         im0: np.ndarray,
         vid_cap: cv2.VideoCapture = None,
     ):
-        """ Wraps the actual result processing procedures.
+        """Wraps the actual result processing procedures.
         Takes the provided results from a detector and tracker in order to visualize
         them according to user config. Subsequently, visualizes and/or stores the
         enriched image/video.
@@ -241,7 +242,7 @@ class ResultProcessor:
             tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
             im0 (np.array): Image in BGR (,3) [c, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        """    
+        """
         if self._show_det:
             im0 = self.draw_detec_boxes(det, im0)
         if self._show_tracks:
@@ -259,7 +260,7 @@ class ResultProcessor:
                 self.save_vid(im0)
 
     def async_update_worker(self):
-        """ The slave process loop """        
+        """The slave process loop"""
         assert self.queue, "Queue is not initialized!"
         import traceback
 
@@ -290,7 +291,7 @@ class ResultProcessor:
         self.worker_process.terminate()
 
     def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -> np.ndarray:
-        """ Draws bounding boxes, class labels and confidences according to a
+        """Draws bounding boxes, class labels and confidences according to a
         detection matix on the provided image.
 
         Args:
@@ -299,7 +300,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with detection boxes
-        """        
+        """
         for *xyxy, conf, cls in reversed(det):
             # Add bbox to image
             c = int(cls)  # integer class
@@ -323,7 +324,7 @@ class ResultProcessor:
         return im0
 
     def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -> np.ndarray:
-        """ Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.
+        """Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -331,7 +332,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with tracked object boxes
-        """        
+        """
         for *xyxy, _, _, id, _ in tracks:
             id = None if self._hide_labels else str(id)
             plot_one_box(
@@ -344,7 +345,7 @@ class ResultProcessor:
         return im0
 
     def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -> np.ndarray:
-        """ Draws a line for each tracked ID according to the stored history.
+        """Draws a line for each tracked ID according to the stored history.
 
         Args:
             tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
@@ -352,7 +353,7 @@ class ResultProcessor:
 
         Returns:
             np.ndarray: Image enriched with tracked object trajectories
-        """        
+        """
         assert self.track_history, "No track history object initialized!"
         self.track_history.update(tracks)
 
@@ -365,11 +366,11 @@ class ResultProcessor:
         return im0
 
     def save_img(self, im0: np.ndarray):
-        """ Saves an image with current timestamp as name.
+        """Saves an image with current timestamp as name.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        """        
+        """
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         # image named after current timestamp
@@ -379,12 +380,12 @@ class ResultProcessor:
         cv2.imwrite(save_path, im0)
 
     def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
-        """ Appends an image to the current videopointer.
+        """Appends an image to the current videopointer.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
             vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
-        """        
+        """
         # resize frame if its too large for .avi
         if im0.shape[1] > 3200:
             im0 = resize_aspectratio(im0, width=3200)
@@ -414,11 +415,11 @@ class ResultProcessor:
         self.vid_writer.write(im0)
 
     def visualize(self, im0: np.ndarray):
-        """ Visualizes the passed image.
+        """Visualizes the passed image.
 
         Args:
             im0 (np.ndarray): Image in BGR [3, w, h]
-        """        
+        """
         cv2.namedWindow("Pancake", cv2.WINDOW_NORMAL)
         cv2.imshow("Pancake", im0)
         cv2.waitKey(0 if self._debug else 1)
@@ -429,7 +430,7 @@ class ResultProcessor:
 
 
 def setup_result_processor(config: dict, labels: list) -> ResultProcessor:
-    """ Helper function to retrieve the configs and parse it to the 
+    """Helper function to retrieve the configs and parse it to the
         ResultProcessor class initialization.
 
     Args:
@@ -438,7 +439,7 @@ def setup_result_processor(config: dict, labels: list) -> ResultProcessor:
 
     Returns:
         ResultProcessor: An instance of the ResultProcessor
-    """    
+    """
     return ResultProcessor(
         show_res=config.VIEW_RES,
         save_res=config.SAVE_RES,

@@ -12,7 +12,8 @@ class BaseTracker(ABC):
         All tracking algorithms to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
         allowing for modular access to the detectors.
-    """    
+    """
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -> None:
@@ -20,12 +21,12 @@ class BaseTracker(ABC):
 
     @classmethod
     def get_subclasses(cls):
-        """ Returns all subclasses of this base class. 
+        """Returns all subclasses of this base class.
         The dictionary poses as Tracker registry.
 
         Returns:
             dict: Dictionary containing all child classes.
-        """      
+        """
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -37,7 +38,7 @@ class BaseTracker(ABC):
 
     @abstractmethod
     def update(self, det: torch.Tensor, *args, **kwargs) -> np.ndarray:
-        """ Updates the internal tracker state.
+        """Updates the internal tracker state.
 
         Args:
             det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
@@ -47,5 +48,5 @@ class BaseTracker(ABC):
 
         Returns:
             np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
-        """        
+        """
         raise NotImplementedError

@@ -31,7 +31,7 @@ class YOLOCustomDetector(Detector):
 
         Args:
             config (dict): Configuration dictionary
-        """        
+        """
         self.weights = config["weights"]
         weights_cfg = (
             fix_path(self.weights) if type(self.weights) is str else self.weights
@@ -72,10 +72,9 @@ class YOLOCustomDetector(Detector):
                 )
         except ModuleNotFoundError:
             l.info(f"Will fallback to weights file: {self.weights}")
-            
 
     def detect(self, imgs: List[np.ndarray]) -> List[torch.Tensor]:
-        """ Wrapper for detection calculation.
+        """Wrapper for detection calculation.
 
         Description:
             - Pads and resizes the images to conform with the model
@@ -87,7 +86,7 @@ class YOLOCustomDetector(Detector):
 
         Returns:
             List[torch.Tensor]: List of tensors, detections on (,6) tensors [xyxy, conf, cls]
-        """        
+        """
         pr_imgs = self._preprocess(imgs)
         img_sizes = [img.shape for img in imgs]
 
@@ -99,14 +98,14 @@ class YOLOCustomDetector(Detector):
         return res
 
     def _preprocess(self, imgs: List[np.ndarray]) -> np.array:
-        """ Pads and resizes the images, converts the images to RGB.
+        """Pads and resizes the images, converts the images to RGB.
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
 
         Returns:
             np.array: Padded and resized images in RGB [bs, c, w, h]
-        """        
+        """
         if type(imgs) is not list:
             imgs = [imgs]
 
@@ -127,7 +126,7 @@ class YOLOCustomDetector(Detector):
     def _postprocess(
         self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
     ) -> list:
-        """ Rescales the detection matrix from padded and resized to
+        """Rescales the detection matrix from padded and resized to
         the original size.
 
         Args:
@@ -137,7 +136,7 @@ class YOLOCustomDetector(Detector):
 
         Returns:
             list: Tensor list of rescaled detections, on (,6) tensor [bs, xyxy, conf, cls]
-        """ 
+        """
         # Rescale images from preprocessed to original
         res = [None] * len(det)
         for i, x in enumerate(det):

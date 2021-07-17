@@ -18,16 +18,16 @@ class DeepSort(object):
     def __init__(
         self,
         model_path: str,
-        device: str="CPU",
-        max_dist: float=0.2,
-        min_confidence: float=0.3,
-        nms_max_overlap: float=1.0,
-        max_iou_distance: float=0.7,
-        max_age: int=70,
-        n_init: int=3,
-        nn_budget: int=100,
-        max_id: int=100,
-        use_cuda: bool=True,
+        device: str = "CPU",
+        max_dist: float = 0.2,
+        min_confidence: float = 0.3,
+        nms_max_overlap: float = 1.0,
+        max_iou_distance: float = 0.7,
+        max_age: int = 70,
+        n_init: int = 3,
+        nn_budget: int = 100,
+        max_id: int = 100,
+        use_cuda: bool = True,
     ):
         """ DeepSort wrapper class
 
@@ -50,7 +50,7 @@ class DeepSort(object):
                                         when the budget is reached. Defaults to 100.
             max_id (int, optional): Highest possible id for tracked entity. Defaults to 100.
             use_cuda (bool, optional): Fallback to CUDA device if possible. Defaults to True.
-        """    
+        """
         self.min_confidence = min_confidence
         self.nms_max_overlap = nms_max_overlap
 
@@ -67,13 +67,13 @@ class DeepSort(object):
         )
 
     def update(
-        self, 
-        bbox_xyxy: np.ndarray, 
-        confidences: np.ndarray, 
-        ori_img: np.ndarray, 
-        cls: np.ndarray
+        self,
+        bbox_xyxy: np.ndarray,
+        confidences: np.ndarray,
+        ori_img: np.ndarray,
+        cls: np.ndarray,
     ) -> np.ndarray:
-        """ Updates the internal state.
+        """Updates the internal state.
 
         Description:
             - Runs NMS
@@ -89,7 +89,7 @@ class DeepSort(object):
 
         Returns:
             np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
-        """        
+        """
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)

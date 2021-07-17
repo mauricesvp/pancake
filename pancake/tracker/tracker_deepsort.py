@@ -12,11 +12,11 @@ from .deep_sort.deep_sort import DeepSort
 
 class DEEPSORT(BaseTracker):
     def __init__(self, cfg: dict, *args, **kwargs):
-        """ DeepSort Interface Class
+        """DeepSort Interface Class
 
         Args:
             cfg (dict): Dictionary containing configurations
-        """        
+        """
         assert (
             "device" in kwargs
         ), "Used device type needs to be specified (cpu, gpu:0, gpu:1)!"
@@ -40,7 +40,7 @@ class DEEPSORT(BaseTracker):
         )
 
     def update(self, det: torch.Tensor, img: np.ndarray) -> np.ndarray:
-        """ Transforms and parses detection matrices to the DeepSort update function.
+        """Transforms and parses detection matrices to the DeepSort update function.
 
         Args:
             det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
@@ -48,22 +48,24 @@ class DEEPSORT(BaseTracker):
 
         Returns:
             np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
-        """        
+        """
         bbox_xywh, confidences, cls = DEEPSORT.transform_detections(det)
         return self.DS.update(bbox_xywh, confidences, img, cls)
 
     @staticmethod
-    def transform_detections(det: torch.Tensor) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """ Transform detection vector to numpy.
+    def transform_detections(
+        det: torch.Tensor,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Transform detection vector to numpy.
 
         Args:
             det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, np.ndarray]: 
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
                 - x1, y1, x2, y2
                 - class confidences
                 - model-specific class indices
-        """             
+        """
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]
