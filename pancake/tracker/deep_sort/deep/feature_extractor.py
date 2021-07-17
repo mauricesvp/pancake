@@ -1,3 +1,4 @@
+""" Features Extractor based on PyTorch """
 import torch
 import torchvision.transforms as transforms
 import numpy as np
