@@ -29,8 +29,8 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Configurations](#configurations)
   - [Modules](#modules)
     - [Backend](#backend)
-    - [Object Detection](#object-detection)
-    - [Object Tracking](#object-tracking)
+    - [Detection](#detection)
+    - [Tracking](#tracking)
   - [Further Notes](#further-notes)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
@@ -300,7 +300,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **Possible values:**
   * ```NAME```: _name of the detector technology according to the registry_
 
-  **Note**: For more information on the detector registry and which detector technologies are currently implemented, refer to [Object Detection](#object-detection).
+  **Note**: For more information on the detector registry and which detector technologies are currently implemented, refer to [Detection](#detection).
 </details>
 
 <!-- Tracker -->
@@ -313,7 +313,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **Possible values:**
   * ```NAME```: _name of the tracking algorithm according to the registry_
 
-  **Note**: For more information on the tracker registry and which tracking algorithms are currently implemented, refer to [Object Tracking](#object-tracking).
+  **Note**: For more information on the tracker registry and which tracking algorithms are currently implemented, refer to [Tracking](#tracking).
 </details>
 
 <!-- Result Processing -->
@@ -400,25 +400,44 @@ and the results are stored in a database (this happens for every frame).
   usually the user shouldn't have to delve into this too much.
 
 ### Backend
-  Backend foo
+  Because the Detection can - depending on the data - not necessarily be run directly,
+  the Backend is responsible for adjusting the data as necessary to make sure the results are in order.
+  All backends are initialized with an instance of a Detector, which is used for the detection.
   <br>
   <details>
     <summary><b>Basic</b></summary>
+    The Basic Backend simply takes the input image(s), and runs the detection on each image.
   </details>
   <details>
     <summary><b>DEI (Divide and Conquer)</b></summary>
+    The DEI Backend is specifically designed for the detection on the Strasse des 17. Juni,
+    using a panorama image (made up by three images).
+    Because the detections would be very poor if it was run one the panorama directly,
+    the Backend first splits the panorama image into partial images.
+    These then get rotated, depending on the proximity to the center (no rotation in the center, more rotation on the outer sides).
+    This is done as the angle of the cars gets quite skewed on the outer sides, which hinders a successful detection.
+    The actual detection is now run on the partial images, after which the rotation und splitting are reversed to produce the final results.
+  </details>
+  <details>
+    <summary><b>Adding a new Backend</b></summary>
+    Registry foo
   </details>
 
-### Object Detection
-  Detection foo
+### Detection
+  The Detection itself is handled by an instance of a Detector.
+  For pancake, we provide two versions of the [YOLOv5](https://github.com/ultralytics/yolov5) detector.
   <details>
     <summary><b>Simple</b></summary>
   </details>
   <details>
     <summary><b>Custom</b></summary>
   </details>
+  <details>
+    <summary><b>Adding a new Detector</b></summary>
+    Registry foo
+  </details>
 
-### Object Tracking
+### Tracking
   Tracking foo
   <details>
     <summary><b>Centroid Tracker</b></summary>
@@ -426,12 +445,17 @@ and the results are stored in a database (this happens for every frame).
   <details>
     <summary><b>DeepSORT</b></summary>
   </details>
+  <details>
+    <summary><b>Adding a new Tracker</b></summary>
+    Registry foo
+  </details>
 
 ### Storage
   Storage foo
 
 ### Analysis
-  404
+  Pancake currently doesn't offer further analysis on the collected data.
+  This is something that could be tackled in the future.
 
 [Back to ToC](#table-of-contents)
 
