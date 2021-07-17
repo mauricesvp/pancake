@@ -1,3 +1,5 @@
+from typing import Type
+
 import argparse
 import logging
 import time
@@ -16,7 +18,12 @@ from .utils.result_processor import setup_result_processor
 l = setup_logger(__name__)
 
 
-def setup_logging(config):
+def setup_logging(config: dict):
+    """Helper function to set the logging level.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+    """    
     try:
         log_level = getattr(logging, config.LOGGING.LEVEL)
         l.setLevel(log_level)
@@ -39,11 +46,11 @@ def main(cfg_path: str = None, n: int = 0):
     setup_logging(config.PANCAKE)
 
     # Detector setup
-    DETECTOR = det.setup_detector(config.PANCAKE)
-    BACKEND = be.setup_backend(config.PANCAKE, DETECTOR)
+    DETECTOR: Type[det.Detector] = det.setup_detector(config.PANCAKE)
+    BACKEND: Type[be.Backend] = be.setup_backend(config.PANCAKE, DETECTOR)
 
     # Tracker setup
-    TRACKER = tr.setup_tracker(config.PANCAKE)
+    TRACKER: Type[tr.BaseTracker] = tr.setup_tracker(config.PANCAKE)
 
     # Input data setup
     source = config.PANCAKE.DATA.SOURCE
