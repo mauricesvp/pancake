@@ -393,6 +393,11 @@ The pancake framework can be thought of as a data pipeline. The incoming data is
 the backend generates detections using a detector, the tracker generates tracks,
 and the results are stored in a database (this happens for every frame).
 
+Pancake has been designed with modularity in mind, that is to say the Backend, Detector and Tracker can easily be changed,
+which also means new ones can be implemented and integrated easily.
+
+Find more details on how to write your own Backend, Detector or Tracker below.
+
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
   as well as multiple sources at once (e.g. multi-camera setups).
@@ -420,7 +425,14 @@ and the results are stored in a database (this happens for every frame).
   </details>
   <details>
     <summary><b>Adding a new Backend</b></summary>
-    Registry foo
+    <ol>
+      <li>Create your backend_foo.py within <code>detector/backends/</code> .</li>
+      <li>Create a Backend class that inherits from the <a href="pancake/detector/backends/backend.py">Base Backend</a>.</li>
+      <li>Implement the <code>detect</code> method.</li>
+      <li>Add your Backend to the <a href="pancake/detector/backends/__init__.py">registry</a> (i.e. add <code>from .backend_foo import Foo</code>).</li>
+      <li>Set your Backend in the configuration.</li>
+    </ol>
+  Important: When implementing your Backend, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/backends/backend.html> Backend API</a>!
   </details>
 
 ### Detection
@@ -434,7 +446,14 @@ and the results are stored in a database (this happens for every frame).
   </details>
   <details>
     <summary><b>Adding a new Detector</b></summary>
-    Registry foo
+    <ol>
+      <li>Create your detector_foo.py within <code>detector/</code> .</li>
+      <li>Create a Detector class that inherits from the <a href="pancake/detector/detector.py">Base Detector</a>.</li>
+      <li>Implement the <code>detect</code> method.</li>
+      <li>Add your Detector to the <a href="pancake/detector/__init__.py">registry</a> (i.e. add <code>from .detector_foo import Foo</code>).</li>
+      <li>Set your Detector in the configuration.</li>
+    </ol>
+  Important: When implementing your Detector, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/detector.html> Detector API</a>!
   </details>
 
 ### Tracking
@@ -447,7 +466,14 @@ and the results are stored in a database (this happens for every frame).
   </details>
   <details>
     <summary><b>Adding a new Tracker</b></summary>
-    Registry foo
+    <ol>
+      <li>Create your tracker_foo.py within <code>tracker/</code> .</li>
+      <li>Create a Tracker class that inherits from the <a href="pancake/tracker/tracker.py">Base Tracker</a>.</li>
+      <li>Implement the <code>update</code> method.</li>
+      <li>Add your Tracker to the <a href="pancake/tracker/__init__.py">registry</a> (i.e. add <code>from .tracker_foo import Foo</code>).</li>
+      <li>Set your Tracker in the configuration.</li>
+    </ol>
+  Important: When implementing your Tracker, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/tracker/tracker.html> Tracker API</a>!
   </details>
 
 ### Storage
