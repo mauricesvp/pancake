@@ -105,9 +105,11 @@ class YOLOCustomDetector(Detector):
 
     def detect(self, imgs: List[np.ndarray]) -&gt; List[torch.Tensor]:
         &#34;&#34;&#34; Wrapper for detection calculation.
-        - Pads and resizes the images to conform with the model
-        - Calls the infer method of underlying model in order to retrieve detections
-        - Rescales the detections
+
+        Description:
+            - Pads and resizes the images to conform with the model
+            - Calls the infer method of underlying model in order to retrieve detections
+            - Rescales the detections
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
@@ -187,8 +189,9 @@ class YOLOCustomDetector(Detector):
 <span>(</span><span>config: dict, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base Class: Abstract class for the Detectors</p>
-<p>All Detectors to be used within this framework have to inherit from this class.
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Detectors</p>
+<p><strong>Base Class</strong>:
+All Detectors to be used within this framework have to inherit from this class.
 The inheritance will automatically register every subclass into the registry thus
 allowing for modular access to the detectors.</p>
 <p>This class encapsulates the YOLOv5 module.</p>
@@ -261,9 +264,11 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
 
     def detect(self, imgs: List[np.ndarray]) -&gt; List[torch.Tensor]:
         &#34;&#34;&#34; Wrapper for detection calculation.
-        - Pads and resizes the images to conform with the model
-        - Calls the infer method of underlying model in order to retrieve detections
-        - Rescales the detections
+
+        Description:
+            - Pads and resizes the images to conform with the model
+            - Calls the infer method of underlying model in order to retrieve detections
+            - Rescales the detections
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
@@ -339,10 +344,13 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
 <span>def <span class="ident">detect</span></span>(<span>self, imgs: List[numpy.ndarray]) ‑> List[torch.Tensor]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Wrapper for detection calculation.
-- Pads and resizes the images to conform with the model
-- Calls the infer method of underlying model in order to retrieve detections
-- Rescales the detections</p>
+<div class="desc"><p>Wrapper for detection calculation.</p>
+<h2 id="description">Description</h2>
+<ul>
+<li>Pads and resizes the images to conform with the model</li>
+<li>Calls the infer method of underlying model in order to retrieve detections</li>
+<li>Rescales the detections</li>
+</ul>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>imgs</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
@@ -359,9 +367,11 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
 </summary>
 <pre><code class="python">def detect(self, imgs: List[np.ndarray]) -&gt; List[torch.Tensor]:
     &#34;&#34;&#34; Wrapper for detection calculation.
-    - Pads and resizes the images to conform with the model
-    - Calls the infer method of underlying model in order to retrieve detections
-    - Rescales the detections
+
+    Description:
+        - Pads and resizes the images to conform with the model
+        - Calls the infer method of underlying model in order to retrieve detections
+        - Rescales the detections
 
     Args:
         imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]

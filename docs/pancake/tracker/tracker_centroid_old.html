@@ -381,8 +381,11 @@ class CentroidTracker(BaseTracker):
 <span>(</span><span>cfg: dict, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></div>
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Trackers</p>
+<p><strong>Base Class</strong>:
+All tracking algorithms to be used within this framework have to inherit from this class.
+The inheritance will automatically register every subclass into the registry thus
+allowing for modular access to the detectors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -748,201 +751,15 @@ def transform_detections(det: Type[torch.Tensor]):
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="pancake.tracker.tracker_centroid_old.CentroidTracker.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, det: Type[torch.Tensor], img: Type[numpy.ndarray]) ‑> numpy.ndarray</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def update(
-    self, det: Type[torch.Tensor], img: Type[np.ndarray]
-) -&gt; np.ndarray:  # det: list of koordinates x,y , x,y, ...
-    # self.l.debug(&#34;UPDATE CENTROID TRACKER&#34;)
-    bbox_xyxy, conf, _ = self.transform_detections(det)
-
-    # Previous Group
-    # create current timestamp in ms
-    frame_timestamp = int(round(time.time() * 1000))
-
-    if self.previous_timestamp is not None and not self.IS_VIDEO_INPUT:
-        self.time_between_frames = frame_timestamp - self.previous_timestamp
-
-    # check to see if the list of input bounding box rectangles
-    # is empty
-    if len(bbox_xyxy) == 0:
-        # loop over any existing tracked objects and mark them
-        # as disappeared
-        for objectID in list(self.disappeared.keys()):
-            self.disappeared[objectID] += 1
-            # Previous Group
-            self.continuedMovement[objectID] = False
-            self._continueMovement(objectID)
-            self.previousPos[objectID] = None
-            # if we have reached a maximum number of consecutive
-            # frames where a given object has been marked as
-            # missing, deregister it
-            # Or if the object is inside the deregistration zone
-            if self.disappeared[
-                objectID
-            ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
-                self.objects[objectID]
-            ):
-                self._deregister(objectID)
-        # return early as there are no centroids or tracking info
-        # to update
-        self.previous_timestamp = frame_timestamp
-        return self._return()
-
-    # initialize an array of input centroids for the current frame
-    inputCentroids = np.zeros((len(bbox_xyxy), 2), dtype=&#34;int&#34;)
-    inputBBOX = np.zeros((len(bbox_xyxy), 4), dtype=&#34;int&#34;)
-    inputConfidence = np.zeros((len(bbox_xyxy), 1), dtype=&#34;float&#34;)
-    # loop over the bounding box rectangles
-    for (i, bb) in enumerate(bbox_xyxy):
-        # use the bounding box coordinates to derive the centroid
-        inputCentroids[i] = self._centroid(bb)
-        inputBBOX[i] = bb
-        inputConfidence[i] = conf[i]
-
-    # print(&#34;INPUTS:&#34;)
-    # print(inputCentroids, inputBBOX, inputConfidence)
-
-    # if we are currently not tracking any objects take the input
-    # centroids and register each of them
-    if len(self.objects) == 0:
-        for i in range(len(inputCentroids)):
-            # only register when not in deregistration zone
-            if self._isNotInsideDeregistrationZone(inputCentroids[i]):
-                self._register(inputCentroids[i], inputBBOX[i], inputConfidence[i])
-
-    # otherwise, are are currently tracking objects so we need to
-    # try to match the input centroids to existing object
-    # centroids
-    else:
-        # grab the set of object IDs and corresponding centroids
-        objectIDs = list(self.objects.keys())
-        objectCentroids = list(self.objects.values())
-        # compute the distance between each pair of object
-        # centroids and input centroids, respectively -- our
-        # goal will be to match an input centroid to an existing
-        # object centroid
-        D = dist.cdist(np.array(objectCentroids), inputCentroids)
-        # Previous Group
-        # create sorted list of tuples of indexes and value in ascending order
-        D_sorted = sorted(np.ndenumerate(D), key=itemgetter(1))
-        # in order to determine if we need to update, register,
-        # or deregister an object we need to keep track of which
-        # of the rows and column indexes we have already examined
-        usedRows = set()
-        usedCols = set()
-
-        # loop through pairs of object, inputCentroid, and distance
-        for line in D_sorted:
-            row = line[0][0]
-            col = line[0][1]
-            distance = line[1]
-            # if we have already examined either the row or
-            # column value before, ignore it
-            # val
-            if row in usedRows or col in usedCols:
-                continue
-            # otherwise, grab the object ID for the current row,
-            # set its new centroid, and reset the disappeared
-            # counter
-            # But only if inside a maximum distance
-            if (distance &lt; self.DISTANCE_TOLERANCE) and (
-                abs(self.objects[objectIDs[row]][1] - inputCentroids[col][1])
-                &lt; self.VERTICAL_TOLERANCE
-            ):
-                objectID = objectIDs[row]
-                self.objects[objectID] = inputCentroids[col]
-                self.bbox[objectID] = inputBBOX[col]
-                self.confidence[objectID] = inputConfidence[col]
-                self.disappeared[objectID] = 0
-                # Previous Group
-                self.continuedMovement[objectID] = False
-
-                # Previous Group
-                # save the movement between the last two frames (only, if it is &#34;forward&#34;)
-                if self.previousPos[objectID] is not None:
-                    if (
-                        self.objects[objectID][1] &lt; self.LANE_SEPARATOR
-                        and (
-                            self.objects[objectID][0]
-                            - self.previousPos[objectID][0]
-                        )
-                        &lt; 0
-                    ) or (
-                        self.objects[objectID][1] &gt; self.LANE_SEPARATOR
-                        and (
-                            self.objects[objectID][0]
-                            - self.previousPos[objectID][0]
-                        )
-                        &gt; 0
-                    ):
-
-                        self.lastValidMovement[objectID] = (
-                            self.objects[objectID] - self.previousPos[objectID]
-                        ) / self.time_between_frames
-                    self.previousPos[objectID] = self.objects[objectID]
-
-                # indicate that we have examined each of the row and
-                # column indexes, respectively
-                usedRows.add(row)
-                usedCols.add(col)
-
-        # compute both the row and column index we have NOT yet
-        # examined
-        unusedRows = set(range(0, D.shape[0])).difference(usedRows)
-        unusedCols = set(range(0, D.shape[1])).difference(usedCols)
-
-        # in the event that the number of object centroids is
-        # equal or greater than the number of input centroids
-        # we need to check and see if some of these objects have
-        # potentially disappeared
-        if D.shape[0] &gt;= D.shape[1]:
-            # loop over the unused row indexes
-            for row in unusedRows:
-                # grab the object ID for the corresponding row
-                # index and increment the disappeared counter
-                objectID = objectIDs[row]
-                self.disappeared[objectID] += 1
-                # Previous Group
-                self.continuedMovement[objectID] = False
-                self._continueMovement(objectID)
-                self.previousPos[objectID] = None
-                # check to see if the number of consecutive
-                # frames the object has been marked &#34;disappeared&#34;
-                # for warrants deregistering the object
-                # Or if object is inside deregistration zone
-                if self.disappeared[
-                    objectID
-                ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
-                    objectCentroids[row]
-                ):
-                    self._deregister(objectID)
-
-        # otherwise, if the number of input centroids is greater
-        # than the number of existing object centroids we need to
-        # register each new input centroid as a trackable object
-        else:
-            for col in unusedCols:
-                if self._isNotInsideDeregistrationZone(inputCentroids[col]):
-                    self._register(
-                        inputCentroids[col], inputBBOX[col], inputConfidence[col]
-                    )
-
-    # return the set of trackable objects
-    self.previous_timestamp = frame_timestamp
-    return self._return()</code></pre>
-</details>
-</dd>
-</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pancake.tracker.tracker.BaseTracker" href="tracker.html#pancake.tracker.tracker.BaseTracker">BaseTracker</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pancake.tracker.tracker.BaseTracker.get_subclasses" href="tracker.html#pancake.tracker.tracker.BaseTracker.get_subclasses">get_subclasses</a></code></li>
+<li><code><a title="pancake.tracker.tracker.BaseTracker.update" href="tracker.html#pancake.tracker.tracker.BaseTracker.update">update</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -964,7 +781,6 @@ def transform_detections(det: Type[torch.Tensor]):
 <h4><code><a title="pancake.tracker.tracker_centroid_old.CentroidTracker" href="#pancake.tracker.tracker_centroid_old.CentroidTracker">CentroidTracker</a></code></h4>
 <ul class="">
 <li><code><a title="pancake.tracker.tracker_centroid_old.CentroidTracker.transform_detections" href="#pancake.tracker.tracker_centroid_old.CentroidTracker.transform_detections">transform_detections</a></code></li>
-<li><code><a title="pancake.tracker.tracker_centroid_old.CentroidTracker.update" href="#pancake.tracker.tracker_centroid_old.CentroidTracker.update">update</a></code></li>
 </ul>
 </li>
 </ul>

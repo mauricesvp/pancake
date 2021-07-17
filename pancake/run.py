@@ -26,10 +26,12 @@ def setup_logging(config):
 
 
 def main(cfg_path: str = None, n: int = 0):
-    """
-    :param cfg_path (str): Alternative config path
-    :param n (int): Maximum number of iterations (0 means infinite)
-    """
+    """ Pancake Main Function
+
+    Args:
+        cfg_path (str, optional): Alternative config path. Defaults to None.
+        n (int, optional): Maximum number of iterations (0 means infinite). Defaults to 0.
+    """    
     l.debug("Starting pancake.")
 
     config = pancake_config(cfg_path)

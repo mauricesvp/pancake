@@ -76,9 +76,11 @@ class YOLOCustomDetector(Detector):
 
     def detect(self, imgs: List[np.ndarray]) -> List[torch.Tensor]:
         """ Wrapper for detection calculation.
-        - Pads and resizes the images to conform with the model
-        - Calls the infer method of underlying model in order to retrieve detections
-        - Rescales the detections
+
+        Description:
+            - Pads and resizes the images to conform with the model
+            - Calls the infer method of underlying model in order to retrieve detections
+            - Rescales the detections
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]

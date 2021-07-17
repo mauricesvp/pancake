@@ -37,8 +37,15 @@ def profile(
     output_file: str=None, sort_by: str=&#34;cumulative&#34;, lines_to_print: int=None, strip_dirs: bool=False
 ) -&gt; pstats.Stats:
     &#34;&#34;&#34; A time profiler decorator.
-    Inspired by and modified the profile decorator of Giampaolo Rodola:
-    http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Description:
+        Measures the time for all subcalls and documents it in a readable fashion.
+        Inspired by and modified the profile decorator of Giampaolo Rodola:
+        http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Usage:
+        Simply import this function and add it as a decorator to the method to be
+        profiled. (@profile(...))
 
     Args:
         output_file (str, optional): 
@@ -102,9 +109,14 @@ def profile(
 <span>def <span class="ident">profile</span></span>(<span>output_file: str = None, sort_by: str = 'cumulative', lines_to_print: int = None, strip_dirs: bool = False) ‑> pstats.Stats</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A time profiler decorator.
+<div class="desc"><p>A time profiler decorator.</p>
+<h2 id="description">Description</h2>
+<p>Measures the time for all subcalls and documents it in a readable fashion.
 Inspired by and modified the profile decorator of Giampaolo Rodola:
 <a href="http://code.activestate.com/recipes/577817-profile-decorator/">http://code.activestate.com/recipes/577817-profile-decorator/</a></p>
+<h2 id="usage">Usage</h2>
+<p>Simply import this function and add it as a decorator to the method to be
+profiled. (@profile(&hellip;))</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>output_file</code></strong> :&ensp;<code>str</code>, optional</dt>
@@ -141,8 +153,15 @@ Defaults to False.</dd>
     output_file: str=None, sort_by: str=&#34;cumulative&#34;, lines_to_print: int=None, strip_dirs: bool=False
 ) -&gt; pstats.Stats:
     &#34;&#34;&#34; A time profiler decorator.
-    Inspired by and modified the profile decorator of Giampaolo Rodola:
-    http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Description:
+        Measures the time for all subcalls and documents it in a readable fashion.
+        Inspired by and modified the profile decorator of Giampaolo Rodola:
+        http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Usage:
+        Simply import this function and add it as a decorator to the method to be
+        profiled. (@profile(...))
 
     Args:
         output_file (str, optional): 

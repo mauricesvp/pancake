@@ -7,11 +7,12 @@ import torch
 
 
 class Detector(ABC):
-    """ Base Class: Abstract class for the Detectors
+    """ [_Abstract Class_] Base class of the Detectors
     
-    All Detectors to be used within this framework have to inherit from this class. \
-    The inheritance will automatically register every subclass into the registry thus \
-    allowing for modular access to the detectors.
+    __Base Class__:
+        All Detectors to be used within this framework have to inherit from this class. \
+        The inheritance will automatically register every subclass into the registry thus \
+        allowing for modular access to the detectors.
     """    
     _subclasses = {}
 

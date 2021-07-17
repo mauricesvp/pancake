@@ -8,8 +8,15 @@ def profile(
     output_file: str=None, sort_by: str="cumulative", lines_to_print: int=None, strip_dirs: bool=False
 ) -> pstats.Stats:
     """ A time profiler decorator.
-    Inspired by and modified the profile decorator of Giampaolo Rodola:
-    http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Description:
+        Measures the time for all subcalls and documents it in a readable fashion.
+        Inspired by and modified the profile decorator of Giampaolo Rodola:
+        http://code.activestate.com/recipes/577817-profile-decorator/
+
+    Usage:
+        Simply import this function and add it as a decorator to the method to be
+        profiled. (@profile(...))
 
     Args:
         output_file (str, optional): 

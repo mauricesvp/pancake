@@ -1,4 +1,4 @@
-""" Holds the Result Processor """
+""" Holds the Pancake Result Processor """
 from datetime import datetime
 from typing import List
 
@@ -42,9 +42,10 @@ class ResultProcessor:
     ):
         """ This class encapsulates all result processing procedures.
 
-        Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
-        Visualizes the results, saves the results as image/video
-        Asynchronous approach, guaranteed throughput speedup!
+        Functionalities:
+            - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
+            - Visualizes the results, saves the results as image/video
+            - Asynchronous approach, guaranteed throughput speedup!
 
         Args:
             show_res (bool): If resulting images should be visualized live
