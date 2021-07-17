@@ -13,7 +13,7 @@ class Backend(ABC):
     __Base Class__:
         All Backends to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
-        allowing for modular access to the detectors.
+        allowing for modular access to the backend strategies.
     """
 
     _subclasses = {}
