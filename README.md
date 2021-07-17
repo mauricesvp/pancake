@@ -389,8 +389,15 @@ All of the pancake ingredients can simply be specified in the designated _[panca
 
 <img width="800" height="%" src="/gitimg/app_structure.png">
 
-Module foo stuff
-placeholder
+The pancake framework can be thought of as a data pipeline. The incoming data is preprocessed,
+the backend generates detections using a detector, the tracker generates tracks,
+and the results are stored in a database (this happens for every frame).
+
+### Data + Preprocessing
+  Pancake offers various different data sources, both live and offline,
+  as well as multiple sources at once (e.g. multi-camera setups).
+  The preprocessing necessary is handled "under the hood" (for details, see [datasets.py](pancake/utils/datasets.py) ),
+  usually the user shouldn't have to delve into this too much.
 
 ### Backend
   Backend foo
