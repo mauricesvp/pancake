@@ -29,6 +29,8 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34; Pancake Tracker Base Class &#34;&#34;&#34;
 from abc import ABC, abstractmethod
+
+import numpy as np
 import torch
 
 
@@ -63,7 +65,7 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det: torch.Tensor, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
         &#34;&#34;&#34; Updates the internal tracker state.
 
         Args:
@@ -71,6 +73,9 @@ class BaseTracker(ABC):
 
         Raises:
             NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
         &#34;&#34;&#34;        
         raise NotImplementedError</code></pre>
 </details>
@@ -129,7 +134,7 @@ allowing for modular access to the detectors.</p></div>
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det: torch.Tensor, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
         &#34;&#34;&#34; Updates the internal tracker state.
 
         Args:
@@ -137,6 +142,9 @@ allowing for modular access to the detectors.</p></div>
 
         Raises:
             NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
         &#34;&#34;&#34;        
         raise NotImplementedError</code></pre>
 </details>
@@ -183,7 +191,7 @@ def get_subclasses(cls):
 <h3>Methods</h3>
 <dl>
 <dt id="pancake.tracker.tracker.BaseTracker.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, det: torch.Tensor, *args, **kwargs)</span>
+<span>def <span class="ident">update</span></span>(<span>self, det: torch.Tensor, *args, **kwargs) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Updates the internal tracker state.</p>
@@ -196,13 +204,18 @@ def get_subclasses(cls):
 <dl>
 <dt><code>NotImplementedError</code></dt>
 <dd>(this is an abtract method)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id]</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@abstractmethod
-def update(self, det: torch.Tensor, *args, **kwargs):
+def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
     &#34;&#34;&#34; Updates the internal tracker state.
 
     Args:
@@ -210,6 +223,9 @@ def update(self, det: torch.Tensor, *args, **kwargs):
 
     Raises:
         NotImplementedError: (this is an abtract method)
+
+    Returns:
+        np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
     &#34;&#34;&#34;        
     raise NotImplementedError</code></pre>
 </details>

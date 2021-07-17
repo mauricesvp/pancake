@@ -1,5 +1,7 @@
 """ Pancake Tracker Base Class """
 from abc import ABC, abstractmethod
+
+import numpy as np
 import torch
 
 
@@ -34,7 +36,7 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det: torch.Tensor, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -> np.ndarray:
         """ Updates the internal tracker state.
 
         Args:
@@ -42,5 +44,8 @@ class BaseTracker(ABC):
 
         Raises:
             NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
         """        
         raise NotImplementedError
