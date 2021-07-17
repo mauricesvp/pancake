@@ -393,6 +393,9 @@ The pancake framework can be thought of as a data pipeline. The incoming data is
 the backend generates detections using a detector, the tracker generates tracks,
 and the results are stored in a database (this happens for every frame).
 
+Pancake has been designed with modularity in mind, that is to say the Backend, Detector and Tracker can easily be changed,
+which also means new ones can be implemented and integrated easily. Find more details on how to write your own Backend, Detector or Tracker below.
+
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
   as well as multiple sources at once (e.g. multi-camera setups).
