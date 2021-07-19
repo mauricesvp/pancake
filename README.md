@@ -430,7 +430,7 @@ Find more details on how to write your own Backend, Detector or Tracker below.
       <li>Create a Backend class that inherits from the <a href="pancake/detector/backends/backend.py">Base Backend</a>.</li>
       <li>Implement the <code>detect</code> method.</li>
       <li>Add your Backend to the <a href="pancake/detector/backends/__init__.py">registry</a> (i.e. add <code>from .backend_foo import Foo</code>).</li>
-      <li>Set your Backend in the configuration.</li>
+      <li>Set your Backend in the configuration (under "BACKEND" -> NAME: "foo").</li>
     </ol>
   Important: When implementing your Backend, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/backends/backend.html> Backend API</a>!
   </details>
@@ -451,7 +451,7 @@ Find more details on how to write your own Backend, Detector or Tracker below.
       <li>Create a Detector class that inherits from the <a href="pancake/detector/detector.py">Base Detector</a>.</li>
       <li>Implement the <code>detect</code> method.</li>
       <li>Add your Detector to the <a href="pancake/detector/__init__.py">registry</a> (i.e. add <code>from .detector_foo import Foo</code>).</li>
-      <li>Set your Detector in the configuration.</li>
+      <li>Set your Detector in the configuration (under "DETECTOR" -> NAME: "foo").</li>
     </ol>
   Important: When implementing your Detector, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/detector.html> Detector API</a>!
   </details>
@@ -473,7 +473,7 @@ Find more details on how to write your own Backend, Detector or Tracker below.
       <li>Create a Tracker class that inherits from the <a href="pancake/tracker/tracker.py">Base Tracker</a>.</li>
       <li>Implement the <code>update</code> method.</li>
       <li>Add your Tracker to the <a href="pancake/tracker/__init__.py">registry</a> (i.e. add <code>from .tracker_foo import Foo</code>).</li>
-      <li>Set your Tracker in the configuration.</li>
+      <li>Set your Tracker in the configuration (under "TRACKER" -> NAME: "foo").</li>
     </ol>
   Important: When implementing your Tracker, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/tracker/tracker.html> Tracker API</a>!
   </details>
