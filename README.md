@@ -457,7 +457,9 @@ Find more details on how to write your own Backend, Detector or Tracker below.
   </details>
 
 ### Tracking
-  Tracking foo
+  Tracking is handled by an instance of a tracker.
+  For pancake, we provide a Centroid Tracker as well as a DeepSORT Tracker, 
+  whereat the Trackers have been loosely taken over from previous project groups.
   <details>
     <summary><b>Centroid Tracker</b></summary>
   </details>
@@ -477,7 +479,11 @@ Find more details on how to write your own Backend, Detector or Tracker below.
   </details>
 
 ### Storage
-  Storage foo
+  The collected data can optionally be stored in a SQLite database (this can enabled in the [configuration](#configurations)).
+
+### Result Processing
+  If you are not only interested in the raw results data, but also in visualizations of detections or tracks,
+  you can enable this in the [configuration](#configurations).
 
 ### Analysis
   Pancake currently doesn't offer further analysis on the collected data.
