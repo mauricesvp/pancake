@@ -24,7 +24,7 @@ def setup_logging(config: dict):
 
     Args:
         config (dict): Dictionary containing configurations.
-    """    
+    """
     try:
         log_level = getattr(logging, config.LOGGING.LEVEL)
         l.setLevel(log_level)

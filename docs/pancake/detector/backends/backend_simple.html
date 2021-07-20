@@ -46,14 +46,26 @@ TODOs:
       (this could be done in the detector as well)
 
 &#34;&#34;&#34;
+from typing import List, Tuple, Type
+
 import torch
 import cv2
+import numpy as np
 
 from .backend import Backend
+from ..detector import Detector
 
 
 class SIMPLE(Backend):
-    def __init__(self, detector, roi: list = None, *args, **kwargs) -&gt; None:
+    def __init__(
+        self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
+    ) -&gt; None:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (List[int], optional): [description]. Defaults to None.
+        &#34;&#34;&#34;
         &#34;&#34;&#34;
 
         :param detector: Detector which provides &#39;detect&#39; method,
@@ -66,7 +78,17 @@ class SIMPLE(Backend):
         else:
             self.roi = None
 
-    def detect(self, source) -&gt; (list, list):
+    def detect(
+        self, source: List[np.ndarray]
+    ) -&gt; Tuple[List[torch.Tensor], List[np.ndarray]]:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[List[torch.Tensor], List[np.ndarray]]: [description]
+        &#34;&#34;&#34;
         &#34;&#34;&#34;Detect objects on image(s).
 
         :param source: Image or list of images.
@@ -119,7 +141,7 @@ class SIMPLE(Backend):
 <dl>
 <dt id="pancake.detector.backends.backend_simple.SIMPLE"><code class="flex name class">
 <span>class <span class="ident">SIMPLE</span></span>
-<span>(</span><span>detector, roi: list = None, *args, **kwargs)</span>
+<span>(</span><span>detector: Type[<a title="pancake.detector.detector.Detector" href="../detector.html#pancake.detector.detector.Detector">Detector</a>], roi: List[int] = None, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>[<em>Abstract Class</em>] Base class of the Backends</p>
@@ -127,14 +149,28 @@ class SIMPLE(Backend):
 All Backends to be used within this framework have to inherit from this class.
 The inheritance will automatically register every subclass into the registry thus
 allowing for modular access to the backend strategies.</p>
-<p>:param detector: Detector which provides 'detect' method,
-which can take one or multiple images.</p></div>
+<p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>detector</code></strong> :&ensp;<code>Type[Detector]</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>roi</code></strong> :&ensp;<code>List[int]</code>, optional</dt>
+<dd>[description]. Defaults to None.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SIMPLE(Backend):
-    def __init__(self, detector, roi: list = None, *args, **kwargs) -&gt; None:
+    def __init__(
+        self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
+    ) -&gt; None:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (List[int], optional): [description]. Defaults to None.
+        &#34;&#34;&#34;
         &#34;&#34;&#34;
 
         :param detector: Detector which provides &#39;detect&#39; method,
@@ -147,7 +183,17 @@ which can take one or multiple images.</p></div>
         else:
             self.roi = None
 
-    def detect(self, source) -&gt; (list, list):
+    def detect(
+        self, source: List[np.ndarray]
+    ) -&gt; Tuple[List[torch.Tensor], List[np.ndarray]]:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[List[torch.Tensor], List[np.ndarray]]: [description]
+        &#34;&#34;&#34;
         &#34;&#34;&#34;Detect objects on image(s).
 
         :param source: Image or list of images.
@@ -196,16 +242,35 @@ which can take one or multiple images.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="pancake.detector.backends.backend_simple.SIMPLE.detect"><code class="name flex">
-<span>def <span class="ident">detect</span></span>(<span>self, source) ‑> (<class 'list'>, <class 'list'>)</span>
+<span>def <span class="ident">detect</span></span>(<span>self, source: List[numpy.ndarray]) ‑> Tuple[List[torch.Tensor], List[numpy.ndarray]]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Detect objects on image(s).</p>
-<p>:param source: Image or list of images.</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[List[torch.Tensor], List[np.ndarray]]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def detect(self, source) -&gt; (list, list):
+<pre><code class="python">def detect(
+    self, source: List[np.ndarray]
+) -&gt; Tuple[List[torch.Tensor], List[np.ndarray]]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        source (List[np.ndarray]): [description]
+
+    Returns:
+        Tuple[List[torch.Tensor], List[np.ndarray]]: [description]
+    &#34;&#34;&#34;
     &#34;&#34;&#34;Detect objects on image(s).
 
     :param source: Image or list of images.

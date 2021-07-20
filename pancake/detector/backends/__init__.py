@@ -20,7 +20,7 @@ def setup_backend(config: dict, detector: Type[Detector]) -> Type[Backend]:
 
     Returns:
         Type[Backend]: A Backend subclass instance.
-    """    
+    """
     assert detector
 
     name = config.BACKEND.NAME

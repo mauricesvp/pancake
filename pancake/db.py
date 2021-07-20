@@ -23,7 +23,7 @@ l = setup_logger(__name__)
 
 class DataBase:
     def __init__(self, db_name: str, relations: dict, inserts: dict, *args, **kwargs):
-        """ Encapsulates the Pancake database
+        """Encapsulates the Pancake database
 
         Args:
             db_name (str): Database filename
@@ -32,7 +32,7 @@ class DataBase:
 
         Raises:
             ConnectionError: Raised when sqlite3 can't connect to the database
-        """        
+        """
         try:
             self.con = sqlite3.connect(db_name, check_same_thread=False)
             self.relations = relations
@@ -57,7 +57,7 @@ class DataBase:
         Raises:
             ConnectionError: Raised when an error occurs while trying to create \
                                 table.
-        """        
+        """
         cursor = self.con.cursor()
 
         for rel_name, query in self.relations.items():
@@ -72,8 +72,7 @@ class DataBase:
                     raise ConnectionError
 
     def initial_insert(self, *args, **kwargs) -> None:
-        """ Method to log the static application setup.
-        """        
+        """Method to log the static application setup."""
         cursor = self.con.cursor()
 
         if "DETECTOR" in kwargs["DBT"]:
@@ -134,13 +133,12 @@ class DataBase:
         self.con.commit()
 
     def insert_tracks(self, *args, **kwargs):
-        """ Calls a thread to execute the query with provided arguments.
-        """        
+        """Calls a thread to execute the query with provided arguments."""
         t = threading.Thread(target=self.run_insert_tracks, args=args, kwargs=kwargs)
         t.start()
 
     def run_insert_tracks(self, tracks: np.ndarray, timestamp: float):
-        """ Executes query with provided tracks matrix.
+        """Executes query with provided tracks matrix.
 
         If no timestamp is provided, we take the current timestamp.
         Reorders the matrix to match the database relation in order to be
@@ -150,7 +148,7 @@ class DataBase:
         Args:
             tracks (np.ndarray): Tracks on [x1, y1, x2, y2, centre x, centre y, id, cls]
             timestamp (float): A timestamp of format time.time() timestamp
-        """        
+        """
         if len(tracks) < 1:
             l.debug("Tracks are empty, skipping insert.")
             return
@@ -199,7 +197,7 @@ def setup_database(
     Returns:
         Union[DataBase, None]: An instance of the pancake database if the flag was set,
                                 None otherwise.
-    """    
+    """
     db_schema = get_config(config_file=fix_path(cfg.SCHEME_PATH)).PANCAKE_DB
 
     relations = db_schema.RELATIONS

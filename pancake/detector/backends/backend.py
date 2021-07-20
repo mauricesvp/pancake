@@ -23,7 +23,7 @@ class Backend(ABC):
 
     @classmethod
     def get_subclasses(cls) -> dict:
-        """ Returns all subclasses of this base class.
+        """Returns all subclasses of this base class.
         The dictionary poses as Backend registry.
 
         Returns:
@@ -39,7 +39,7 @@ class Backend(ABC):
     def detect(
         self, img: Union[np.ndarray, List[np.ndarray]], *args, **kwargs
     ) -> Tuple[torch.Tensor, np.ndarray]:
-        """ Method to wrap the backend strategy.
+        """Method to wrap the backend strategy.
 
         Args:
             img (Union[np.ndarray, List[np.ndarray]]): Image or list of Images in BGR [c, w, h]
@@ -48,9 +48,9 @@ class Backend(ABC):
             NotImplementedError: (this is an abstract class)
 
         Returns:
-            Tuple[torch.Tensor, np.ndarray]: 
+            Tuple[torch.Tensor, np.ndarray]:
                 First member of the tuple is the detection matrix in [xyxy, conf, cls] and
-                second, the resulting image from application of the strategy in BGR 
+                second, the resulting image from application of the strategy in BGR
                 [c, w , h].
-        """    
+        """
         raise NotImplementedError

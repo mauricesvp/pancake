@@ -89,7 +89,7 @@ class YOLOCustomDetector(Detector):
         """
         if type(imgs) is not list:
             imgs = [imgs]
-            
+
         img_sizes = [img.shape for img in imgs]
 
         # Inference

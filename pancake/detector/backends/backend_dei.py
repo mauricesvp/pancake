@@ -7,6 +7,7 @@ TODOs:
       (this could be done in the detector as well)
 
 """
+from typing import Type, Tuple, List, Union
 import math
 import time
 from functools import lru_cache
@@ -19,6 +20,7 @@ import torch
 from shapely.geometry import Polygon
 
 from .backend import Backend
+from ..detector import Detector
 from pancake.logger import setup_logger
 
 l = setup_logger(__name__)
@@ -27,7 +29,9 @@ l = setup_logger(__name__)
 # Helper functions
 
 
-def locate(subframes, x0, y0, x1, y1) -> list:
+def locate(
+    subframes: List[np.ndarray], x0: int, y0: int, x1: int, y1: int
+) -> List[int]:
     """Return all subframe ids the obj is present in.
 
     This function assumes the coordinates are laid out like this:
@@ -58,14 +62,38 @@ def locate(subframes, x0, y0, x1, y1) -> list:
     return locations
 
 
-def hconcat(source):
+def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -> np.ndarray:
+    """[summary]
+
+    Args:
+        source (Union[np.ndarray, List[np.ndarray]]): [description]
+
+    Returns:
+        np.ndarray: [description]
+    """
     """Concat images horizontally"""
     if type(source) != list:
         source = [source]
     return cv2.hconcat(source)
 
 
-def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -> list:
+def rev_rotate_bound(
+    img: np.ndarray, 
+    result: Tuple[int, int, int, int, int, int], 
+    angle: int, 
+    side: int
+) -> Tuple[int, int, int, int, int, int]:
+    """[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        result (Tuple[int, int, int, int, int, int]): [description]
+        angle (int): [description]
+        side (int): [description]
+
+    Returns:
+        Tuple[int, int, int, int, int, int]: [description]
+    """
     h, w, _ = img.shape
     center = (w // 2, h // 2)
 
@@ -92,7 +120,16 @@ def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -> l
     return (tlx, tly, brx, bry, cf, cl)
 
 
-def rotate_cpu(image, angle):
+def rotate_cpu(image: np.ndarray, angle: int):
+    """[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    """    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -104,7 +141,16 @@ def rotate_cpu(image, angle):
     return rotated
 
 
-def rotate(image, angle):
+def rotate(image: np.ndarray, angle: int):
+    """[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    """    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -118,7 +164,16 @@ def rotate(image, angle):
     return rotated.download()
 
 
-def rotate_bound_cpu(img: np.ndarray, angle: int):
+def rotate_bound_cpu(img: np.ndarray, angle: int) -> np.ndarray:
+    """[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    """    
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -147,7 +202,16 @@ def rotate_bound_cpu(img: np.ndarray, angle: int):
     return cv2.warpAffine(img, M, (nW, nH))
 
 
-def rotate_bound(img: np.ndarray, angle: int):
+def rotate_bound(img: np.ndarray, angle: int) -> np.ndarray:
+    """[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    """    
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -184,7 +248,15 @@ def rotate_bound(img: np.ndarray, angle: int):
 
 
 @lru_cache(maxsize=None)
-def f(x: int) -> (int, int):
+def f(x: int) -> Tuple[int, int]:
+    """[summary]
+
+    Args:
+        x (int): [description]
+
+    Returns:
+        Tuple[int, int]: [description]
+    """    
     """Returns y value, angle of rotation, width for x along centre strip."""
     if x < 3840:
         y = int(-0.047 * x + 1100)
@@ -212,7 +284,7 @@ CONST = {
 class DEI(Backend):
     def __init__(
         self,
-        detector,
+        detector: Type[Detector],
         roi: list = None,
         simple: bool = False,
         cache: bool = True,
@@ -220,6 +292,15 @@ class DEI(Backend):
         *args,
         **kwargs,
     ) -> None:
+        """[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (list, optional): [description]. Defaults to None.
+            simple (bool, optional): [description]. Defaults to False.
+            cache (bool, optional): [description]. Defaults to True.
+            config (dict, optional): [description]. Defaults to {}.
+        """    
         """
 
         :param detector: Detector which provides 'detect' method,
@@ -269,8 +350,16 @@ class DEI(Backend):
 
     def detect(
         self,
-        source,
-    ) -> (list, np.ndarray):
+        source: List[np.ndarray],
+    ) -> Tuple[torch.Tensor, np.ndarray]:
+        """[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[torch.Tensor, np.ndarray]: [description]
+        """    
         """
         Detect objects on image by splitting and merging.
 

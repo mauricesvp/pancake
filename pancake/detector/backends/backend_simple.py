@@ -7,14 +7,26 @@ TODOs:
       (this could be done in the detector as well)
 
 """
+from typing import List, Tuple, Type
+
 import torch
 import cv2
+import numpy as np
 
 from .backend import Backend
+from ..detector import Detector
 
 
 class SIMPLE(Backend):
-    def __init__(self, detector, roi: list = None, *args, **kwargs) -> None:
+    def __init__(
+        self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
+    ) -> None:
+        """[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (List[int], optional): [description]. Defaults to None.
+        """
         """
 
         :param detector: Detector which provides 'detect' method,
@@ -27,7 +39,17 @@ class SIMPLE(Backend):
         else:
             self.roi = None
 
-    def detect(self, source) -> (list, list):
+    def detect(
+        self, source: List[np.ndarray]
+    ) -> Tuple[List[torch.Tensor], List[np.ndarray]]:
+        """[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[List[torch.Tensor], List[np.ndarray]]: [description]
+        """
         """Detect objects on image(s).
 
         :param source: Image or list of images.

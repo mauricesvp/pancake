@@ -46,6 +46,7 @@ TODOs:
       (this could be done in the detector as well)
 
 &#34;&#34;&#34;
+from typing import Type, Tuple, List, Union
 import math
 import time
 from functools import lru_cache
@@ -58,6 +59,7 @@ import torch
 from shapely.geometry import Polygon
 
 from .backend import Backend
+from ..detector import Detector
 from pancake.logger import setup_logger
 
 l = setup_logger(__name__)
@@ -66,7 +68,9 @@ l = setup_logger(__name__)
 # Helper functions
 
 
-def locate(subframes, x0, y0, x1, y1) -&gt; list:
+def locate(
+    subframes: List[np.ndarray], x0: int, y0: int, x1: int, y1: int
+) -&gt; List[int]:
     &#34;&#34;&#34;Return all subframe ids the obj is present in.
 
     This function assumes the coordinates are laid out like this:
@@ -97,14 +101,38 @@ def locate(subframes, x0, y0, x1, y1) -&gt; list:
     return locations
 
 
-def hconcat(source):
+def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        source (Union[np.ndarray, List[np.ndarray]]): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;
     &#34;&#34;&#34;Concat images horizontally&#34;&#34;&#34;
     if type(source) != list:
         source = [source]
     return cv2.hconcat(source)
 
 
-def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -&gt; list:
+def rev_rotate_bound(
+    img: np.ndarray, 
+    result: Tuple[int, int, int, int, int, int], 
+    angle: int, 
+    side: int
+) -&gt; Tuple[int, int, int, int, int, int]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        result (Tuple[int, int, int, int, int, int]): [description]
+        angle (int): [description]
+        side (int): [description]
+
+    Returns:
+        Tuple[int, int, int, int, int, int]: [description]
+    &#34;&#34;&#34;
     h, w, _ = img.shape
     center = (w // 2, h // 2)
 
@@ -131,7 +159,16 @@ def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -&gt
     return (tlx, tly, brx, bry, cf, cl)
 
 
-def rotate_cpu(image, angle):
+def rotate_cpu(image: np.ndarray, angle: int):
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    &#34;&#34;&#34;    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -143,7 +180,16 @@ def rotate_cpu(image, angle):
     return rotated
 
 
-def rotate(image, angle):
+def rotate(image: np.ndarray, angle: int):
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    &#34;&#34;&#34;    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -157,7 +203,16 @@ def rotate(image, angle):
     return rotated.download()
 
 
-def rotate_bound_cpu(img: np.ndarray, angle: int):
+def rotate_bound_cpu(img: np.ndarray, angle: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -186,7 +241,16 @@ def rotate_bound_cpu(img: np.ndarray, angle: int):
     return cv2.warpAffine(img, M, (nW, nH))
 
 
-def rotate_bound(img: np.ndarray, angle: int):
+def rotate_bound(img: np.ndarray, angle: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -223,7 +287,15 @@ def rotate_bound(img: np.ndarray, angle: int):
 
 
 @lru_cache(maxsize=None)
-def f(x: int) -&gt; (int, int):
+def f(x: int) -&gt; Tuple[int, int]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        x (int): [description]
+
+    Returns:
+        Tuple[int, int]: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip.&#34;&#34;&#34;
     if x &lt; 3840:
         y = int(-0.047 * x + 1100)
@@ -251,7 +323,7 @@ CONST = {
 class DEI(Backend):
     def __init__(
         self,
-        detector,
+        detector: Type[Detector],
         roi: list = None,
         simple: bool = False,
         cache: bool = True,
@@ -259,6 +331,15 @@ class DEI(Backend):
         *args,
         **kwargs,
     ) -&gt; None:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (list, optional): [description]. Defaults to None.
+            simple (bool, optional): [description]. Defaults to False.
+            cache (bool, optional): [description]. Defaults to True.
+            config (dict, optional): [description]. Defaults to {}.
+        &#34;&#34;&#34;    
         &#34;&#34;&#34;
 
         :param detector: Detector which provides &#39;detect&#39; method,
@@ -308,8 +389,16 @@ class DEI(Backend):
 
     def detect(
         self,
-        source,
-    ) -&gt; (list, np.ndarray):
+        source: List[np.ndarray],
+    ) -&gt; Tuple[torch.Tensor, np.ndarray]:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[torch.Tensor, np.ndarray]: [description]
+        &#34;&#34;&#34;    
         &#34;&#34;&#34;
         Detect objects on image by splitting and merging.
 
@@ -483,16 +572,34 @@ class DEI(Backend):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pancake.detector.backends.backend_dei.f"><code class="name flex">
-<span>def <span class="ident">f</span></span>(<span>x: int) ‑> (<class 'int'>, <class 'int'>)</span>
+<span>def <span class="ident">f</span></span>(<span>x: int) ‑> Tuple[int, int]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns y value, angle of rotation, width for x along centre strip.</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>int</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[int, int]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@lru_cache(maxsize=None)
-def f(x: int) -&gt; (int, int):
+def f(x: int) -&gt; Tuple[int, int]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        x (int): [description]
+
+    Returns:
+        Tuple[int, int]: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip.&#34;&#34;&#34;
     if x &lt; 3840:
         y = int(-0.047 * x + 1100)
@@ -510,15 +617,33 @@ def f(x: int) -&gt; (int, int):
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.hconcat"><code class="name flex">
-<span>def <span class="ident">hconcat</span></span>(<span>source)</span>
+<span>def <span class="ident">hconcat</span></span>(<span>source: Union[numpy.ndarray, List[numpy.ndarray]]) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Concat images horizontally</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>Union[np.ndarray, List[np.ndarray]]</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def hconcat(source):
+<pre><code class="python">def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        source (Union[np.ndarray, List[np.ndarray]]): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;
     &#34;&#34;&#34;Concat images horizontally&#34;&#34;&#34;
     if type(source) != list:
         source = [source]
@@ -526,7 +651,7 @@ def f(x: int) -&gt; (int, int):
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.locate"><code class="name flex">
-<span>def <span class="ident">locate</span></span>(<span>subframes, x0, y0, x1, y1) ‑> list</span>
+<span>def <span class="ident">locate</span></span>(<span>subframes: List[numpy.ndarray], x0: int, y0: int, x1: int, y1: int) ‑> List[int]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return all subframe ids the obj is present in.</p>
@@ -543,7 +668,9 @@ x0, y0 ------------
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def locate(subframes, x0, y0, x1, y1) -&gt; list:
+<pre><code class="python">def locate(
+    subframes: List[np.ndarray], x0: int, y0: int, x1: int, y1: int
+) -&gt; List[int]:
     &#34;&#34;&#34;Return all subframe ids the obj is present in.
 
     This function assumes the coordinates are laid out like this:
@@ -575,15 +702,47 @@ x0, y0 ------------
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.rev_rotate_bound"><code class="name flex">
-<span>def <span class="ident">rev_rotate_bound</span></span>(<span>img: numpy.ndarray, result: tuple, angle: int, side: int) ‑> list</span>
+<span>def <span class="ident">rev_rotate_bound</span></span>(<span>img: numpy.ndarray, result: Tuple[int, int, int, int, int, int], angle: int, side: int) ‑> Tuple[int, int, int, int, int, int]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>result</code></strong> :&ensp;<code>Tuple[int, int, int, int, int, int]</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>side</code></strong> :&ensp;<code>int</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[int, int, int, int, int, int]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rev_rotate_bound(img: np.ndarray, result: tuple, angle: int, side: int) -&gt; list:
+<pre><code class="python">def rev_rotate_bound(
+    img: np.ndarray, 
+    result: Tuple[int, int, int, int, int, int], 
+    angle: int, 
+    side: int
+) -&gt; Tuple[int, int, int, int, int, int]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        result (Tuple[int, int, int, int, int, int]): [description]
+        angle (int): [description]
+        side (int): [description]
+
+    Returns:
+        Tuple[int, int, int, int, int, int]: [description]
+    &#34;&#34;&#34;
     h, w, _ = img.shape
     center = (w // 2, h // 2)
 
@@ -611,15 +770,36 @@ x0, y0 ------------
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.rotate"><code class="name flex">
-<span>def <span class="ident">rotate</span></span>(<span>image, angle)</span>
+<span>def <span class="ident">rotate</span></span>(<span>image: numpy.ndarray, angle: int)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>angle</code></strong> :&ensp;<code>float</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[type]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rotate(image, angle):
+<pre><code class="python">def rotate(image: np.ndarray, angle: int):
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    &#34;&#34;&#34;    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -634,16 +814,36 @@ x0, y0 ------------
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.rotate_bound"><code class="name flex">
-<span>def <span class="ident">rotate_bound</span></span>(<span>img: numpy.ndarray, angle: int)</span>
+<span>def <span class="ident">rotate_bound</span></span>(<span>img: numpy.ndarray, angle: int) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><h2 id="source">Source</h2>
-<p>github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rotate_bound(img: np.ndarray, angle: int):
+<pre><code class="python">def rotate_bound(img: np.ndarray, angle: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -677,16 +877,36 @@ x0, y0 ------------
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.rotate_bound_cpu"><code class="name flex">
-<span>def <span class="ident">rotate_bound_cpu</span></span>(<span>img: numpy.ndarray, angle: int)</span>
+<span>def <span class="ident">rotate_bound_cpu</span></span>(<span>img: numpy.ndarray, angle: int) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><h2 id="source">Source</h2>
-<p>github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rotate_bound_cpu(img: np.ndarray, angle: int):
+<pre><code class="python">def rotate_bound_cpu(img: np.ndarray, angle: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        img (np.ndarray): [description]
+        angle (int): [description]
+
+    Returns:
+        np.ndarray: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -716,15 +936,36 @@ x0, y0 ------------
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.rotate_cpu"><code class="name flex">
-<span>def <span class="ident">rotate_cpu</span></span>(<span>image, angle)</span>
+<span>def <span class="ident">rotate_cpu</span></span>(<span>image: numpy.ndarray, angle: int)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>angle</code></strong> :&ensp;<code>float</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[type]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rotate_cpu(image, angle):
+<pre><code class="python">def rotate_cpu(image: np.ndarray, angle: int):
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        image (np.ndarray): [description]
+        angle (float): [description]
+
+    Returns:
+        [type]: [description]
+    &#34;&#34;&#34;    
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -743,7 +984,7 @@ x0, y0 ------------
 <dl>
 <dt id="pancake.detector.backends.backend_dei.DEI"><code class="flex name class">
 <span>class <span class="ident">DEI</span></span>
-<span>(</span><span>detector, roi: list = None, simple: bool = False, cache: bool = True, config: dict = {}, *args, **kwargs)</span>
+<span>(</span><span>detector: Type[<a title="pancake.detector.detector.Detector" href="../detector.html#pancake.detector.detector.Detector">Detector</a>], roi: list = None, simple: bool = False, cache: bool = True, config: dict = {}, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>[<em>Abstract Class</em>] Base class of the Backends</p>
@@ -751,9 +992,20 @@ x0, y0 ------------
 All Backends to be used within this framework have to inherit from this class.
 The inheritance will automatically register every subclass into the registry thus
 allowing for modular access to the backend strategies.</p>
-<p>:param detector: Detector which provides 'detect' method,
-which can take one or multiple images.
-:param simple (bool): Use less subframes</p></div>
+<p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>detector</code></strong> :&ensp;<code>Type[Detector]</code></dt>
+<dd>[description]</dd>
+<dt><strong><code>roi</code></strong> :&ensp;<code>list</code>, optional</dt>
+<dd>[description]. Defaults to None.</dd>
+<dt><strong><code>simple</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>[description]. Defaults to False.</dd>
+<dt><strong><code>cache</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>[description]. Defaults to True.</dd>
+<dt><strong><code>config</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>[description]. Defaults to {}.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -761,7 +1013,7 @@ which can take one or multiple images.
 <pre><code class="python">class DEI(Backend):
     def __init__(
         self,
-        detector,
+        detector: Type[Detector],
         roi: list = None,
         simple: bool = False,
         cache: bool = True,
@@ -769,6 +1021,15 @@ which can take one or multiple images.
         *args,
         **kwargs,
     ) -&gt; None:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            detector (Type[Detector]): [description]
+            roi (list, optional): [description]. Defaults to None.
+            simple (bool, optional): [description]. Defaults to False.
+            cache (bool, optional): [description]. Defaults to True.
+            config (dict, optional): [description]. Defaults to {}.
+        &#34;&#34;&#34;    
         &#34;&#34;&#34;
 
         :param detector: Detector which provides &#39;detect&#39; method,
@@ -818,8 +1079,16 @@ which can take one or multiple images.
 
     def detect(
         self,
-        source,
-    ) -&gt; (list, np.ndarray):
+        source: List[np.ndarray],
+    ) -&gt; Tuple[torch.Tensor, np.ndarray]:
+        &#34;&#34;&#34;[summary]
+
+        Args:
+            source (List[np.ndarray]): [description]
+
+        Returns:
+            Tuple[torch.Tensor, np.ndarray]: [description]
+        &#34;&#34;&#34;    
         &#34;&#34;&#34;
         Detect objects on image by splitting and merging.
 
@@ -992,35 +1261,36 @@ which can take one or multiple images.
 <h3>Methods</h3>
 <dl>
 <dt id="pancake.detector.backends.backend_dei.DEI.detect"><code class="name flex">
-<span>def <span class="ident">detect</span></span>(<span>self, source) ‑> (<class 'list'>, <class 'numpy.ndarray'>)</span>
+<span>def <span class="ident">detect</span></span>(<span>self, source: List[numpy.ndarray]) ‑> Tuple[torch.Tensor, numpy.ndarray]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Detect objects on image by splitting and merging.</p>
-<p>:param source: filename or np.ndarray</p>
-<p>:return (objs, img): list of tuples with objects and their coordinates,
-stitched panorama image</p>
-<p>The tuples of the return list have 6 values:
-x0: x-value top left corner
-y0: y-value top left corner
-x1: x-value bottom right corner
-y1: y-value bottom right corner
-conf: Confidence of detection, values between 0 and 1
-class id: Integer indicating the detected object type</p>
-<p>Modus operandi:
-* Stitch images
-* Divide image into subframes
-* Rotate subframes (without cropping, i.e. adding padding)
-* Detect objects on each subframe, saving classes and coordinates
-* Calculate coordinates on original frame
-* Filter and merge objects</p></div>
+<div class="desc"><p>[summary]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[torch.Tensor, np.ndarray]</code></dt>
+<dd>[description]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def detect(
     self,
-    source,
-) -&gt; (list, np.ndarray):
+    source: List[np.ndarray],
+) -&gt; Tuple[torch.Tensor, np.ndarray]:
+    &#34;&#34;&#34;[summary]
+
+    Args:
+        source (List[np.ndarray]): [description]
+
+    Returns:
+        Tuple[torch.Tensor, np.ndarray]: [description]
+    &#34;&#34;&#34;    
     &#34;&#34;&#34;
     Detect objects on image by splitting and merging.
 

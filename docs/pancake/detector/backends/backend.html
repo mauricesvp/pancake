@@ -52,7 +52,7 @@ class Backend(ABC):
 
     @classmethod
     def get_subclasses(cls) -&gt; dict:
-        &#34;&#34;&#34; Returns all subclasses of this base class.
+        &#34;&#34;&#34;Returns all subclasses of this base class.
         The dictionary poses as Backend registry.
 
         Returns:
@@ -68,7 +68,7 @@ class Backend(ABC):
     def detect(
         self, img: Union[np.ndarray, List[np.ndarray]], *args, **kwargs
     ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-        &#34;&#34;&#34; Method to wrap the backend strategy.
+        &#34;&#34;&#34;Method to wrap the backend strategy.
 
         Args:
             img (Union[np.ndarray, List[np.ndarray]]): Image or list of Images in BGR [c, w, h]
@@ -77,11 +77,11 @@ class Backend(ABC):
             NotImplementedError: (this is an abstract class)
 
         Returns:
-            Tuple[torch.Tensor, np.ndarray]: 
+            Tuple[torch.Tensor, np.ndarray]:
                 First member of the tuple is the detection matrix in [xyxy, conf, cls] and
-                second, the resulting image from application of the strategy in BGR 
+                second, the resulting image from application of the strategy in BGR
                 [c, w , h].
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 </section>
@@ -124,7 +124,7 @@ allowing for modular access to the backend strategies.</p></div>
 
     @classmethod
     def get_subclasses(cls) -&gt; dict:
-        &#34;&#34;&#34; Returns all subclasses of this base class.
+        &#34;&#34;&#34;Returns all subclasses of this base class.
         The dictionary poses as Backend registry.
 
         Returns:
@@ -140,7 +140,7 @@ allowing for modular access to the backend strategies.</p></div>
     def detect(
         self, img: Union[np.ndarray, List[np.ndarray]], *args, **kwargs
     ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-        &#34;&#34;&#34; Method to wrap the backend strategy.
+        &#34;&#34;&#34;Method to wrap the backend strategy.
 
         Args:
             img (Union[np.ndarray, List[np.ndarray]]): Image or list of Images in BGR [c, w, h]
@@ -149,11 +149,11 @@ allowing for modular access to the backend strategies.</p></div>
             NotImplementedError: (this is an abstract class)
 
         Returns:
-            Tuple[torch.Tensor, np.ndarray]: 
+            Tuple[torch.Tensor, np.ndarray]:
                 First member of the tuple is the detection matrix in [xyxy, conf, cls] and
-                second, the resulting image from application of the strategy in BGR 
+                second, the resulting image from application of the strategy in BGR
                 [c, w , h].
-        &#34;&#34;&#34;    
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -184,7 +184,7 @@ The dictionary poses as Backend registry.</p>
 </summary>
 <pre><code class="python">@classmethod
 def get_subclasses(cls) -&gt; dict:
-    &#34;&#34;&#34; Returns all subclasses of this base class.
+    &#34;&#34;&#34;Returns all subclasses of this base class.
     The dictionary poses as Backend registry.
 
     Returns:
@@ -212,12 +212,10 @@ def get_subclasses(cls) -&gt; dict:
 <dd>(this is an abstract class)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><code>Tuple[torch.Tensor, np.ndarray]</code></dt>
-<dd>First member of the tuple is the detection matrix in [xyxy, conf, cls] and
+<p>Tuple[torch.Tensor, np.ndarray]:
+First member of the tuple is the detection matrix in [xyxy, conf, cls] and
 second, the resulting image from application of the strategy in BGR
-[c, w , h].</dd>
-</dl></div>
+[c, w , h].</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -226,7 +224,7 @@ second, the resulting image from application of the strategy in BGR
 def detect(
     self, img: Union[np.ndarray, List[np.ndarray]], *args, **kwargs
 ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-    &#34;&#34;&#34; Method to wrap the backend strategy.
+    &#34;&#34;&#34;Method to wrap the backend strategy.
 
     Args:
         img (Union[np.ndarray, List[np.ndarray]]): Image or list of Images in BGR [c, w, h]
@@ -235,11 +233,11 @@ def detect(
         NotImplementedError: (this is an abstract class)
 
     Returns:
-        Tuple[torch.Tensor, np.ndarray]: 
+        Tuple[torch.Tensor, np.ndarray]:
             First member of the tuple is the detection matrix in [xyxy, conf, cls] and
-            second, the resulting image from application of the strategy in BGR 
+            second, the resulting image from application of the strategy in BGR
             [c, w , h].
-    &#34;&#34;&#34;    
+    &#34;&#34;&#34;
     raise NotImplementedError</code></pre>
 </details>
 </dd>
