@@ -1,4 +1,4 @@
-""" Pancake Database Class """
+""" Module containing the Pancake Database. """
 from typing import Type, Union
 
 import numpy as np

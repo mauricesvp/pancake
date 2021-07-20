@@ -1,3 +1,4 @@
+""" Package containing tracker related modules. """
 from typing import Type
 
 import torch

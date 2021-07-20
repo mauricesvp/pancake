@@ -1,3 +1,4 @@
+""" Module encapsulating the main Pancake program. """
 from typing import Type
 
 import argparse

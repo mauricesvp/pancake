@@ -1,3 +1,4 @@
+""" Package containing detector related modules. """
 from typing import Type
 
 import torch
