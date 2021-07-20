@@ -63,9 +63,9 @@ class DEEPSORT(BaseTracker):
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]:
-                - x1, y1, x2, y2
-                - class confidences
-                - model-specific class indices
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         """
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]

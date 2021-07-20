@@ -92,9 +92,9 @@ class DEEPSORT(BaseTracker):
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]:
-                - x1, y1, x2, y2
-                - class confidences
-                - model-specific class indices
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         &#34;&#34;&#34;
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>
@@ -182,9 +182,9 @@ allowing for modular access to the trackers.</p>
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]:
-                - x1, y1, x2, y2
-                - class confidences
-                - model-specific class indices
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         &#34;&#34;&#34;
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>
@@ -208,9 +208,9 @@ allowing for modular access to the trackers.</p>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>Tuple[np.ndarray, np.ndarray, np.ndarray]:
-- x1, y1, x2, y2
-- class confidences
-- model-specific class indices</p></div>
+[(x1, y1, x2, y2),
+(class confidences),
+(model-specific class indices]</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -226,9 +226,9 @@ def transform_detections(
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]:
-            - x1, y1, x2, y2
-            - class confidences
-            - model-specific class indices
+             [(x1, y1, x2, y2),
+              (class confidences),
+              (model-specific class indices]
     &#34;&#34;&#34;
     t_det = det.cpu().detach().numpy()
     return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>

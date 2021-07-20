@@ -82,10 +82,10 @@ class DeepSort(object):
             - Outputs the track identities
 
         Args:
-            bbox_xyxy (np.ndarray): [description]
-            confidences (np.ndarray): [description]
-            ori_img (np.ndarray): [description]
-            cls (np.ndarray): [description]
+            bbox_xyxy (np.ndarray): Detected bounding boxes in [x1, y1, x2, y2]
+            confidences (np.ndarray): Confidence scores of the detected entities
+            ori_img (np.ndarray): Original image in BGR [c, w, h]
+            cls (np.ndarray): Model-specific class indices of the detected entities
 
         Returns:
             np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
