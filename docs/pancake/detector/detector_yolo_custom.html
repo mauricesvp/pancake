@@ -122,13 +122,13 @@ class YOLOCustomDetector(Detector):
         img_sizes = [img.shape for img in imgs]
 
         # Inference
-        pr_imgs = self._preprocess(imgs)
+        pr_imgs = self.preprocess(imgs)
         # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
         det, _ = self.model.infer(pr_imgs)
 
-        return self._postprocess(det, pr_imgs, img_sizes)
+        return self.postprocess(det, pr_imgs, img_sizes)
 
-    def _preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
+    def preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
         &#34;&#34;&#34;Pads and resizes the images, converts the images to RGB.
 
         Args:
@@ -154,7 +154,7 @@ class YOLOCustomDetector(Detector):
         pr_imgs = np.ascontiguousarray(pr_imgs)
         return pr_imgs
 
-    def _postprocess(
+    def postprocess(
         self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
     ) -&gt; list:
         &#34;&#34;&#34;Rescales the detection matrix from padded and resized to
@@ -282,13 +282,13 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
         img_sizes = [img.shape for img in imgs]
 
         # Inference
-        pr_imgs = self._preprocess(imgs)
+        pr_imgs = self.preprocess(imgs)
         # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
         det, _ = self.model.infer(pr_imgs)
 
-        return self._postprocess(det, pr_imgs, img_sizes)
+        return self.postprocess(det, pr_imgs, img_sizes)
 
-    def _preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
+    def preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
         &#34;&#34;&#34;Pads and resizes the images, converts the images to RGB.
 
         Args:
@@ -314,7 +314,7 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
         pr_imgs = np.ascontiguousarray(pr_imgs)
         return pr_imgs
 
-    def _postprocess(
+    def postprocess(
         self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
     ) -&gt; list:
         &#34;&#34;&#34;Rescales the detection matrix from padded and resized to
@@ -387,11 +387,103 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
     img_sizes = [img.shape for img in imgs]
 
     # Inference
-    pr_imgs = self._preprocess(imgs)
+    pr_imgs = self.preprocess(imgs)
     # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
     det, _ = self.model.infer(pr_imgs)
 
-    return self._postprocess(det, pr_imgs, img_sizes)</code></pre>
+    return self.postprocess(det, pr_imgs, img_sizes)</code></pre>
+</details>
+</dd>
+<dt id="pancake.detector.detector_yolo_custom.YOLOCustomDetector.postprocess"><code class="name flex">
+<span>def <span class="ident">postprocess</span></span>(<span>self, det: List[torch.Tensor], pr_imgs: <built-in function array>, img_sizes: list) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rescales the detection matrix from padded and resized to
+the original size.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>List[torch.Tensor]</code></dt>
+<dd>Tensor list of detections, on (,6) tensor [bs, xyxy, conf, cls]</dd>
+<dt><strong><code>pr_imgs</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Preprocessed images [bs, c, w, h]</dd>
+<dt><strong><code>img_sizes</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of original image sizes [bs, (w, h)]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>Tensor list of rescaled detections, on (,6) tensor [bs, xyxy, conf, cls]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def postprocess(
+    self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
+) -&gt; list:
+    &#34;&#34;&#34;Rescales the detection matrix from padded and resized to
+    the original size.
+
+    Args:
+        det (List[torch.Tensor]): Tensor list of detections, on (,6) tensor [bs, xyxy, conf, cls]
+        pr_imgs (np.array): Preprocessed images [bs, c, w, h]
+        img_sizes (list): List of original image sizes [bs, (w, h)]
+
+    Returns:
+        list: Tensor list of rescaled detections, on (,6) tensor [bs, xyxy, conf, cls]
+    &#34;&#34;&#34;
+    # Rescale images from preprocessed to original
+    res = [None] * len(det)
+    for i, x in enumerate(det):
+        x[:, :4] = scale_coords(pr_imgs.shape[2:], x[:, :4], img_sizes[i]).round()
+        res[i] = x
+    return res</code></pre>
+</details>
+</dd>
+<dt id="pancake.detector.detector_yolo_custom.YOLOCustomDetector.preprocess"><code class="name flex">
+<span>def <span class="ident">preprocess</span></span>(<span>self, imgs: List[numpy.ndarray]) ‑> <built-in function array></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pads and resizes the images, converts the images to RGB.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>imgs</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
+<dd>List of ndarrays, images in BGR [bs, c, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.array</code></dt>
+<dd>Padded and resized images in RGB [bs, c, w, h]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
+    &#34;&#34;&#34;Pads and resizes the images, converts the images to RGB.
+
+    Args:
+        imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
+
+    Returns:
+        np.array: Padded and resized images in RGB [bs, c, w, h]
+    &#34;&#34;&#34;
+    if type(imgs) is not list:
+        imgs = [imgs]
+
+    # Padded resize
+    pr_imgs = [
+        letterbox(x, self.model._required_img_size, stride=self.model._stride)[0]
+        for x in imgs
+    ]
+    # Stack
+    pr_imgs = np.stack(pr_imgs, 0)
+    # Convert
+    pr_imgs = pr_imgs[:, :, :, ::-1].transpose(
+        0, 3, 1, 2
+    )  # BGR to RGB, to bsx3x416x416
+    pr_imgs = np.ascontiguousarray(pr_imgs)
+    return pr_imgs</code></pre>
 </details>
 </dd>
 </dl>
@@ -424,6 +516,8 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
 <h4><code><a title="pancake.detector.detector_yolo_custom.YOLOCustomDetector" href="#pancake.detector.detector_yolo_custom.YOLOCustomDetector">YOLOCustomDetector</a></code></h4>
 <ul class="">
 <li><code><a title="pancake.detector.detector_yolo_custom.YOLOCustomDetector.detect" href="#pancake.detector.detector_yolo_custom.YOLOCustomDetector.detect">detect</a></code></li>
+<li><code><a title="pancake.detector.detector_yolo_custom.YOLOCustomDetector.postprocess" href="#pancake.detector.detector_yolo_custom.YOLOCustomDetector.postprocess">postprocess</a></code></li>
+<li><code><a title="pancake.detector.detector_yolo_custom.YOLOCustomDetector.preprocess" href="#pancake.detector.detector_yolo_custom.YOLOCustomDetector.preprocess">preprocess</a></code></li>
 </ul>
 </li>
 </ul>

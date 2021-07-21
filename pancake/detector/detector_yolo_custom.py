@@ -93,13 +93,13 @@ class YOLOCustomDetector(Detector):
         img_sizes = [img.shape for img in imgs]
 
         # Inference
-        pr_imgs = self._preprocess(imgs)
+        pr_imgs = self.preprocess(imgs)
         # l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
-        return self._postprocess(det, pr_imgs, img_sizes)
+        return self.postprocess(det, pr_imgs, img_sizes)
 
-    def _preprocess(self, imgs: List[np.ndarray]) -> np.array:
+    def preprocess(self, imgs: List[np.ndarray]) -> np.array:
         """Pads and resizes the images, converts the images to RGB.
 
         Args:
@@ -125,7 +125,7 @@ class YOLOCustomDetector(Detector):
         pr_imgs = np.ascontiguousarray(pr_imgs)
         return pr_imgs
 
-    def _postprocess(
+    def postprocess(
         self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
     ) -> list:
         """Rescales the detection matrix from padded and resized to
