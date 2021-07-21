@@ -40,5 +40,4 @@ def setup_detector(config: dict) -> Type[Detector]:
         elif device_cfg.isdigit():
             device = device_cfg
 
-    DETECTOR = DETECTOR_REGISTRY[name](params, device=device)
-    return DETECTOR
+    return DETECTOR_REGISTRY[name](params, device=device)

@@ -41,7 +41,7 @@ class Yolov5Model(BaseModel):
             max_det (int): Max number of detections in an infered frame
 
         Note:
-        - 'weights' parameter can contain either a Path or a name of an pretrained YOLOv5 architecture, \
+            'weights' parameter can contain either a Path or a name of an pretrained YOLOv5 architecture, \
             for a list of available models refer to: [here](https://github.com/ultralytics/yolov5/releases)
         """
         super(Yolov5Model, self).__init__(device)

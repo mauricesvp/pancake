@@ -128,7 +128,7 @@ class DeepSort(object):
                     dtype=np.int,
                 )
             )
-        if len(outputs) > 0:
+        if outputs:
             outputs = np.stack(outputs, axis=0)
         return outputs
 
@@ -174,9 +174,7 @@ class DeepSort(object):
 
         t = x1
         l = y1
-        w = int(x2 - x1)
-        h = int(y2 - y1)
-        return t, l, w, h
+        return t, l, int(x2 - t), int(y2 - l)
 
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
@@ -185,8 +183,4 @@ class DeepSort(object):
             im = ori_img[y1:y2, x1:x2]
             if im.any():
                 im_crops.append(im)
-        if im_crops:
-            features = self.extractor(im_crops)
-        else:
-            features = np.array([])
-        return features
+        return self.extractor(im_crops) if im_crops else np.array([])

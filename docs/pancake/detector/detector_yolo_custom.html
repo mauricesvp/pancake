@@ -73,8 +73,8 @@ class YOLOCustomDetector(Detector):
 
         conf_thres = float(config[&#34;conf_thres&#34;])
         iou_thres = float(config[&#34;iou_thres&#34;])
-        classes = None if &#34;None&#34; == config[&#34;classes&#34;] else config[&#34;classes&#34;]
-        agnostic_nms = True if &#34;True&#34; == config[&#34;agnostic_nms&#34;] else False
+        classes = None if config[&#34;classes&#34;] == &#34;None&#34; else config[&#34;classes&#34;]
+        agnostic_nms = config[&#34;agnostic_nms&#34;] == &#34;True&#34;
         img_size = int(config[&#34;img_size&#34;])
         device = kwargs.get(&#34;device&#34;, &#34;CPU&#34;)
         max_det = int(config[&#34;max_det&#34;])
@@ -126,8 +126,7 @@ class YOLOCustomDetector(Detector):
         # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
         det, _ = self.model.infer(pr_imgs)
 
-        res = self._postprocess(det, pr_imgs, img_sizes)
-        return res
+        return self._postprocess(det, pr_imgs, img_sizes)
 
     def _preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
         &#34;&#34;&#34;Pads and resizes the images, converts the images to RGB.
@@ -234,8 +233,8 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
 
         conf_thres = float(config[&#34;conf_thres&#34;])
         iou_thres = float(config[&#34;iou_thres&#34;])
-        classes = None if &#34;None&#34; == config[&#34;classes&#34;] else config[&#34;classes&#34;]
-        agnostic_nms = True if &#34;True&#34; == config[&#34;agnostic_nms&#34;] else False
+        classes = None if config[&#34;classes&#34;] == &#34;None&#34; else config[&#34;classes&#34;]
+        agnostic_nms = config[&#34;agnostic_nms&#34;] == &#34;True&#34;
         img_size = int(config[&#34;img_size&#34;])
         device = kwargs.get(&#34;device&#34;, &#34;CPU&#34;)
         max_det = int(config[&#34;max_det&#34;])
@@ -287,8 +286,7 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
         # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
         det, _ = self.model.infer(pr_imgs)
 
-        res = self._postprocess(det, pr_imgs, img_sizes)
-        return res
+        return self._postprocess(det, pr_imgs, img_sizes)
 
     def _preprocess(self, imgs: List[np.ndarray]) -&gt; np.array:
         &#34;&#34;&#34;Pads and resizes the images, converts the images to RGB.
@@ -393,8 +391,7 @@ When the flag 'trt' is True, self.model is overwritten by the YOLOv5 TensorRT mo
     # l.debug(f&#34;Inference on: {pr_imgs.shape}&#34;)
     det, _ = self.model.infer(pr_imgs)
 
-    res = self._postprocess(det, pr_imgs, img_sizes)
-    return res</code></pre>
+    return self._postprocess(det, pr_imgs, img_sizes)</code></pre>
 </details>
 </dd>
 </dl>

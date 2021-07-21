@@ -129,8 +129,7 @@ def draw_boxes(
                 else:
                     id_hist[id].append((x, y))
             init = False
-        for id in id_hist:
-            points = id_hist[id]
+        for id, points in id_hist.items():
             x0, y0 = points.pop(0)
             for x, y in points:
                 cv2.line(im0, (x0, y0), (x, y), colors(id, True), 5)
@@ -171,7 +170,7 @@ def save(
         save_path += ".jpg"
         cv2.imwrite(save_path, im0)
     else:  # 'video' or 'stream'
-        if not "vid_path" in globals() or not "vid_writer" in globals():
+        if "vid_path" not in globals() or "vid_writer" not in globals():
             globals()["vid_path"], globals()["vid_writer"] = None, None
 
         if im0.shape[1] > 3200:

@@ -157,7 +157,7 @@ class DeepSort(object):
                     dtype=np.int,
                 )
             )
-        if len(outputs) &gt; 0:
+        if outputs:
             outputs = np.stack(outputs, axis=0)
         return outputs
 
@@ -203,9 +203,7 @@ class DeepSort(object):
 
         t = x1
         l = y1
-        w = int(x2 - x1)
-        h = int(y2 - y1)
-        return t, l, w, h
+        return t, l, int(x2 - t), int(y2 - l)
 
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
@@ -214,11 +212,7 @@ class DeepSort(object):
             im = ori_img[y1:y2, x1:x2]
             if im.any():
                 im_crops.append(im)
-        if im_crops:
-            features = self.extractor(im_crops)
-        else:
-            features = np.array([])
-        return features</code></pre>
+        return self.extractor(im_crops) if im_crops else np.array([])</code></pre>
 </details>
 </section>
 <section>
@@ -386,7 +380,7 @@ when the budget is reached. Defaults to 100.</dd>
                     dtype=np.int,
                 )
             )
-        if len(outputs) &gt; 0:
+        if outputs:
             outputs = np.stack(outputs, axis=0)
         return outputs
 
@@ -432,9 +426,7 @@ when the budget is reached. Defaults to 100.</dd>
 
         t = x1
         l = y1
-        w = int(x2 - x1)
-        h = int(y2 - y1)
-        return t, l, w, h
+        return t, l, int(x2 - t), int(y2 - l)
 
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
@@ -443,11 +435,7 @@ when the budget is reached. Defaults to 100.</dd>
             im = ori_img[y1:y2, x1:x2]
             if im.any():
                 im_crops.append(im)
-        if im_crops:
-            features = self.extractor(im_crops)
-        else:
-            features = np.array([])
-        return features</code></pre>
+        return self.extractor(im_crops) if im_crops else np.array([])</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -545,7 +533,7 @@ when the budget is reached. Defaults to 100.</dd>
                 dtype=np.int,
             )
         )
-    if len(outputs) &gt; 0:
+    if outputs:
         outputs = np.stack(outputs, axis=0)
     return outputs</code></pre>
 </details>

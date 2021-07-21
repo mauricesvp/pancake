@@ -20,11 +20,11 @@ async def fetch_html(url: str, session: ClientSession, **kwargs) -> tuple:
 
 async def make_requests(urls: set, **kwargs) -> None:
     async with ClientSession() as session:
-        tasks = []
-        for url in urls:
-            tasks.append(
-                asyncio.create_task(fetch_html(url=url, session=session, **kwargs))
-            )
+        tasks = [
+            asyncio.create_task(fetch_html(url=url, session=session, **kwargs))
+            for url in urls
+        ]
+
         results = await asyncio.gather(*tasks)
 
 

@@ -36,5 +36,4 @@ def setup_tracker(config: dict) -> Type[BaseTracker]:
         elif device_cfg.isdigit():
             device = device_cfg
 
-    TRACKER = TRACKER_REGISTRY[name](tracker_cfg, device=device)
-    return TRACKER
+    return TRACKER_REGISTRY[name](tracker_cfg, device=device)

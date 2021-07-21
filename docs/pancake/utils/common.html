@@ -157,8 +157,7 @@ def draw_boxes(
                 else:
                     id_hist[id].append((x, y))
             init = False
-        for id in id_hist:
-            points = id_hist[id]
+        for id, points in id_hist.items():
             x0, y0 = points.pop(0)
             for x, y in points:
                 cv2.line(im0, (x0, y0), (x, y), colors(id, True), 5)
@@ -199,7 +198,7 @@ def save(
         save_path += &#34;.jpg&#34;
         cv2.imwrite(save_path, im0)
     else:  # &#39;video&#39; or &#39;stream&#39;
-        if not &#34;vid_path&#34; in globals() or not &#34;vid_writer&#34; in globals():
+        if &#34;vid_path&#34; not in globals() or &#34;vid_writer&#34; not in globals():
             globals()[&#34;vid_path&#34;], globals()[&#34;vid_writer&#34;] = None, None
 
         if im0.shape[1] &gt; 3200:
@@ -323,8 +322,7 @@ def fix_path(path: Union[str, list]) -&gt; str:
                 else:
                     id_hist[id].append((x, y))
             init = False
-        for id in id_hist:
-            points = id_hist[id]
+        for id, points in id_hist.items():
             x0, y0 = points.pop(0)
             for x, y in points:
                 cv2.line(im0, (x0, y0), (x, y), colors(id, True), 5)
@@ -466,7 +464,7 @@ Pancake main loop.</p>
         save_path += &#34;.jpg&#34;
         cv2.imwrite(save_path, im0)
     else:  # &#39;video&#39; or &#39;stream&#39;
-        if not &#34;vid_path&#34; in globals() or not &#34;vid_writer&#34; in globals():
+        if &#34;vid_path&#34; not in globals() or &#34;vid_writer&#34; not in globals():
             globals()[&#34;vid_path&#34;], globals()[&#34;vid_writer&#34;] = None, None
 
         if im0.shape[1] &gt; 3200:

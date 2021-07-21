@@ -334,14 +334,12 @@ class Yolov5TRT(BaseModel):
         # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
 
-        # do postprocess
-        pred = [
+        return [
             self.postp_image_infer(
                 output[i * 6001 : (i + 1) * 6001], img_sizes[0], img_sizes[1]
             )
             for i in range(self.batch_size)
         ]
-        return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -> torch.Tensor:
         """Reshapes the model output to interpretable shape then applies NMS
@@ -391,6 +389,4 @@ class Yolov5TRT(BaseModel):
         result_scores = torch.unsqueeze(result_scores, 1)
         result_classid = torch.unsqueeze(result_classid, 1)
 
-        result = torch.cat((result_boxes, result_scores, result_classid), 1)
-
-        return result
+        return torch.cat((result_boxes, result_scores, result_classid), 1)

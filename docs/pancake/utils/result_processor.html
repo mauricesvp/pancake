@@ -408,7 +408,7 @@ class ResultProcessor:
 
         cv2.imwrite(save_path, im0)
 
-    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
+    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
         &#34;&#34;&#34;Appends an image to the current videopointer.
 
         Args:
@@ -420,28 +420,37 @@ class ResultProcessor:
             im0 = resize_aspectratio(im0, width=3200)
 
         if not self.vid_path:  # new video
-            now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
-            self.vid_path = str(self._save_dir / now)
-
-            if isinstance(self.vid_writer, cv2.VideoWriter):
-                self.vid_writer.release()  # release previous video writer
-
-            # take w, h from input video
-            # if vid_cap:  # video
-            #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
-            #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            # else:  # images, stream
-
-            # take user defined fps
-            fps, w, h = self._fps, im0.shape[1], im0.shape[0]
-            self.vid_path += &#34;.avi&#34;
-
-            self.vid_writer = cv2.VideoWriter(
-                self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
-            )
-
+            self.init_new_vid(im0)
         self.vid_writer.write(im0)
+
+    def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+            in a single video.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+        self.vid_path = str(self._save_dir / now)
+
+        if isinstance(self.vid_writer, cv2.VideoWriter):
+            self.vid_writer.release()  # release previous video writer
+
+        # take w, h from input video
+        # if vid_cap:  # video
+        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # else:  # images, stream
+
+        # take user defined fps
+        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+        self.vid_path += &#34;.avi&#34;
+
+        self.vid_writer = cv2.VideoWriter(
+            self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+        )
 
     def visualize(self, im0: np.ndarray):
         &#34;&#34;&#34;Visualizes the passed image.
@@ -987,7 +996,7 @@ blocking</dd>
 
         cv2.imwrite(save_path, im0)
 
-    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
+    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
         &#34;&#34;&#34;Appends an image to the current videopointer.
 
         Args:
@@ -999,28 +1008,37 @@ blocking</dd>
             im0 = resize_aspectratio(im0, width=3200)
 
         if not self.vid_path:  # new video
-            now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
-            self.vid_path = str(self._save_dir / now)
-
-            if isinstance(self.vid_writer, cv2.VideoWriter):
-                self.vid_writer.release()  # release previous video writer
-
-            # take w, h from input video
-            # if vid_cap:  # video
-            #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
-            #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            # else:  # images, stream
-
-            # take user defined fps
-            fps, w, h = self._fps, im0.shape[1], im0.shape[0]
-            self.vid_path += &#34;.avi&#34;
-
-            self.vid_writer = cv2.VideoWriter(
-                self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
-            )
-
+            self.init_new_vid(im0)
         self.vid_writer.write(im0)
+
+    def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+            in a single video.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+        self.vid_path = str(self._save_dir / now)
+
+        if isinstance(self.vid_writer, cv2.VideoWriter):
+            self.vid_writer.release()  # release previous video writer
+
+        # take w, h from input video
+        # if vid_cap:  # video
+        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # else:  # images, stream
+
+        # take user defined fps
+        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+        self.vid_path += &#34;.avi&#34;
+
+        self.vid_writer = cv2.VideoWriter(
+            self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+        )
 
     def visualize(self, im0: np.ndarray):
         &#34;&#34;&#34;Visualizes the passed image.
@@ -1213,6 +1231,53 @@ detection matix on the provided image.</p>
     return im0</code></pre>
 </details>
 </dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.init_new_vid"><code class="name flex">
+<span>def <span class="ident">init_new_vid</span></span>(<span>self, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets up a new video writer instance in order to save our results
+in a single video.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+<dt><strong><code>vid_cap</code></strong> :&ensp;<code>cv2.VideoCapture</code>, optional</dt>
+<dd><em>Deprecated</em> cv2.VideoCapture object. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+    &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+        in a single video.
+
+    Args:
+        im0 (np.ndarray): Image in BGR [3, w, h]
+        vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+    &#34;&#34;&#34;
+    now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+    self.vid_path = str(self._save_dir / now)
+
+    if isinstance(self.vid_writer, cv2.VideoWriter):
+        self.vid_writer.release()  # release previous video writer
+
+    # take w, h from input video
+    # if vid_cap:  # video
+    #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+    #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # else:  # images, stream
+
+    # take user defined fps
+    fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+    self.vid_path += &#34;.avi&#34;
+
+    self.vid_writer = cv2.VideoWriter(
+        self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+    )</code></pre>
+</details>
+</dd>
 <dt id="pancake.utils.result_processor.ResultProcessor.kill_worker"><code class="name flex">
 <span>def <span class="ident">kill_worker</span></span>(<span>self)</span>
 </code></dt>
@@ -1335,7 +1400,7 @@ the worker process.</p></div>
 </details>
 </dd>
 <dt id="pancake.utils.result_processor.ResultProcessor.save_vid"><code class="name flex">
-<span>def <span class="ident">save_vid</span></span>(<span>self, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None)</span>
+<span>def <span class="ident">save_vid</span></span>(<span>self, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Appends an image to the current videopointer.</p>
@@ -1350,7 +1415,7 @@ the worker process.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
+<pre><code class="python">def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
     &#34;&#34;&#34;Appends an image to the current videopointer.
 
     Args:
@@ -1362,27 +1427,7 @@ the worker process.</p></div>
         im0 = resize_aspectratio(im0, width=3200)
 
     if not self.vid_path:  # new video
-        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
-        self.vid_path = str(self._save_dir / now)
-
-        if isinstance(self.vid_writer, cv2.VideoWriter):
-            self.vid_writer.release()  # release previous video writer
-
-        # take w, h from input video
-        # if vid_cap:  # video
-        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
-        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        # else:  # images, stream
-
-        # take user defined fps
-        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
-        self.vid_path += &#34;.avi&#34;
-
-        self.vid_writer = cv2.VideoWriter(
-            self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
-        )
-
+        self.init_new_vid(im0)
     self.vid_writer.write(im0)</code></pre>
 </details>
 </dd>
@@ -1499,6 +1544,7 @@ enriched image/video.</p>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_detec_boxes" href="#pancake.utils.result_processor.ResultProcessor.draw_detec_boxes">draw_detec_boxes</a></code></li>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_track_boxes" href="#pancake.utils.result_processor.ResultProcessor.draw_track_boxes">draw_track_boxes</a></code></li>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_track_hist" href="#pancake.utils.result_processor.ResultProcessor.draw_track_hist">draw_track_hist</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.init_new_vid" href="#pancake.utils.result_processor.ResultProcessor.init_new_vid">init_new_vid</a></code></li>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.kill_worker" href="#pancake.utils.result_processor.ResultProcessor.kill_worker">kill_worker</a></code></li>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.process" href="#pancake.utils.result_processor.ResultProcessor.process">process</a></code></li>
 <li><code><a title="pancake.utils.result_processor.ResultProcessor.reset_vid_writer" href="#pancake.utils.result_processor.ResultProcessor.reset_vid_writer">reset_vid_writer</a></code></li>

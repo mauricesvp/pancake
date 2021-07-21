@@ -42,7 +42,7 @@ def locate(
         ------------ x1, y1
     """
     locations = []
-    if not (x0 > 0 and y0 > 0):
+    if x0 <= 0 or y0 <= 0:
         return locations
     for i, subframe in enumerate(subframes):
         tlx, tly, brx, bry = subframe[:4]
@@ -78,10 +78,7 @@ def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -> np.ndarray:
 
 
 def rev_rotate_bound(
-    img: np.ndarray, 
-    result: Tuple[int, int, int, int, int, int], 
-    angle: int, 
-    side: int
+    img: np.ndarray, result: Tuple[int, int, int, int, int, int], angle: int, side: int
 ) -> Tuple[int, int, int, int, int, int]:
     """[summary]
 
@@ -129,16 +126,14 @@ def rotate_cpu(image: np.ndarray, angle: int):
 
     Returns:
         [type]: [description]
-    """    
+    """
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
     center = (w // 2, h // 2)
 
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(image, M, (w, h))
-
-    return rotated
+    return cv2.warpAffine(image, M, (w, h))
 
 
 def rotate(image: np.ndarray, angle: int):
@@ -150,7 +145,7 @@ def rotate(image: np.ndarray, angle: int):
 
     Returns:
         [type]: [description]
-    """    
+    """
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
 
@@ -173,7 +168,7 @@ def rotate_bound_cpu(img: np.ndarray, angle: int) -> np.ndarray:
 
     Returns:
         np.ndarray: [description]
-    """    
+    """
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -211,7 +206,7 @@ def rotate_bound(img: np.ndarray, angle: int) -> np.ndarray:
 
     Returns:
         np.ndarray: [description]
-    """    
+    """
     """
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
@@ -256,7 +251,7 @@ def f(x: int) -> Tuple[int, int]:
 
     Returns:
         Tuple[int, int]: [description]
-    """    
+    """
     """Returns y value, angle of rotation, width for x along centre strip."""
     if x < 3840:
         y = int(-0.047 * x + 1100)
@@ -300,7 +295,7 @@ class DEI(Backend):
             simple (bool, optional): [description]. Defaults to False.
             cache (bool, optional): [description]. Defaults to True.
             config (dict, optional): [description]. Defaults to {}.
-        """    
+        """
         """
 
         :param detector: Detector which provides 'detect' method,
@@ -359,7 +354,7 @@ class DEI(Backend):
 
         Returns:
             Tuple[torch.Tensor, np.ndarray]: [description]
-        """    
+        """
         """
         Detect objects on image by splitting and merging.
 
@@ -393,8 +388,8 @@ class DEI(Backend):
 
         img = hconcat(source)
 
+        subframes = []
         if self.cache:
-            subframes = []
             for x, y, angle, side in self.xyas:
                 tlx, tly, brx, bry = x - side, y - side, x + side, y + side
                 # TODO: ROI
@@ -406,7 +401,6 @@ class DEI(Backend):
         else:
             x = CONST["START_X"]
             y, angle, side = f(x)
-            subframes = []
             while x < (CONST["END_X"] + side):
                 if self.simple:
                     side = int(1.7 * side)
@@ -447,15 +441,6 @@ class DEI(Backend):
 
         subcoords = [x[1:5] for x in subframes]
         results = self.merge(objs, subcoords)
-
-        if False:  # Debugging
-            for obj in results:
-                x0, y0, x1, y1, *_ = obj
-                cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
-            for subf in subframes:
-                x0, y0, x1, y1 = subf[1:5]
-                cv2.rectangle(img, (x0, y0), (x1, y1), (255, 0, 0), 2)
-            cv2.imwrite("stuff.jpg", img)
 
         for i, x in enumerate(results):
             results[i] = torch.FloatTensor(list(x[:6]))

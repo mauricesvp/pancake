@@ -158,11 +158,7 @@ class DataBase:
         cursor = self.con.cursor()
 
         # append timestamp to 0th column, 0 if timestamp is None, 69 is a dummy entry for cls
-        insertable = np.c_[
-            np.full((tracks.shape[0]), timestamp if timestamp else 0),
-            tracks,
-            # np.full((tracks.shape[0]), 69),
-        ]
+        insertable = np.c_[np.full(tracks.shape[0], timestamp or 0), tracks]
 
         #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
         # order: [id, ts, cx, cy, x1, y1, x2, y2, cls] (for "extended_db.yaml")

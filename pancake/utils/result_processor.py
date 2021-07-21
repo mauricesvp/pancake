@@ -379,7 +379,7 @@ class ResultProcessor:
 
         cv2.imwrite(save_path, im0)
 
-    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None):
+    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -> None:
         """Appends an image to the current videopointer.
 
         Args:
@@ -391,28 +391,37 @@ class ResultProcessor:
             im0 = resize_aspectratio(im0, width=3200)
 
         if not self.vid_path:  # new video
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-            self.vid_path = str(self._save_dir / now)
-
-            if isinstance(self.vid_writer, cv2.VideoWriter):
-                self.vid_writer.release()  # release previous video writer
-
-            # take w, h from input video
-            # if vid_cap:  # video
-            #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
-            #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            # else:  # images, stream
-
-            # take user defined fps
-            fps, w, h = self._fps, im0.shape[1], im0.shape[0]
-            self.vid_path += ".avi"
-
-            self.vid_writer = cv2.VideoWriter(
-                self.vid_path, cv2.VideoWriter_fourcc(*"XVID"), fps, (w, h)
-            )
-
+            self.init_new_vid(im0)
         self.vid_writer.write(im0)
+
+    def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -> None:
+        """Sets up a new video writer instance in order to save our results
+            in a single video.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        """
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        self.vid_path = str(self._save_dir / now)
+
+        if isinstance(self.vid_writer, cv2.VideoWriter):
+            self.vid_writer.release()  # release previous video writer
+
+        # take w, h from input video
+        # if vid_cap:  # video
+        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # else:  # images, stream
+
+        # take user defined fps
+        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+        self.vid_path += ".avi"
+
+        self.vid_writer = cv2.VideoWriter(
+            self.vid_path, cv2.VideoWriter_fourcc(*"XVID"), fps, (w, h)
+        )
 
     def visualize(self, im0: np.ndarray):
         """Visualizes the passed image.

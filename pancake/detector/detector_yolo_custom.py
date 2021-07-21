@@ -44,8 +44,8 @@ class YOLOCustomDetector(Detector):
 
         conf_thres = float(config["conf_thres"])
         iou_thres = float(config["iou_thres"])
-        classes = None if "None" == config["classes"] else config["classes"]
-        agnostic_nms = True if "True" == config["agnostic_nms"] else False
+        classes = None if config["classes"] == "None" else config["classes"]
+        agnostic_nms = config["agnostic_nms"] == "True"
         img_size = int(config["img_size"])
         device = kwargs.get("device", "CPU")
         max_det = int(config["max_det"])
@@ -97,8 +97,7 @@ class YOLOCustomDetector(Detector):
         # l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
-        res = self._postprocess(det, pr_imgs, img_sizes)
-        return res
+        return self._postprocess(det, pr_imgs, img_sizes)
 
     def _preprocess(self, imgs: List[np.ndarray]) -> np.array:
         """Pads and resizes the images, converts the images to RGB.

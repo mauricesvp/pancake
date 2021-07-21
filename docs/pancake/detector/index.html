@@ -69,8 +69,7 @@ def setup_detector(config: dict) -&gt; Type[Detector]:
         elif device_cfg.isdigit():
             device = device_cfg
 
-    DETECTOR = DETECTOR_REGISTRY[name](params, device=device)
-    return DETECTOR</code></pre>
+    return DETECTOR_REGISTRY[name](params, device=device)</code></pre>
 </details>
 </section>
 <section>
@@ -149,8 +148,7 @@ initializes a detector from the detector registry.</p>
         elif device_cfg.isdigit():
             device = device_cfg
 
-    DETECTOR = DETECTOR_REGISTRY[name](params, device=device)
-    return DETECTOR</code></pre>
+    return DETECTOR_REGISTRY[name](params, device=device)</code></pre>
 </details>
 </dd>
 </dl>

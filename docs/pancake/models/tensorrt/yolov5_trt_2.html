@@ -363,14 +363,12 @@ class Yolov5TRT(BaseModel):
         # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
 
-        # do postprocess
-        pred = [
+        return [
             self.postp_image_infer(
                 output[i * 6001 : (i + 1) * 6001], img_sizes[0], img_sizes[1]
             )
             for i in range(self.batch_size)
         ]
-        return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -&gt; torch.Tensor:
         &#34;&#34;&#34;Reshapes the model output to interpretable shape then applies NMS
@@ -420,9 +418,7 @@ class Yolov5TRT(BaseModel):
         result_scores = torch.unsqueeze(result_scores, 1)
         result_classid = torch.unsqueeze(result_classid, 1)
 
-        result = torch.cat((result_boxes, result_scores, result_classid), 1)
-
-        return result</code></pre>
+        return torch.cat((result_boxes, result_scores, result_classid), 1)</code></pre>
 </details>
 </section>
 <section>
@@ -770,14 +766,12 @@ TensorRT engine and plugin library with this external repo:</p>
         # here we use the first row of output in that batch_size = 1
         output = host_outputs[0]
 
-        # do postprocess
-        pred = [
+        return [
             self.postp_image_infer(
                 output[i * 6001 : (i + 1) * 6001], img_sizes[0], img_sizes[1]
             )
             for i in range(self.batch_size)
         ]
-        return pred
 
     def postp_image_infer(self, output: np.ndarray, origin_h, origin_w) -&gt; torch.Tensor:
         &#34;&#34;&#34;Reshapes the model output to interpretable shape then applies NMS
@@ -827,9 +821,7 @@ TensorRT engine and plugin library with this external repo:</p>
         result_scores = torch.unsqueeze(result_scores, 1)
         result_classid = torch.unsqueeze(result_classid, 1)
 
-        result = torch.cat((result_boxes, result_scores, result_classid), 1)
-
-        return result</code></pre>
+        return torch.cat((result_boxes, result_scores, result_classid), 1)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1076,14 +1068,12 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
     # here we use the first row of output in that batch_size = 1
     output = host_outputs[0]
 
-    # do postprocess
-    pred = [
+    return [
         self.postp_image_infer(
             output[i * 6001 : (i + 1) * 6001], img_sizes[0], img_sizes[1]
         )
         for i in range(self.batch_size)
-    ]
-    return pred</code></pre>
+    ]</code></pre>
 </details>
 </dd>
 <dt id="pancake.models.tensorrt.yolov5_trt_2.Yolov5TRT.load_engine"><code class="name flex">
@@ -1209,9 +1199,7 @@ def prep_image_infer(img: Union[torch.Tensor, np.array]) -&gt; np.array:
     result_scores = torch.unsqueeze(result_scores, 1)
     result_classid = torch.unsqueeze(result_classid, 1)
 
-    result = torch.cat((result_boxes, result_scores, result_classid), 1)
-
-    return result</code></pre>
+    return torch.cat((result_boxes, result_scores, result_classid), 1)</code></pre>
 </details>
 </dd>
 <dt id="pancake.models.tensorrt.yolov5_trt_2.Yolov5TRT.prep_batches"><code class="name flex">
