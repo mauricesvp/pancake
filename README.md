@@ -436,25 +436,54 @@ Find more details on how to write your own Backend, Detector or Tracker below.
   </details>
 
 ### Detection
-  The Detection itself is handled by an instance of a Detector.
-  For pancake, we provide two versions of the [YOLOv5](https://github.com/ultralytics/yolov5) detector.
-  <details>
-    <summary><b>Simple</b></summary>
-  </details>
-  <details>
-    <summary><b>Custom</b></summary>
-  </details>
-  <details>
-    <summary><b>Adding a new Detector</b></summary>
-    <ol>
-      <li>Create your detector_foo.py within <code>detector/</code> .</li>
-      <li>Create a Detector class that inherits from the <a href="pancake/detector/detector.py">Base Detector</a>.</li>
-      <li>Implement the <code>detect</code> method.</li>
-      <li>Add your Detector to the <a href="pancake/detector/__init__.py">registry</a> (i.e. add <code>from .detector_foo import Foo</code>).</li>
-      <li>Set your Detector in the configuration (under "DETECTOR" -> NAME: "foo").</li>
-    </ol>
-  Important: When implementing your Detector, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/detector.html> Detector API</a>!
-  </details>
+The Detection itself is handled by an instance of a Detector.
+For pancake, we provide two versions of the [YOLOv5](https://github.com/ultralytics/yolov5) detector.
+<details>
+  <summary><b>Simple</b></summary>
+  A very simple detector using a pretrained model provided by YOLOv5.
+  
+  **Configuration options:** (under <code>YOLO_SIMPLE:</code>)
+  
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>size</code> | "s", "m", "l" or "x"         | Yolo model size
+
+</details>
+
+<details>
+  <summary><b>Custom</b></summary>
+  A detector based on YOLOv5, custom trained with data provided by a previous project group.
+
+  **Configuration options:** (under <code>YOLO_CUSTOM:</code>)
+
+
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>model</code>                    | "yolov5"          | Yolo custom class from registry
+  | <code>weights</code>      | "yolov5m.pt"          | Weights to be loaded
+  | <code>img_size</code>      | 640         | Image size, applies to standard and trt
+  | <code>conf_thres</code>      | 0.65         | Confidence threshold (Confidence will be in the range 0-1.0)
+  | <code>iou_thres</code>      | 0.6         | IoU (Intersection over Union) threshold
+  | <code>classes</code>      | [0, 1, 2, 3, 5, 7]         | Filtered classes: Person(0), Bicycle(1), Car(2), Motorcycle(3), Bus(5), Truck(7)
+  | <code>agnostic_nms</code>      | True, False        | Agnostic nms (Non-maximum suppression)
+  | <code>max_det</code>      | 20        | Maximum detections per infered frame
+  | <code>trt</code>      | True, False        | Enable trt engine for inference
+  | <code>trt_engine_path</code>      | "yolov5s6.engine"        | Path to locally compiled engine
+  | <code>trt_plugin_library</code>      | "libmyplugins.so"        | Path to locally compiled lib
+
+</details>
+
+<details>
+  <summary><b>Adding a new Detector</b></summary>
+  <ol>
+    <li>Create your detector_foo.py within <code>detector/</code> .</li>
+    <li>Create a Detector class that inherits from the <a href="pancake/detector/detector.py">Base Detector</a>.</li>
+    <li>Implement the <code>detect</code> method.</li>
+    <li>Add your Detector to the <a href="pancake/detector/__init__.py">registry</a> (i.e. add <code>from .detector_foo import Foo</code>).</li>
+    <li>Set your Detector in the configuration (under "DETECTOR" -> NAME: "foo").</li>
+  </ol>
+Important: When implementing your Detector, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/detector.html> Detector API</a>!
+</details>
 
 ### Tracking
   Tracking is handled by an instance of a tracker.
