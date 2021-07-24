@@ -486,26 +486,53 @@ Important: When implementing your Detector, you need to stick to the <a href=htt
 </details>
 
 ### Tracking
-  Tracking is handled by an instance of a tracker.
-  For pancake, we provide a Centroid Tracker as well as a DeepSORT Tracker, 
-  whereat the Trackers have been loosely taken over from previous project groups.
-  <details>
-    <summary><b>Centroid Tracker</b></summary>
-  </details>
-  <details>
-    <summary><b>DeepSORT</b></summary>
-  </details>
-  <details>
-    <summary><b>Adding a new Tracker</b></summary>
-    <ol>
-      <li>Create your tracker_foo.py within <code>tracker/</code> .</li>
-      <li>Create a Tracker class that inherits from the <a href="pancake/tracker/tracker.py">Base Tracker</a>.</li>
-      <li>Implement the <code>update</code> method.</li>
-      <li>Add your Tracker to the <a href="pancake/tracker/__init__.py">registry</a> (i.e. add <code>from .tracker_foo import Foo</code>).</li>
-      <li>Set your Tracker in the configuration (under "TRACKER" -> NAME: "foo").</li>
-    </ol>
-  Important: When implementing your Tracker, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/tracker/tracker.html> Tracker API</a>!
-  </details>
+Tracking is handled by an instance of a tracker.
+For pancake, we provide a Centroid Tracker as well as a DeepSORT Tracker, 
+whereat the Trackers have been loosely taken over from previous project groups.
+<details>
+  <summary><b>Centroid Tracker</b></summary>
+    
+  **Configuration options:** (under <code>CENTROID:</code>)
+  
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>TRACKER_CFG_PATH</code> | "../configs/tracker/centroid.yaml"       | Centroid config path
+  
+      
+  **centroid.yaml:**
+  
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>MAX_ID</code> | 10000       | Limit for the Track IDs
+  | <code>MAX_DISAPPEARED</code> | 10       | Maximum time (in frames) an object will be premoved on disappearance
+  | <code>DISTANCE_TOLERANCE</code> | 500       | Maximum distance to allow for a car tracking match
+  | <code>VERTICAL_TOLERANCE</code> | 100       | Maximum vertical distance to allow for a car tracking match
+  | <code>FRAME_WIDTH</code> | 11520       | Total image width
+  | <code>TRANSITION_WIDTH</code> | 200       | Transition width around the image edges
+  | <code>LANE_SEPARATOR_LL</code> | 1117       | y-coordinates of the separator line - left
+  | <code>LANE_SEPARATOR_LC</code> | 925       | y-coordinates of the separator line - left-center
+  | <code>LANE_SEPARATOR_CR</code> | 925       | y-coordinates of the separator line - right-center
+  | <code>LANE_SEPARATOR_CR</code> | 1151       | y-coordinates of the separator line - right
+  | <code>DEREG_ZONE_L</code> | 1600       | Deregistration zone x-boundary left
+  | <code>DEREG_ZONE_R</code> | 10500       | Deregistration zone x-boundary right
+  | <code>REG_ZONE_L</code> | 2750       | Registration zone x-boundary left
+  | <code>REG_ZONE_R</code> | 9750       | Registration zone x-boundary right
+
+</details>
+<details>
+  <summary><b>DeepSORT</b></summary>
+</details>
+<details>
+  <summary><b>Adding a new Tracker</b></summary>
+  <ol>
+    <li>Create your tracker_foo.py within <code>tracker/</code> .</li>
+    <li>Create a Tracker class that inherits from the <a href="pancake/tracker/tracker.py">Base Tracker</a>.</li>
+    <li>Implement the <code>update</code> method.</li>
+    <li>Add your Tracker to the <a href="pancake/tracker/__init__.py">registry</a> (i.e. add <code>from .tracker_foo import Foo</code>).</li>
+    <li>Set your Tracker in the configuration (under "TRACKER" -> NAME: "foo").</li>
+  </ol>
+Important: When implementing your Tracker, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/tracker/tracker.html> Tracker API</a>!
+</details>
 
 ### Storage
   The collected data can optionally be stored in a SQLite database (this can enabled in the [configuration](#configurations)).
