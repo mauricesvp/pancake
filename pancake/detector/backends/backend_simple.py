@@ -21,17 +21,11 @@ class SIMPLE(Backend):
     def __init__(
         self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
     ) -> None:
-        """[summary]
+        """Simple Backend
 
         Args:
-            detector (Type[Detector]): [description]
-            roi (List[int], optional): [description]. Defaults to None.
-        """
-        """
-
-        :param detector: Detector which provides 'detect' method,
-                         which can take one or multiple images.
-
+            detector (Type[Detector]): Detector instance which provides "detect" method
+            roi (List[int], optional): Region of interest. Defaults to None.
         """
         self.detector = detector
         if roi:
@@ -42,17 +36,13 @@ class SIMPLE(Backend):
     def detect(
         self, source: List[np.ndarray]
     ) -> Tuple[List[torch.Tensor], List[np.ndarray]]:
-        """[summary]
+        """Detect objects on images.
 
         Args:
-            source (List[np.ndarray]): [description]
+            source (List[np.ndarray]): List of images
 
         Returns:
-            Tuple[List[torch.Tensor], List[np.ndarray]]: [description]
-        """
-        """Detect objects on image(s).
-
-        :param source: Image or list of images.
+            Tuple[torch.Tensor, np.ndarray]: Tuple of objects and stitched image
         """
         if self.roi:
             assert len(self.roi) == len(source)

@@ -9,7 +9,7 @@ import torch
 
 class Backend(ABC):
     """ [_Abstract Class_] Base class of the Backends
-    
+
     __Base Class__:
         All Backends to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
