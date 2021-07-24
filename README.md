@@ -521,6 +521,28 @@ whereat the Trackers have been loosely taken over from previous project groups.
 </details>
 <details>
   <summary><b>DeepSORT</b></summary>
+
+  **Configuration options:** (under <code>DEEPSORT:</code>)
+  
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>TRACKER_CFG_PATH</code> | "../configs/tracker/deep_sort.yaml"       | DeepSORT config path
+  
+      
+  **deep_sort.yaml:**
+  
+  | Parameter               | Example Values   | Description         |
+  | ---------------------   | ----------------- | ------------------- |
+  | <code>REID_CKPT</code> | "../weights/tracker/deepsort/feature_extractor.t7"       | -
+  | <code>MAX_DIST</code> | 0.6       | -
+  | <code>MIN_CONFIDENCE</code> | 0.4       | -
+  | <code>NMS_MAX_OVERLAP</code> | 0.7       | -
+  | <code>MAX_IOU_DISTANCE</code> | 0.75       | -
+  | <code>MAX_AGE</code> | 70       | -
+  | <code>N_INIT</code> | 3       | -
+  | <code>NN_BUDGET</code> | 10000       | -
+  | <code>MAX_ID</code> | 100000       | -
+  
 </details>
 <details>
   <summary><b>Adding a new Tracker</b></summary>
