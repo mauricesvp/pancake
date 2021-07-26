@@ -31,6 +31,26 @@ jobs:
       - name: Install requirements
         run: poetry install
 
+      - name: Remove old docs
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: /docs/pancake
+
       - name: Generate documentation with pdoc3
         run: poetry run pdoc --html pancake --html-dir docs --force
+
+      - name: Commit documents
+        run: |
+          git add docs
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "[Git Actions] Update Documentations" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      
       
