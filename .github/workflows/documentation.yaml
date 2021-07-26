@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
       matrix:
@@ -31,9 +31,6 @@ jobs:
       - name: Install requirements
         run: poetry install
 
-      - name: Activate Venv
-        run: poetry shell
-
       - name: Generate documentation with pdoc3
-        run: pdoc --html pancake --html-dir docs --force
+        run: poetry run pdoc --html pancake --html-dir docs --force
       
