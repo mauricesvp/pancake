@@ -28,7 +28,10 @@ jobs:
       - name: View poetry-version
         run: poetry --version
 
-      - name: Install requirements and activate Venv
+      - name: Install requirements
+        run: poetry install
+
+      - name: Activate Venv
         run: poetry shell
 
       - name: Generate documentation with pdoc3
