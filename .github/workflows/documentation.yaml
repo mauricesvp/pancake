@@ -1,3 +1,5 @@
+# Generates a python documentation with pdoc3
+# © github@tuananhroman, Tuan Anh Roman Le
 name: Documentation Generator
 
 on: [push]
