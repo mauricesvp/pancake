@@ -40,7 +40,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
     - [Samples](#samples)
-    - [Comment your code](#comment-your-code)
+    - [Comment your Code](#comment-your-code)
   - [Used Third Party Repos](#used-third-party-repos)
   - [License](#license)
   - [Authors](#authors)
@@ -593,8 +593,8 @@ Important: When implementing your Tracker, you need to stick to the <a href=http
 
 [Back to ToC](#table-of-contents)
 
-### Comment your code
-As comment style we chose the [Google docstrings style](https://gist.github.com/redlotus/3bc387c2591e3e908c9b63b97b11d24e)!
+### Comment your Code
+As comment style we chose the [Google docstrings style](https://colab.research.google.com/drive/1NGkIHqXnOPeZqV1RbvcGoQ_DTjOgpGxC?usp=sharing)!
 ## Used Third Party Repos
 * **Yolov5**, Ultralytics: https://github.com/ultralytics/yolov5
 * **DeepSORT**: https://github.com/nwojke/deep_sort
