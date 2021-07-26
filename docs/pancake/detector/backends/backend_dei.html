@@ -79,6 +79,16 @@ def locate(
        |               |
        |               |
         ------------ x1, y1
+
+    Args:
+        subframes (List[np.ndarray]): Subframes
+        x0 (int): upper-left x-value
+        y0 (int): upper-left y-value
+        x1 (int): lower-right x-value
+        y1 (int): lower-right y-value
+
+    Returns:
+        List[int]: List of subframe ids
     &#34;&#34;&#34;
     locations = []
     if x0 &lt;= 0 or y0 &lt;= 0:
@@ -102,15 +112,14 @@ def locate(
 
 
 def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Concatenate images horizontally
 
     Args:
-        source (Union[np.ndarray, List[np.ndarray]]): [description]
+        source (Union[np.ndarray, List[np.ndarray]]): Image or list of images
 
     Returns:
-        np.ndarray: [description]
+        np.ndarray: Concatenated image
     &#34;&#34;&#34;
-    &#34;&#34;&#34;Concat images horizontally&#34;&#34;&#34;
     if type(source) != list:
         source = [source]
     return cv2.hconcat(source)
@@ -119,16 +128,16 @@ def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -&gt; np.ndarray:
 def rev_rotate_bound(
     img: np.ndarray, result: Tuple[int, int, int, int, int, int], angle: int, side: int
 ) -&gt; Tuple[int, int, int, int, int, int]:
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Reverse bounded (non-cropping) image rotation
 
     Args:
-        img (np.ndarray): [description]
-        result (Tuple[int, int, int, int, int, int]): [description]
-        angle (int): [description]
-        side (int): [description]
+        img (np.ndarray): Image to be rotated back
+        result (Tuple[int, int, int, int, int, int]): Result tuple
+        angle (int): Angle in degree measure
+        side (int): Side width
 
     Returns:
-        Tuple[int, int, int, int, int, int]: [description]
+        Tuple[int, int, int, int, int, int]: Result tuple width adjusted coordinates
     &#34;&#34;&#34;
     h, w, _ = img.shape
     center = (w // 2, h // 2)
@@ -157,14 +166,14 @@ def rev_rotate_bound(
 
 
 def rotate_cpu(image: np.ndarray, angle: int):
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Rotate image using CPU only
 
     Args:
-        image (np.ndarray): [description]
-        angle (float): [description]
+        image (np.ndarray): Image to be rotated
+        angle (float): Angle in degree measure
 
     Returns:
-        [type]: [description]
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
@@ -176,14 +185,14 @@ def rotate_cpu(image: np.ndarray, angle: int):
 
 
 def rotate(image: np.ndarray, angle: int):
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Rotate image
 
     Args:
-        image (np.ndarray): [description]
-        angle (float): [description]
+        image (np.ndarray): Image to be rotated
+        angle (float): Angle in degree measure
 
     Returns:
-        [type]: [description]
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
@@ -199,18 +208,16 @@ def rotate(image: np.ndarray, angle: int):
 
 
 def rotate_bound_cpu(img: np.ndarray, angle: int) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
-
-    Args:
-        img (np.ndarray): [description]
-        angle (int): [description]
-
-    Returns:
-        np.ndarray: [description]
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Rotate image bounded (non-cropping) using CPU only
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+
+    Args:
+        img (np.ndarray): Image to be rotated
+        angle (int): Angle in degree measure
+
+    Returns:
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image and then determine the
     # center
@@ -237,18 +244,16 @@ def rotate_bound_cpu(img: np.ndarray, angle: int) -&gt; np.ndarray:
 
 
 def rotate_bound(img: np.ndarray, angle: int) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
-
-    Args:
-        img (np.ndarray): [description]
-        angle (int): [description]
-
-    Returns:
-        np.ndarray: [description]
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Rotate image bounded (non-cropping)
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+
+    Args:
+        img (np.ndarray): Image to be rotated
+        angle (int): Angle in degree measure
+
+    Returns:
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image and then determine the
     # center
@@ -282,16 +287,15 @@ def rotate_bound(img: np.ndarray, angle: int) -&gt; np.ndarray:
 
 
 @lru_cache(maxsize=None)
-def f(x: int) -&gt; Tuple[int, int]:
-    &#34;&#34;&#34;[summary]
+def f(x: int) -&gt; Tuple[int, int, int]:
+    &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip
 
     Args:
-        x (int): [description]
+        x (int): x-value
 
     Returns:
-        Tuple[int, int]: [description]
+        Tuple[int, int, int]: y, angle, width
     &#34;&#34;&#34;
-    &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip.&#34;&#34;&#34;
     if x &lt; 3840:
         y = int(-0.047 * x + 1100)
         angle = int(-0.015 * x + 57)
@@ -326,21 +330,14 @@ class DEI(Backend):
         *args,
         **kwargs,
     ) -&gt; None:
-        &#34;&#34;&#34;[summary]
+        &#34;&#34;&#34;DEI Backend
 
         Args:
-            detector (Type[Detector]): [description]
-            roi (list, optional): [description]. Defaults to None.
-            simple (bool, optional): [description]. Defaults to False.
-            cache (bool, optional): [description]. Defaults to True.
-            config (dict, optional): [description]. Defaults to {}.
-        &#34;&#34;&#34;
-        &#34;&#34;&#34;
-
-        :param detector: Detector which provides &#39;detect&#39; method,
-                         which can take one or multiple images.
-        :param simple (bool): Use less subframes
-
+            detector (Type[Detector]): Detector instance which provides &#34;detect&#34; method
+            roi (list, optional): Region of interest. Defaults to None.
+            simple (bool, optional): Simple flag (will use less subframes). Defaults to False.
+            cache (bool, optional): Cache flag. Defaults to True.
+            config (dict, optional): Config options. Defaults to {}.
         &#34;&#34;&#34;
         self.detector = detector
         self.simple = simple
@@ -386,37 +383,32 @@ class DEI(Backend):
         self,
         source: List[np.ndarray],
     ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-        &#34;&#34;&#34;[summary]
+        &#34;&#34;&#34;Detect objects on images by splitting and merging.
+
+        Description:
+            The tuples of the return list have 6 values:
+            x0: x-value top left corner
+            y0: y-value top left corner
+            x1: x-value bottom right corner
+            y1: y-value bottom right corner
+            conf: Confidence of detection, values between 0 and 1
+            class id: Integer indicating the detected object type
+
+            Modus operandi:
+            * Stitch images
+            * Divide image into subframes
+            * Rotate subframes (without cropping, i.e. adding padding)
+            * Detect objects on each subframe, saving classes and coordinates
+            * Calculate coordinates on original frame
+            * Filter and merge objects
 
         Args:
-            source (List[np.ndarray]): [description]
+            source (List[np.ndarray]): List of images
 
         Returns:
-            Tuple[torch.Tensor, np.ndarray]: [description]
-        &#34;&#34;&#34;
-        &#34;&#34;&#34;
-        Detect objects on image by splitting and merging.
-
-        :param source: filename or np.ndarray
-
-        :return (objs, img): list of tuples with objects and their coordinates,
+            Tuple[torch.Tensor, np.ndarray]: Tuple with list of objects and their coordinates,
                              stitched panorama image
 
-        The tuples of the return list have 6 values:
-        x0: x-value top left corner
-        y0: y-value top left corner
-        x1: x-value bottom right corner
-        y1: y-value bottom right corner
-        conf: Confidence of detection, values between 0 and 1
-        class id: Integer indicating the detected object type
-
-        Modus operandi:
-        * Stitch images
-        * Divide image into subframes
-        * Rotate subframes (without cropping, i.e. adding padding)
-        * Detect objects on each subframe, saving classes and coordinates
-        * Calculate coordinates on original frame
-        * Filter and merge objects
         &#34;&#34;&#34;
         assert all(x.shape == source[0].shape for x in source[1:])
 
@@ -487,21 +479,30 @@ class DEI(Backend):
         results = torch.stack(results, dim=0) if results else torch.empty((0, 6))
         return results, img
 
-    def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
-        &#34;&#34;&#34;
-        Merge all detected objects of subframes.
+    def merge(
+        self, objs: List[Tuple], subframes: List[np.ndarray] = None, ratio: float = 0.8
+    ) -&gt; List[Tuple]:
+        &#34;&#34;&#34;Merge all detected objects of subframes.
 
-        Right now we use a single heuristic:
-        If obj is embedded in another object with 90% or more of its area, discard it.
+        Description:
+            Right now we use a single heuristic:
+            If obj is embedded in another object with 80% or more of its area, discard it.
 
-        TODO:
-            This simple heuristic is by no means perfect yet.
-            Especially when an object is right at the border of a subframe,
-            the results can get inaccurate.
-            Further filtering has to be done here
-            Example:
-            * If obj is at the border of a subframe, check if it is in the middle
-              of another one (and discard if so)
+            TODO:
+                This simple heuristic is by no means perfect yet.
+                Especially when an object is right at the border of a subframe,
+                the results can get inaccurate.
+                Further filtering has to be done here
+                Example:
+                * If obj is at the border of a subframe, check if it is in the middle
+                  of another one (and discard if so)
+        Args:
+            objs (List[Tuple]): List of objects
+            subframes (List[np.ndarray]): List of subframes
+            ratio (float): Embedded threshold
+
+        Returns:
+            List[Tuple]: List of filtered objects
         &#34;&#34;&#34;
         results = []
         while objs:
@@ -557,35 +558,34 @@ class DEI(Backend):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pancake.detector.backends.backend_dei.f"><code class="name flex">
-<span>def <span class="ident">f</span></span>(<span>x: int) ‑> Tuple[int, int]</span>
+<span>def <span class="ident">f</span></span>(<span>x: int) ‑> Tuple[int, int, int]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Returns y value, angle of rotation, width for x along centre strip</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>x</code></strong> :&ensp;<code>int</code></dt>
-<dd>[description]</dd>
+<dd>x-value</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>Tuple[int, int]</code></dt>
-<dd>[description]</dd>
+<dt><code>Tuple[int, int, int]</code></dt>
+<dd>y, angle, width</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@lru_cache(maxsize=None)
-def f(x: int) -&gt; Tuple[int, int]:
-    &#34;&#34;&#34;[summary]
+def f(x: int) -&gt; Tuple[int, int, int]:
+    &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip
 
     Args:
-        x (int): [description]
+        x (int): x-value
 
     Returns:
-        Tuple[int, int]: [description]
+        Tuple[int, int, int]: y, angle, width
     &#34;&#34;&#34;
-    &#34;&#34;&#34;Returns y value, angle of rotation, width for x along centre strip.&#34;&#34;&#34;
     if x &lt; 3840:
         y = int(-0.047 * x + 1100)
         angle = int(-0.015 * x + 57)
@@ -605,31 +605,30 @@ def f(x: int) -&gt; Tuple[int, int]:
 <span>def <span class="ident">hconcat</span></span>(<span>source: Union[numpy.ndarray, List[numpy.ndarray]]) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Concatenate images horizontally</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>source</code></strong> :&ensp;<code>Union[np.ndarray, List[np.ndarray]]</code></dt>
-<dd>[description]</dd>
+<dd>Image or list of images</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Concatenated image</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def hconcat(source: Union[np.ndarray, List[np.ndarray]]) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Concatenate images horizontally
 
     Args:
-        source (Union[np.ndarray, List[np.ndarray]]): [description]
+        source (Union[np.ndarray, List[np.ndarray]]): Image or list of images
 
     Returns:
-        np.ndarray: [description]
+        np.ndarray: Concatenated image
     &#34;&#34;&#34;
-    &#34;&#34;&#34;Concat images horizontally&#34;&#34;&#34;
     if type(source) != list:
         source = [source]
     return cv2.hconcat(source)</code></pre>
@@ -648,7 +647,25 @@ x0, y0 ------------
 |
 |
 |
------------- x1, y1</p></div>
+------------ x1, y1</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>subframes</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
+<dd>Subframes</dd>
+<dt><strong><code>x0</code></strong> :&ensp;<code>int</code></dt>
+<dd>upper-left x-value</dd>
+<dt><strong><code>y0</code></strong> :&ensp;<code>int</code></dt>
+<dd>upper-left y-value</dd>
+<dt><strong><code>x1</code></strong> :&ensp;<code>int</code></dt>
+<dd>lower-right x-value</dd>
+<dt><strong><code>y1</code></strong> :&ensp;<code>int</code></dt>
+<dd>lower-right y-value</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[int]</code></dt>
+<dd>List of subframe ids</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -664,6 +681,16 @@ x0, y0 ------------
        |               |
        |               |
         ------------ x1, y1
+
+    Args:
+        subframes (List[np.ndarray]): Subframes
+        x0 (int): upper-left x-value
+        y0 (int): upper-left y-value
+        x1 (int): lower-right x-value
+        y1 (int): lower-right y-value
+
+    Returns:
+        List[int]: List of subframe ids
     &#34;&#34;&#34;
     locations = []
     if x0 &lt;= 0 or y0 &lt;= 0:
@@ -690,22 +717,22 @@ x0, y0 ------------
 <span>def <span class="ident">rev_rotate_bound</span></span>(<span>img: numpy.ndarray, result: Tuple[int, int, int, int, int, int], angle: int, side: int) ‑> Tuple[int, int, int, int, int, int]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Reverse bounded (non-cropping) image rotation</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Image to be rotated back</dd>
 <dt><strong><code>result</code></strong> :&ensp;<code>Tuple[int, int, int, int, int, int]</code></dt>
-<dd>[description]</dd>
+<dd>Result tuple</dd>
 <dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
-<dd>[description]</dd>
+<dd>Angle in degree measure</dd>
 <dt><strong><code>side</code></strong> :&ensp;<code>int</code></dt>
-<dd>[description]</dd>
+<dd>Side width</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>Tuple[int, int, int, int, int, int]</code></dt>
-<dd>[description]</dd>
+<dd>Result tuple width adjusted coordinates</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -714,16 +741,16 @@ x0, y0 ------------
 <pre><code class="python">def rev_rotate_bound(
     img: np.ndarray, result: Tuple[int, int, int, int, int, int], angle: int, side: int
 ) -&gt; Tuple[int, int, int, int, int, int]:
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Reverse bounded (non-cropping) image rotation
 
     Args:
-        img (np.ndarray): [description]
-        result (Tuple[int, int, int, int, int, int]): [description]
-        angle (int): [description]
-        side (int): [description]
+        img (np.ndarray): Image to be rotated back
+        result (Tuple[int, int, int, int, int, int]): Result tuple
+        angle (int): Angle in degree measure
+        side (int): Side width
 
     Returns:
-        Tuple[int, int, int, int, int, int]: [description]
+        Tuple[int, int, int, int, int, int]: Result tuple width adjusted coordinates
     &#34;&#34;&#34;
     h, w, _ = img.shape
     center = (w // 2, h // 2)
@@ -755,32 +782,32 @@ x0, y0 ------------
 <span>def <span class="ident">rotate</span></span>(<span>image: numpy.ndarray, angle: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Rotate image</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>image</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Image to be rotated</dd>
 <dt><strong><code>angle</code></strong> :&ensp;<code>float</code></dt>
-<dd>[description]</dd>
+<dd>Angle in degree measure</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>[type]</code></dt>
-<dd>[description]</dd>
+<dt><code>np.ndarray</code></dt>
+<dd>Rotated image</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rotate(image: np.ndarray, angle: int):
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Rotate image
 
     Args:
-        image (np.ndarray): [description]
-        angle (float): [description]
+        image (np.ndarray): Image to be rotated
+        angle (float): Angle in degree measure
 
     Returns:
-        [type]: [description]
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
@@ -799,36 +826,36 @@ x0, y0 ------------
 <span>def <span class="ident">rotate_bound</span></span>(<span>img: numpy.ndarray, angle: int) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Rotate image bounded (non-cropping)</p>
+<h2 id="source">Source</h2>
+<p>github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Image to be rotated</dd>
 <dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
-<dd>[description]</dd>
+<dd>Angle in degree measure</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Rotated image</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rotate_bound(img: np.ndarray, angle: int) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
-
-    Args:
-        img (np.ndarray): [description]
-        angle (int): [description]
-
-    Returns:
-        np.ndarray: [description]
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Rotate image bounded (non-cropping)
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+
+    Args:
+        img (np.ndarray): Image to be rotated
+        angle (int): Angle in degree measure
+
+    Returns:
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image and then determine the
     # center
@@ -862,36 +889,36 @@ x0, y0 ------------
 <span>def <span class="ident">rotate_bound_cpu</span></span>(<span>img: numpy.ndarray, angle: int) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Rotate image bounded (non-cropping) using CPU only</p>
+<h2 id="source">Source</h2>
+<p>github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Image to be rotated</dd>
 <dt><strong><code>angle</code></strong> :&ensp;<code>int</code></dt>
-<dd>[description]</dd>
+<dd>Angle in degree measure</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Rotated image</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rotate_bound_cpu(img: np.ndarray, angle: int) -&gt; np.ndarray:
-    &#34;&#34;&#34;[summary]
-
-    Args:
-        img (np.ndarray): [description]
-        angle (int): [description]
-
-    Returns:
-        np.ndarray: [description]
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Rotate image bounded (non-cropping) using CPU only
     Source:
         github.com/jrosebr1/imutils/blob/master/imutils/convenience.py#L41-L63.
+
+    Args:
+        img (np.ndarray): Image to be rotated
+        angle (int): Angle in degree measure
+
+    Returns:
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image and then determine the
     # center
@@ -921,32 +948,32 @@ x0, y0 ------------
 <span>def <span class="ident">rotate_cpu</span></span>(<span>image: numpy.ndarray, angle: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Rotate image using CPU only</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>image</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>Image to be rotated</dd>
 <dt><strong><code>angle</code></strong> :&ensp;<code>float</code></dt>
-<dd>[description]</dd>
+<dd>Angle in degree measure</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>[type]</code></dt>
-<dd>[description]</dd>
+<dt><code>np.ndarray</code></dt>
+<dd>Rotated image</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rotate_cpu(image: np.ndarray, angle: int):
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Rotate image using CPU only
 
     Args:
-        image (np.ndarray): [description]
-        angle (float): [description]
+        image (np.ndarray): Image to be rotated
+        angle (float): Angle in degree measure
 
     Returns:
-        [type]: [description]
+        np.ndarray: Rotated image
     &#34;&#34;&#34;
     # grab the dimensions of the image
     (h, w) = image.shape[:2]
@@ -972,19 +999,19 @@ x0, y0 ------------
 All Backends to be used within this framework have to inherit from this class.
 The inheritance will automatically register every subclass into the registry thus
 allowing for modular access to the backend strategies.</p>
-<p>[summary]</p>
+<p>DEI Backend</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>detector</code></strong> :&ensp;<code>Type[Detector]</code></dt>
-<dd>[description]</dd>
+<dd>Detector instance which provides "detect" method</dd>
 <dt><strong><code>roi</code></strong> :&ensp;<code>list</code>, optional</dt>
-<dd>[description]. Defaults to None.</dd>
+<dd>Region of interest. Defaults to None.</dd>
 <dt><strong><code>simple</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>[description]. Defaults to False.</dd>
+<dd>Simple flag (will use less subframes). Defaults to False.</dd>
 <dt><strong><code>cache</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>[description]. Defaults to True.</dd>
+<dd>Cache flag. Defaults to True.</dd>
 <dt><strong><code>config</code></strong> :&ensp;<code>dict</code>, optional</dt>
-<dd>[description]. Defaults to {}.</dd>
+<dd>Config options. Defaults to {}.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1001,21 +1028,14 @@ allowing for modular access to the backend strategies.</p>
         *args,
         **kwargs,
     ) -&gt; None:
-        &#34;&#34;&#34;[summary]
+        &#34;&#34;&#34;DEI Backend
 
         Args:
-            detector (Type[Detector]): [description]
-            roi (list, optional): [description]. Defaults to None.
-            simple (bool, optional): [description]. Defaults to False.
-            cache (bool, optional): [description]. Defaults to True.
-            config (dict, optional): [description]. Defaults to {}.
-        &#34;&#34;&#34;
-        &#34;&#34;&#34;
-
-        :param detector: Detector which provides &#39;detect&#39; method,
-                         which can take one or multiple images.
-        :param simple (bool): Use less subframes
-
+            detector (Type[Detector]): Detector instance which provides &#34;detect&#34; method
+            roi (list, optional): Region of interest. Defaults to None.
+            simple (bool, optional): Simple flag (will use less subframes). Defaults to False.
+            cache (bool, optional): Cache flag. Defaults to True.
+            config (dict, optional): Config options. Defaults to {}.
         &#34;&#34;&#34;
         self.detector = detector
         self.simple = simple
@@ -1061,37 +1081,32 @@ allowing for modular access to the backend strategies.</p>
         self,
         source: List[np.ndarray],
     ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-        &#34;&#34;&#34;[summary]
+        &#34;&#34;&#34;Detect objects on images by splitting and merging.
+
+        Description:
+            The tuples of the return list have 6 values:
+            x0: x-value top left corner
+            y0: y-value top left corner
+            x1: x-value bottom right corner
+            y1: y-value bottom right corner
+            conf: Confidence of detection, values between 0 and 1
+            class id: Integer indicating the detected object type
+
+            Modus operandi:
+            * Stitch images
+            * Divide image into subframes
+            * Rotate subframes (without cropping, i.e. adding padding)
+            * Detect objects on each subframe, saving classes and coordinates
+            * Calculate coordinates on original frame
+            * Filter and merge objects
 
         Args:
-            source (List[np.ndarray]): [description]
+            source (List[np.ndarray]): List of images
 
         Returns:
-            Tuple[torch.Tensor, np.ndarray]: [description]
-        &#34;&#34;&#34;
-        &#34;&#34;&#34;
-        Detect objects on image by splitting and merging.
-
-        :param source: filename or np.ndarray
-
-        :return (objs, img): list of tuples with objects and their coordinates,
+            Tuple[torch.Tensor, np.ndarray]: Tuple with list of objects and their coordinates,
                              stitched panorama image
 
-        The tuples of the return list have 6 values:
-        x0: x-value top left corner
-        y0: y-value top left corner
-        x1: x-value bottom right corner
-        y1: y-value bottom right corner
-        conf: Confidence of detection, values between 0 and 1
-        class id: Integer indicating the detected object type
-
-        Modus operandi:
-        * Stitch images
-        * Divide image into subframes
-        * Rotate subframes (without cropping, i.e. adding padding)
-        * Detect objects on each subframe, saving classes and coordinates
-        * Calculate coordinates on original frame
-        * Filter and merge objects
         &#34;&#34;&#34;
         assert all(x.shape == source[0].shape for x in source[1:])
 
@@ -1162,21 +1177,30 @@ allowing for modular access to the backend strategies.</p>
         results = torch.stack(results, dim=0) if results else torch.empty((0, 6))
         return results, img
 
-    def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
-        &#34;&#34;&#34;
-        Merge all detected objects of subframes.
+    def merge(
+        self, objs: List[Tuple], subframes: List[np.ndarray] = None, ratio: float = 0.8
+    ) -&gt; List[Tuple]:
+        &#34;&#34;&#34;Merge all detected objects of subframes.
 
-        Right now we use a single heuristic:
-        If obj is embedded in another object with 90% or more of its area, discard it.
+        Description:
+            Right now we use a single heuristic:
+            If obj is embedded in another object with 80% or more of its area, discard it.
 
-        TODO:
-            This simple heuristic is by no means perfect yet.
-            Especially when an object is right at the border of a subframe,
-            the results can get inaccurate.
-            Further filtering has to be done here
-            Example:
-            * If obj is at the border of a subframe, check if it is in the middle
-              of another one (and discard if so)
+            TODO:
+                This simple heuristic is by no means perfect yet.
+                Especially when an object is right at the border of a subframe,
+                the results can get inaccurate.
+                Further filtering has to be done here
+                Example:
+                * If obj is at the border of a subframe, check if it is in the middle
+                  of another one (and discard if so)
+        Args:
+            objs (List[Tuple]): List of objects
+            subframes (List[np.ndarray]): List of subframes
+            ratio (float): Embedded threshold
+
+        Returns:
+            List[Tuple]: List of filtered objects
         &#34;&#34;&#34;
         results = []
         while objs:
@@ -1234,16 +1258,32 @@ allowing for modular access to the backend strategies.</p>
 <span>def <span class="ident">detect</span></span>(<span>self, source: List[numpy.ndarray]) ‑> Tuple[torch.Tensor, numpy.ndarray]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>[summary]</p>
+<div class="desc"><p>Detect objects on images by splitting and merging.</p>
+<h2 id="description">Description</h2>
+<p>The tuples of the return list have 6 values:
+x0: x-value top left corner
+y0: y-value top left corner
+x1: x-value bottom right corner
+y1: y-value bottom right corner
+conf: Confidence of detection, values between 0 and 1
+class id: Integer indicating the detected object type</p>
+<p>Modus operandi:
+* Stitch images
+* Divide image into subframes
+* Rotate subframes (without cropping, i.e. adding padding)
+* Detect objects on each subframe, saving classes and coordinates
+* Calculate coordinates on original frame
+* Filter and merge objects</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>source</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
-<dd>[description]</dd>
+<dd>List of images</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>Tuple[torch.Tensor, np.ndarray]</code></dt>
-<dd>[description]</dd>
+<dd>Tuple with list of objects and their coordinates,
+stitched panorama image</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1253,37 +1293,32 @@ allowing for modular access to the backend strategies.</p>
     self,
     source: List[np.ndarray],
 ) -&gt; Tuple[torch.Tensor, np.ndarray]:
-    &#34;&#34;&#34;[summary]
+    &#34;&#34;&#34;Detect objects on images by splitting and merging.
+
+    Description:
+        The tuples of the return list have 6 values:
+        x0: x-value top left corner
+        y0: y-value top left corner
+        x1: x-value bottom right corner
+        y1: y-value bottom right corner
+        conf: Confidence of detection, values between 0 and 1
+        class id: Integer indicating the detected object type
+
+        Modus operandi:
+        * Stitch images
+        * Divide image into subframes
+        * Rotate subframes (without cropping, i.e. adding padding)
+        * Detect objects on each subframe, saving classes and coordinates
+        * Calculate coordinates on original frame
+        * Filter and merge objects
 
     Args:
-        source (List[np.ndarray]): [description]
+        source (List[np.ndarray]): List of images
 
     Returns:
-        Tuple[torch.Tensor, np.ndarray]: [description]
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
-    Detect objects on image by splitting and merging.
-
-    :param source: filename or np.ndarray
-
-    :return (objs, img): list of tuples with objects and their coordinates,
+        Tuple[torch.Tensor, np.ndarray]: Tuple with list of objects and their coordinates,
                          stitched panorama image
 
-    The tuples of the return list have 6 values:
-    x0: x-value top left corner
-    y0: y-value top left corner
-    x1: x-value bottom right corner
-    y1: y-value bottom right corner
-    conf: Confidence of detection, values between 0 and 1
-    class id: Integer indicating the detected object type
-
-    Modus operandi:
-    * Stitch images
-    * Divide image into subframes
-    * Rotate subframes (without cropping, i.e. adding padding)
-    * Detect objects on each subframe, saving classes and coordinates
-    * Calculate coordinates on original frame
-    * Filter and merge objects
     &#34;&#34;&#34;
     assert all(x.shape == source[0].shape for x in source[1:])
 
@@ -1356,39 +1391,63 @@ allowing for modular access to the backend strategies.</p>
 </details>
 </dd>
 <dt id="pancake.detector.backends.backend_dei.DEI.merge"><code class="name flex">
-<span>def <span class="ident">merge</span></span>(<span>self, objs: list, subframes: list = None, ratio=0.8) ‑> list</span>
+<span>def <span class="ident">merge</span></span>(<span>self, objs: List[Tuple], subframes: List[numpy.ndarray] = None, ratio: float = 0.8) ‑> List[Tuple]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Merge all detected objects of subframes.</p>
+<h2 id="description">Description</h2>
 <p>Right now we use a single heuristic:
-If obj is embedded in another object with 90% or more of its area, discard it.</p>
-<h2 id="todo">Todo</h2>
-<p>This simple heuristic is by no means perfect yet.
+If obj is embedded in another object with 80% or more of its area, discard it.</p>
+<p>TODO:
+This simple heuristic is by no means perfect yet.
 Especially when an object is right at the border of a subframe,
 the results can get inaccurate.
 Further filtering has to be done here
 Example:
 * If obj is at the border of a subframe, check if it is in the middle
-of another one (and discard if so)</p></div>
+of another one (and discard if so)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>objs</code></strong> :&ensp;<code>List[Tuple]</code></dt>
+<dd>List of objects</dd>
+<dt><strong><code>subframes</code></strong> :&ensp;<code>List[np.ndarray]</code></dt>
+<dd>List of subframes</dd>
+<dt><strong><code>ratio</code></strong> :&ensp;<code>float</code></dt>
+<dd>Embedded threshold</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[Tuple]</code></dt>
+<dd>List of filtered objects</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def merge(self, objs: list, subframes: list = None, ratio=0.8) -&gt; list:
-    &#34;&#34;&#34;
-    Merge all detected objects of subframes.
+<pre><code class="python">def merge(
+    self, objs: List[Tuple], subframes: List[np.ndarray] = None, ratio: float = 0.8
+) -&gt; List[Tuple]:
+    &#34;&#34;&#34;Merge all detected objects of subframes.
 
-    Right now we use a single heuristic:
-    If obj is embedded in another object with 90% or more of its area, discard it.
+    Description:
+        Right now we use a single heuristic:
+        If obj is embedded in another object with 80% or more of its area, discard it.
 
-    TODO:
-        This simple heuristic is by no means perfect yet.
-        Especially when an object is right at the border of a subframe,
-        the results can get inaccurate.
-        Further filtering has to be done here
-        Example:
-        * If obj is at the border of a subframe, check if it is in the middle
-          of another one (and discard if so)
+        TODO:
+            This simple heuristic is by no means perfect yet.
+            Especially when an object is right at the border of a subframe,
+            the results can get inaccurate.
+            Further filtering has to be done here
+            Example:
+            * If obj is at the border of a subframe, check if it is in the middle
+              of another one (and discard if so)
+    Args:
+        objs (List[Tuple]): List of objects
+        subframes (List[np.ndarray]): List of subframes
+        ratio (float): Embedded threshold
+
+    Returns:
+        List[Tuple]: List of filtered objects
     &#34;&#34;&#34;
     results = []
     while objs:
