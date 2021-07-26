@@ -17,6 +17,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
 <!------------------------- ToC --------------------------->
 ## Table of Contents
 - [pancake :pancakes: - Panorama Camera Car Tracking](#pancake-pancakes---panorama-camera-car-tracking)
+        - [Documentation](#documentation)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Poetry](#poetry)
@@ -28,13 +29,18 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
   - [Modules](#modules)
+    - [Data + Preprocessing](#data--preprocessing)
     - [Backend](#backend)
     - [Detection](#detection)
     - [Tracking](#tracking)
+    - [Storage](#storage)
+    - [Result Processing](#result-processing)
+    - [Analysis](#analysis)
   - [Further Notes](#further-notes)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
     - [Samples](#samples)
+    - [Comment your code](#comment-your-code)
   - [Used Third Party Repos](#used-third-party-repos)
   - [License](#license)
   - [Authors](#authors)
@@ -571,7 +577,6 @@ Important: When implementing your Tracker, you need to stick to the <a href=http
 
 <!------------------------- Further Notes --------------------------->
 ## Further Notes
-
 ### Google Colab
 
 [Google Colab for training Yolov5 models on custom data](https://colab.research.google.com/drive/1xtMJhFlp0cB9S2_irIkHAjJ9_6Tol-g9?usp=sharing)
@@ -588,6 +593,8 @@ Important: When implementing your Tracker, you need to stick to the <a href=http
 
 [Back to ToC](#table-of-contents)
 
+### Comment your code
+As comment style we chose the [Google docstrings style](https://gist.github.com/redlotus/3bc387c2591e3e908c9b63b97b11d24e)!
 ## Used Third Party Repos
 * **Yolov5**, Ultralytics: https://github.com/ultralytics/yolov5
 * **DeepSORT**: https://github.com/nwojke/deep_sort
