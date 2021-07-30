@@ -10,7 +10,7 @@ usually the user shouldn't have to delve into this too much though.
 
 For details on how to specify different sources (+ Examples) see [Configurations](https://github.com/mauricesvp/pancake/blob/main/README.md#configurations).
 
-# Backend
+## Backend
 
 Because the Detection can - depending on the data - not necessarily be run directly,
 the Backend is responsible for adjusting the data as necessary to make sure the results are in order.
@@ -18,11 +18,10 @@ All backends are initialized with an instance of a Detector, which is used for t
 
 | Backend       | Details   | Configuration ```NAME:```         |
 | ------------- | -------   | ------------------- |
-| Basic         | foo       | ```"simple"```
-| DEI           | foo       | ```"dei"```
+| Basic         | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md#basic)  | ```"simple"```
+| DEI           | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md#dei-divide-and-conquer)  | ```"dei"```
 
-<details>
-  <summary><b>Adding a new Backend</b></summary>
+### Adding a new Backend
   <ol>
     <li>Create your backend_foo.py within <code>detector/backends/</code> .</li>
     <li>Create a Backend class that inherits from the <a href="pancake/detector/backends/backend.py">Base Backend</a>.</li>
@@ -30,8 +29,7 @@ All backends are initialized with an instance of a Detector, which is used for t
     <li>Add your Backend to the <a href="pancake/detector/backends/__init__.py">registry</a> (i.e. add <code>from .backend_foo import Foo</code>).</li>
     <li>Set your Backend in the configuration (under "BACKEND" -> NAME: "foo").</li>
   </ol>
-Important: When implementing your Backend, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/backends/backend.html> Backend API</a>!
-</details>
+  Important: When implementing your Backend, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/detector/backends/backend.html> Backend API</a>!
 
 # Detection
 
