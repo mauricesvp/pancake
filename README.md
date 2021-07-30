@@ -402,7 +402,16 @@ and the results are stored in a database (this happens for every frame).
 Pancake has been designed with modularity in mind, that is to say the Backend, Detector and Tracker can easily be changed,
 which also means new ones can be implemented and integrated easily.
 
-Find more details on how to write your own Backend, Detector or Tracker below.
+For more details, and instructions on how to write your own Backend, Detector or Tracker, see below.
+
+  | Module                  | Details           |
+  | ----------------------- | --------------------------------- |
+  | Data (+ Preprocessing)  |[Data](docs/modules/data.md) |
+  | Backend                 |[Backend](docs/modules/backend.md) |
+  | Tracker                 |[Tracker](docs/modules/tracker.md) |
+  | Result Processing       |[Result Processing](docs/modules/result_processing.md) |
+  | Storage                 |[Storage](docs/modules/storage.md) |
+  | Analysis                |[Analysis](docs/modules/analysis.md) |
 
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
