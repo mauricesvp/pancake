@@ -29,6 +29,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
   - [Modules](#modules)
+  <!---
     - [Data + Preprocessing](#data--preprocessing)
     - [Backend](#backend)
     - [Detection](#detection)
@@ -36,6 +37,7 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Storage](#storage)
     - [Result Processing](#result-processing)
     - [Analysis](#analysis)
+    --->
   - [Further Notes](#further-notes)
     - [Google Colab](#google-colab)
     - [TensorRT](#tensorrt)
@@ -292,7 +294,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   * ```NAME```: _name of the backend strategy according to the registry_
   * ```DEI```: ```SIMPLE```: _True_, _False_ (enables simpler version of DEI)
 
-  **Note**: For more information on the backend registry and which strategies are currently implemented, refer to [Backend](#backend).
+  **Note**: For more information on the backend registry and which strategies are currently implemented, refer to [Backend](#modules).
 
 </details>
 
@@ -306,7 +308,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **Possible values:**
   * ```NAME```: _name of the detector technology according to the registry_
 
-  **Note**: For more information on the detector registry and which detector technologies are currently implemented, refer to [Detection](#detection).
+  **Note**: For more information on the detector registry and which detector technologies are currently implemented, refer to [Detection](#modules).
 </details>
 
 <!-- Tracker -->
@@ -319,7 +321,7 @@ All of the pancake ingredients can simply be specified in the designated _[panca
   **Possible values:**
   * ```NAME```: _name of the tracking algorithm according to the registry_
 
-  **Note**: For more information on the tracker registry and which tracking algorithms are currently implemented, refer to [Tracking](#tracking).
+  **Note**: For more information on the tracker registry and which tracking algorithms are currently implemented, refer to [Tracking](#modules).
 </details>
 
 <!-- Result Processing -->
@@ -413,7 +415,7 @@ For more details, and instructions on how to write your own Backend, Detector or
   | Result Processing       |[Result Processing](docs/modules/result_processing.md) | [API](https://mauricesvp.github.io/pancake/pancake/utils/result_processor.html)
   | Storage                 |[Storage](docs/modules/storage.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/db.html)
   | Analysis                |[Analysis](docs/modules/analysis.md)                   | -
-
+<!---
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
   as well as multiple sources at once (e.g. multi-camera setups).
@@ -582,6 +584,7 @@ Important: When implementing your Tracker, you need to stick to the <a href=http
 ### Analysis
   Pancake currently doesn't offer further analysis on the collected data.
   This is something that could be tackled in the future.
+--->
 
 [Back to ToC](#table-of-contents)
 
