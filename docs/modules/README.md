@@ -2,7 +2,7 @@
 
 <img width="800" height="%" src="/gitimg/app_structure.png">
 
-# Data + Preprocessing
+## Data + Preprocessing
 Pancake offers various different data sources, both live and offline,
 as well as multiple sources at once (e.g. multi-camera setups).
 The preprocessing necessary is handled "under the hood" (for details, see [datasets.py](pancake/utils/datasets.py) ),
@@ -71,3 +71,14 @@ whereat the Trackers have been loosely taken over from previous project groups.
     <li>Set your Tracker in the configuration (under "TRACKER" -> NAME: "foo").</li>
   </ol>
 Important: When implementing your Tracker, you need to stick to the <a href=https://mauricesvp.github.io/pancake/pancake/tracker/tracker.html> Tracker API</a>!
+
+## Storage
+  The collected data can optionally be stored in a SQLite database (this can enabled in the [configuration](#configurations)).
+
+## Result Processing
+  If you are not only interested in the raw results data, but also in visualizations of detections or tracks,
+  you can enable and configure this in the [configuration](#https://github.com/mauricesvp/pancake/blob/main/README.md#configurations).
+
+## Analysis
+  Pancake currently doesn't offer further analysis on the collected data.
+  This is something that could be tackled in the future.
