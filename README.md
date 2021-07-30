@@ -408,13 +408,13 @@ For more details, and instructions on how to write your own Backend, Detector or
 
   | Module                  | Details                                               | API |
   | ----------------------- | ----------------------------------------------------- | --------------- |
-  | Data (+ Preprocessing)  |[Data](docs/modules/data.md)                           | [API](https://mauricesvp.github.io/pancake/pancake/utils/datasets.html)
-  | Backend                 |[Backend](docs/modules/backend.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/detector/backends/index.html)
-  | Detector                |[Detector](docs/modules/detector.md)                   | [API](https://mauricesvp.github.io/pancake/pancake/detector/index.html)
-  | Tracker                 |[Tracker](docs/modules/tracker.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/tracker/index.html)
-  | Result Processing       |[Result Processing](docs/modules/result_processing.md) | [API](https://mauricesvp.github.io/pancake/pancake/utils/result_processor.html)
-  | Storage                 |[Storage](docs/modules/storage.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/db.html)
-  | Analysis                |[Analysis](docs/modules/analysis.md)                   | -
+  | Data (+ Preprocessing)  |[Data](docs/modules/README.md#data--preprocessing)  | [API](https://mauricesvp.github.io/pancake/pancake/utils/datasets.html)
+  | Backend                 |[Backend](docs/modules/README.md#backend)                     | [API](https://mauricesvp.github.io/pancake/pancake/detector/backends/index.html)
+  | Detector                |[Detector](docs/modules/README.md#detection)                   | [API](https://mauricesvp.github.io/pancake/pancake/detector/index.html)
+  | Tracker                 |[Tracker](docs/modules/README.md#tracking)                     | [API](https://mauricesvp.github.io/pancake/pancake/tracker/index.html)
+  | Result Processing       |[Result Processing](docs/modules/README.md#result-processing) | [API](https://mauricesvp.github.io/pancake/pancake/utils/result_processor.html)
+  | Storage                 |[Storage](docs/modules/README.md#storage)                     | [API](https://mauricesvp.github.io/pancake/pancake/db.html)
+  | Analysis                |[Analysis](docs/modules/README.md#analysis)                   | -
 <!---
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
