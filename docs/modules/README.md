@@ -2,6 +2,14 @@
 
 <img width="800" height="%" src="/gitimg/app_structure.png">
 
+# Data + Preprocessing
+Pancake offers various different data sources, both live and offline,
+as well as multiple sources at once (e.g. multi-camera setups).
+The preprocessing necessary is handled "under the hood" (for details, see [datasets.py](pancake/utils/datasets.py) ),
+usually the user shouldn't have to delve into this too much though.
+
+For details on how to specify different sources (+ Examples) see [Configurations](https://github.com/mauricesvp/pancake/blob/main/README.md#configurations).
+
 # Backend
 
 | Backend       | Details   | Configuration ```NAME:```         |
