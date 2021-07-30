@@ -404,14 +404,15 @@ which also means new ones can be implemented and integrated easily.
 
 For more details, and instructions on how to write your own Backend, Detector or Tracker, see below.
 
-  | Module                  | Details           |
-  | ----------------------- | --------------------------------- |
-  | Data (+ Preprocessing)  |[Data](docs/modules/data.md) |
-  | Backend                 |[Backend](docs/modules/backend.md) |
-  | Tracker                 |[Tracker](docs/modules/tracker.md) |
-  | Result Processing       |[Result Processing](docs/modules/result_processing.md) |
-  | Storage                 |[Storage](docs/modules/storage.md) |
-  | Analysis                |[Analysis](docs/modules/analysis.md) |
+  | Module                  | Details                                               | API |
+  | ----------------------- | ----------------------------------------------------- | --------------- |
+  | Data (+ Preprocessing)  |[Data](docs/modules/data.md)                           | [API](https://mauricesvp.github.io/pancake/pancake/utils/datasets.html)
+  | Backend                 |[Backend](docs/modules/backend.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/detector/backends/index.html)
+  | Detector                |[Detector](docs/modules/detector.md)                   | [API](https://mauricesvp.github.io/pancake/pancake/detector/index.html)
+  | Tracker                 |[Tracker](docs/modules/tracker.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/tracker/index.html)
+  | Result Processing       |[Result Processing](docs/modules/result_processing.md) | [API](https://mauricesvp.github.io/pancake/pancake/utils/result_processor.html)
+  | Storage                 |[Storage](docs/modules/storage.md)                     | [API](https://mauricesvp.github.io/pancake/pancake/db.html)
+  | Analysis                |[Analysis](docs/modules/analysis.md)                   | -
 
 ### Data + Preprocessing
   Pancake offers various different data sources, both live and offline,
