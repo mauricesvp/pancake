@@ -283,6 +283,7 @@ class DEI(Backend):
         **kwargs,
     ) -> None:
         """DEI Backend
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
 
         Args:
             detector (Type[Detector]): Detector instance which provides "detect" method
@@ -343,7 +344,7 @@ class DEI(Backend):
             y0: y-value top left corner
             x1: x-value bottom right corner
             y1: y-value bottom right corner
-            conf: Confidence of detection, values between 0 and 1
+            conf: Confidence of detection, float values between 0 and 1
             class id: Integer indicating the detected object type
 
             Modus operandi:
@@ -448,6 +449,10 @@ class DEI(Backend):
                 Example:
                 * If obj is at the border of a subframe, check if it is in the middle
                   of another one (and discard if so)
+
+            The objects are expected to have the x,y coordinates of the top left and bottom right corner
+            as the first four entries (x0, y0, x1, y1).
+
         Args:
             objs (List[Tuple]): List of objects
             subframes (List[np.ndarray]): List of subframes

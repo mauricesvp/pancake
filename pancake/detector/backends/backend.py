@@ -14,6 +14,7 @@ class Backend(ABC):
         All Backends to be used within this framework have to inherit from this class. \
         The inheritance will automatically register every subclass into the registry thus \
         allowing for modular access to the backend strategies.
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
     """
 
     _subclasses = {}

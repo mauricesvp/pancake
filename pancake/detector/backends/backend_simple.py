@@ -17,6 +17,8 @@ class SIMPLE(Backend):
         Takes n images, runs detections on each,
         returns Tuple with detections and stitched image.
 
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
+
         Args:
             detector (Type[Detector]): Detector instance which provides "detect" method
             roi (List[int], optional): Region of interest. Defaults to None.
