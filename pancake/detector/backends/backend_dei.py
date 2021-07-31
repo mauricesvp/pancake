@@ -1,12 +1,3 @@
-"""
-Divide Et Impera (Divide And Conquer) Backend
-----------------
-TODOs:
-    * Apply ROIs
-    * Filter by object class id
-      (this could be done in the detector as well)
-
-"""
 from typing import Type, Tuple, List, Union
 import math
 import time
@@ -98,7 +89,7 @@ def rev_rotate_bound(
         side (int): Side width
 
     Returns:
-        Tuple[int, int, int, int, int, int]: Result tuple width adjusted coordinates
+        Tuple[int, int, int, int, int, int]: Result tuple with adjusted coordinates
     """
     h, w, _ = img.shape
     center = (w // 2, h // 2)

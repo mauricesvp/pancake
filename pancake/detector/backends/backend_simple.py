@@ -1,12 +1,3 @@
-"""
-Simple Backend
-----------------
-TODOs:
-    * Apply ROIs
-    * Filter by object class id
-      (this could be done in the detector as well)
-
-"""
 from typing import List, Tuple, Type
 
 import torch
@@ -22,6 +13,9 @@ class SIMPLE(Backend):
         self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
     ) -> None:
         """Simple Backend
+
+        Takes n images, runs detections on each,
+        returns Tuple with detections and stitched image.
 
         Args:
             detector (Type[Detector]): Detector instance which provides "detect" method
