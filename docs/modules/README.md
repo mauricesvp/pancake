@@ -59,8 +59,8 @@ whereat the Trackers have been loosely taken over from previous project groups.
 
 | Tracker       | Details   | Configuration ```NAME:```         |
 | ------------- | -------   | ------------------- |
-| Centroid         | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/tracker.md#centroid)       | ```"centroid"```
-| DeepSORT           | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/tracker.md#deepsort)       | ```"deepsort"```
+| Centroid      | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/tracker.md#centroid)       | ```"centroid"```
+| DeepSORT      | [Details](https://github.com/mauricesvp/pancake/blob/main/docs/modules/tracker.md#deepsort)       | ```"deepsort"```
 
 ### Adding a new Tracker
   <ol>

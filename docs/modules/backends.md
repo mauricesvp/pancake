@@ -2,6 +2,8 @@
 
 ## Basic
   The Basic Backend simply takes the input image(s), and runs the detection on each image.
+  It returns the detections as well as a stitched image of all input images.
+  (Note that this is currently hard coded to be horizontally stitched)
 
 
 ## DEI (Divide and Conquer)
