@@ -439,8 +439,10 @@ class LoadImageDirs:
                 else:
                     # when queue is full, sleep for a prolonged period
                     time.sleep(self.queue_size / self.read_fps * 0.9)
-        except:
-            self.cap[index].release()
+        except Exception as e:
+            l.error(f&#34;Following error occured: {e}&#34;)
+            if self.mode == &#34;video&#34;:
+                self.cap[index].release()
 
     def new_videos(self, paths: list):
         self.frame = 0
@@ -2672,8 +2674,10 @@ annotated_only: Only use images with an annotated txt file</p></div>
                 else:
                     # when queue is full, sleep for a prolonged period
                     time.sleep(self.queue_size / self.read_fps * 0.9)
-        except:
-            self.cap[index].release()
+        except Exception as e:
+            l.error(f&#34;Following error occured: {e}&#34;)
+            if self.mode == &#34;video&#34;:
+                self.cap[index].release()
 
     def new_videos(self, paths: list):
         self.frame = 0
@@ -2832,8 +2836,10 @@ annotated_only: Only use images with an annotated txt file</p></div>
             else:
                 # when queue is full, sleep for a prolonged period
                 time.sleep(self.queue_size / self.read_fps * 0.9)
-    except:
-        self.cap[index].release()</code></pre>
+    except Exception as e:
+        l.error(f&#34;Following error occured: {e}&#34;)
+        if self.mode == &#34;video&#34;:
+            self.cap[index].release()</code></pre>
 </details>
 </dd>
 </dl>
