@@ -9,6 +9,8 @@ Testdata used is the r44 sample set.
 
 
 --- A B C zone picture ---
+<img src="/gitimg/eval_060821_evalzones.png">
+A, B, C
 
 | Configurations   | Avg. FPS   |  A  |   B  |  	C	  |  Frame	|  Summary  |
 | -------------    | -------    | ----|------|--------|-----    |-----------|
