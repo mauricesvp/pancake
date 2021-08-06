@@ -1,6 +1,12 @@
 # Evaluation
 
+## Evaluation Run [August 6th, 2021]
 Testdata used is the r44 sample set.
+
+1. Phase: Tracker Evaluation ([DeepSORT](../../docs/modules/tracker.md#DeepSORT), [Centroid Tracker](../../docs/modules/tracker.md#Centroid))
+2. Phase: Detector Evaluation ([YOLOv5](../../docs/modules/detector.md): pre-trained, custom-trained)
+3. Phase: Backend Evaluation ([SIMPLE](../../docs/modules/backends.md#Basic), [DEI(simple), DEI(normal)](../../docs/modules/backends.md#DEI)
+
 
 --- A B C zone picture ---
 
