@@ -1,10 +1,12 @@
+""" Module containing the Pancake Database. """
+from typing import Type, Union
+
 import numpy as np
 import sqlite3
 import time
 import threading
-import torch
-from typing import Type
-from multiprocessing.pool import ThreadPool
+
+from torch.jit import Error
 
 from .detector import Detector
 from .detector.backends import Backend
@@ -19,45 +21,23 @@ from .logger import setup_logger
 l = setup_logger(__name__)
 
 
-def setup_database(
-    cfg: dict,
-    detector: Type[Detector] = None,
-    backend: Type[Backend] = None,
-    tracker: Type[BaseTracker] = None,
-):
-    db_schema = get_config(config_file=fix_path(cfg.SCHEME_PATH)).PANCAKE_DB
-
-    relations = db_schema.RELATIONS
-    inserts = db_schema.INSERTS
-
-    return (
-        DataBase(
-            cfg.FILENAME,
-            relations,
-            inserts,
-            DETECTOR=detector,
-            BACKEND=backend,
-            TRACKER=tracker,
-        )
-        if cfg.STORE
-        else None
-    )
-
-
 class DataBase:
-    """Encapsulates the Pancake database"""
-
     def __init__(self, db_name: str, relations: dict, inserts: dict, *args, **kwargs):
-        """
-        :param db_name (str):       Database filename
-        :param relations (dict):    contains create queries for custom relationships
-        :param inserts (dict):      holds corresponding insert queries
+        """Encapsulates the Pancake database
+
+        Args:
+            db_name (str): Database filename
+            relations (dict): Contains create queries for custom relationships
+            inserts (dict): Holds corresponding insert queries
+
+        Raises:
+            ConnectionError: Raised when sqlite3 can't connect to the database
         """
         try:
             self.con = sqlite3.connect(db_name, check_same_thread=False)
             self.relations = relations
             self.inserts = inserts
-        except Error as e:
+        except Exception as e:
             l.error(
                 f"Error while connecting to the DB: {e} \n"
                 "Proceed tracking without database logging"
@@ -72,8 +52,11 @@ class DataBase:
         self.initial_insert(DBT=kwargs)  # Detector, Backend, Tracker
 
     def create_tables(self) -> None:
-        """
-        Creates tables for provided relationships in self.relations.
+        """ Creates tables for provided relationships in self.relations.
+
+        Raises:
+            ConnectionError: Raised when an error occurs while trying to create \
+                                table.
         """
         cursor = self.con.cursor()
 
@@ -89,9 +72,7 @@ class DataBase:
                     raise ConnectionError
 
     def initial_insert(self, *args, **kwargs) -> None:
-        """
-        :param kwargs (dict): Holds objects for logging of the general setup.
-        """
+        """Method to log the static application setup."""
         cursor = self.con.cursor()
 
         if "DETECTOR" in kwargs["DBT"]:
@@ -152,13 +133,21 @@ class DataBase:
         self.con.commit()
 
     def insert_tracks(self, *args, **kwargs):
+        """Calls a thread to execute the query with provided arguments."""
         t = threading.Thread(target=self.run_insert_tracks, args=args, kwargs=kwargs)
         t.start()
 
     def run_insert_tracks(self, tracks: np.ndarray, timestamp: float):
-        """
-        :param tracks (np.ndarray): [tracks][x1, y1, x2, y2, centre x, centre y, id, cls]
-        :param timestamp (float):   time.time() timestamp
+        """Executes query with provided tracks matrix.
+
+        If no timestamp is provided, we take the current timestamp.
+        Reorders the matrix to match the database relation in order to be
+        inserted via .executemany().
+        Skips the query when an error occurs.
+
+        Args:
+            tracks (np.ndarray): Tracks on [x1, y1, x2, y2, centre x, centre y, id, cls]
+            timestamp (float): A timestamp of format time.time() timestamp
         """
         if len(tracks) < 1:
             l.debug("Tracks are empty, skipping insert.")
@@ -169,11 +158,7 @@ class DataBase:
         cursor = self.con.cursor()
 
         # append timestamp to 0th column, 0 if timestamp is None, 69 is a dummy entry for cls
-        insertable = np.c_[
-            np.full((tracks.shape[0]), timestamp if timestamp else 0),
-            tracks,
-            # np.full((tracks.shape[0]), 69),
-        ]
+        insertable = np.c_[np.full(tracks.shape[0], timestamp or 0), tracks]
 
         #!! ADAPT TO CUSTOM SCHEMA IF NECESSARY!!
         # order: [id, ts, cx, cy, x1, y1, x2, y2, cls] (for "extended_db.yaml")
@@ -185,3 +170,44 @@ class DataBase:
             self.con.commit()
         except Exception as e:
             l.error(f"{e} - bad query..")
+
+
+def setup_database(
+    cfg: dict,
+    detector: Type[Detector] = None,
+    backend: Type[Backend] = None,
+    tracker: Type[BaseTracker] = None,
+) -> Union[DataBase, None]:
+    """Helper function to set up the Pancake database.
+
+    Description:
+        The different objects are parsed in order to log the static application
+        setup. They are inserted during the initialization procedure of the database.
+
+    Args:
+        cfg (dict): Dictionary containing configurations.
+        detector (Type[Detector], optional): A detector instance. Defaults to None.
+        backend (Type[Backend], optional): A backend instance. Defaults to None.
+        tracker (Type[BaseTracker], optional): A tracker instance. Defaults to None.
+
+    Returns:
+        Union[DataBase, None]: An instance of the pancake database if the flag was set,
+                                None otherwise.
+    """
+    db_schema = get_config(config_file=fix_path(cfg.SCHEME_PATH)).PANCAKE_DB
+
+    relations = db_schema.RELATIONS
+    inserts = db_schema.INSERTS
+
+    return (
+        DataBase(
+            cfg.FILENAME,
+            relations,
+            inserts,
+            DETECTOR=detector,
+            BACKEND=backend,
+            TRACKER=tracker,
+        )
+        if cfg.STORE
+        else None
+    )

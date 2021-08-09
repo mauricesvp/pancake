@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
 <title>pancake.tracker.tracker API documentation</title>
-<meta name="description" content="Tracker base class." />
+<meta name="description" content="Pancake Tracker Base Class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,16 +22,27 @@
 <h1 class="title">Module <code>pancake.tracker.tracker</code></h1>
 </header>
 <section id="section-intro">
-<p>Tracker base class.</p>
+<p>Pancake Tracker Base Class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Tracker base class. &#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34; Pancake Tracker Base Class &#34;&#34;&#34;
 from abc import ABC, abstractmethod
+
+import numpy as np
+import torch
 
 
 class BaseTracker(ABC):
+    &#34;&#34;&#34; [_Abstract Class_] Base class of the Trackers
+    
+    __Base Class__:
+        All tracking algorithms to be used within this framework have to inherit from this class. \
+        The inheritance will automatically register every subclass into the registry thus \
+        allowing for modular access to the trackers.
+    &#34;&#34;&#34;
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -&gt; None:
@@ -39,6 +50,12 @@ class BaseTracker(ABC):
 
     @classmethod
     def get_subclasses(cls):
+        &#34;&#34;&#34;Returns all subclasses of this base class.
+        The dictionary poses as Tracker registry.
+
+        Returns:
+            dict: Dictionary containing all child classes.
+        &#34;&#34;&#34;
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -49,7 +66,18 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
+        &#34;&#34;&#34;Updates the internal tracker state.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+
+        Raises:
+            NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 </section>
@@ -67,13 +95,24 @@ class BaseTracker(ABC):
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></div>
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Trackers</p>
+<p><strong>Base Class</strong>:
+All tracking algorithms to be used within this framework have to inherit from this class.
+The inheritance will automatically register every subclass into the registry thus
+allowing for modular access to the trackers.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseTracker(ABC):
+    &#34;&#34;&#34; [_Abstract Class_] Base class of the Trackers
+    
+    __Base Class__:
+        All tracking algorithms to be used within this framework have to inherit from this class. \
+        The inheritance will automatically register every subclass into the registry thus \
+        allowing for modular access to the trackers.
+    &#34;&#34;&#34;
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -&gt; None:
@@ -81,6 +120,12 @@ inheritance.</p></div>
 
     @classmethod
     def get_subclasses(cls):
+        &#34;&#34;&#34;Returns all subclasses of this base class.
+        The dictionary poses as Tracker registry.
+
+        Returns:
+            dict: Dictionary containing all child classes.
+        &#34;&#34;&#34;
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -91,7 +136,18 @@ inheritance.</p></div>
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
+        &#34;&#34;&#34;Updates the internal tracker state.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+
+        Raises:
+            NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
+        &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -111,13 +167,25 @@ inheritance.</p></div>
 <span>def <span class="ident">get_subclasses</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns all subclasses of this base class.
+The dictionary poses as Tracker registry.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Dictionary containing all child classes.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
 def get_subclasses(cls):
+    &#34;&#34;&#34;Returns all subclasses of this base class.
+    The dictionary poses as Tracker registry.
+
+    Returns:
+        dict: Dictionary containing all child classes.
+    &#34;&#34;&#34;
     return dict(cls._subclasses)</code></pre>
 </details>
 </dd>
@@ -125,16 +193,42 @@ def get_subclasses(cls):
 <h3>Methods</h3>
 <dl>
 <dt id="pancake.tracker.tracker.BaseTracker.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, det, *args, **kwargs)</span>
+<span>def <span class="ident">update</span></span>(<span>self, det: torch.Tensor, *args, **kwargs) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Updates the internal tracker state.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>NotImplementedError</code></dt>
+<dd>(this is an abtract method)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@abstractmethod
-def update(self, det, *args, **kwargs):
+def update(self, det: torch.Tensor, *args, **kwargs) -&gt; np.ndarray:
+    &#34;&#34;&#34;Updates the internal tracker state.
+
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+
+    Raises:
+        NotImplementedError: (this is an abtract method)
+
+    Returns:
+        np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
+    &#34;&#34;&#34;
     raise NotImplementedError</code></pre>
 </details>
 </dd>

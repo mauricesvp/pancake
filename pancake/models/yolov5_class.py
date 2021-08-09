@@ -41,9 +41,9 @@ class Yolov5Model(BaseModel):
             max_det (int): Max number of detections in an infered frame
 
         Note:
-        - 'weights' parameter can contain either a Path or a name of an pretrained YOLOv5 architecture, \
+            'weights' parameter can contain either a Path or a name of an pretrained YOLOv5 architecture, \
             for a list of available models refer to: [here](https://github.com/ultralytics/yolov5/releases)
-        """        
+        """
         super(Yolov5Model, self).__init__(device)
         # load model
         self.model = attempt_load(weights, map_location=self._device)
@@ -69,11 +69,11 @@ class Yolov5Model(BaseModel):
         self._init_infer(self._required_img_size)
 
     def _init_infer(self, img_size: int):
-        """ Does one forward pass on the NN for warmup of the GPU.
+        """Does one forward pass on the NN for warmup of the GPU.
 
         Args:
             img_size (int): Padded and resized image size conforming with model stride
-        """        
+        """
         super(Yolov5Model, self)._init_infer(img_size)
 
     def prep_image_infer(self, img: np.array) -> torch.Tensor:
@@ -86,18 +86,18 @@ class Yolov5Model(BaseModel):
         Returns:
             torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
                 expanded dim (,4), half precision (fp16))
-        """        
+        """
         return super(Yolov5Model, self).prep_image_infer(img)
 
     def infer(self, img: np.array) -> List[torch.Tensor]:
-        """ Inference method
+        """Inference method
 
         Args:
             img (np.array): Resized and padded image [c, w, h] or [bs, c, w, h]
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        """        
+        """
         # Prepare img for inference
         img = self.prep_image_infer(img)
 

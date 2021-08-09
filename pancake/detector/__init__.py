@@ -1,3 +1,6 @@
+""" Package containing detector related modules. """
+from typing import Type
+
 import torch
 from .detector import Detector
 from .detector_yolo_custom import YOLOCustomDetector
@@ -9,7 +12,19 @@ __all__ = ["DETECTOR_REGISTRY", "setup_detector"]
 DETECTOR_REGISTRY = Detector.get_subclasses()
 
 
-def setup_detector(config):
+def setup_detector(config: dict) -> Type[Detector]:
+    """Helper function to set up a detector specified in the configurations.
+
+    Description:
+        Retrieves the configs, sets the device if possible and
+        initializes a detector from the detector registry.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+
+    Returns:
+        Type[Detector]: A Detector subclass instance.
+    """
     name = config.DETECTOR.NAME
     params = getattr(config.DETECTOR, name.upper())
 
@@ -25,5 +40,4 @@ def setup_detector(config):
         elif device_cfg.isdigit():
             device = device_cfg
 
-    DETECTOR = DETECTOR_REGISTRY[name](params, device=device)
-    return DETECTOR
+    return DETECTOR_REGISTRY[name](params, device=device)

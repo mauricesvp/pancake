@@ -31,7 +31,7 @@ class YOLOCustomDetector(Detector):
 
         Args:
             config (dict): Configuration dictionary
-        """        
+        """
         self.weights = config["weights"]
         weights_cfg = (
             fix_path(self.weights) if type(self.weights) is str else self.weights
@@ -44,8 +44,8 @@ class YOLOCustomDetector(Detector):
 
         conf_thres = float(config["conf_thres"])
         iou_thres = float(config["iou_thres"])
-        classes = None if "None" == config["classes"] else config["classes"]
-        agnostic_nms = True if "True" == config["agnostic_nms"] else False
+        classes = None if config["classes"] == "None" else config["classes"]
+        agnostic_nms = config["agnostic_nms"] == "True"
         img_size = int(config["img_size"])
         device = kwargs.get("device", "CPU")
         max_det = int(config["max_det"])
@@ -72,39 +72,42 @@ class YOLOCustomDetector(Detector):
                 )
         except ModuleNotFoundError:
             l.info(f"Will fallback to weights file: {self.weights}")
-            
 
     def detect(self, imgs: List[np.ndarray]) -> List[torch.Tensor]:
-        """ Wrapper for detection calculation.
-        - Pads and resizes the images to conform with the model
-        - Calls the infer method of underlying model in order to retrieve detections
-        - Rescales the detections
+        """Wrapper for detection calculation.
+
+        Description:
+            - Pads and resizes the images to conform with the model
+            - Calls the infer method of underlying model in order to retrieve detections
+            - Rescales the detections
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
 
         Returns:
             List[torch.Tensor]: List of tensors, detections on (,6) tensors [xyxy, conf, cls]
-        """        
-        pr_imgs = self._preprocess(imgs)
+        """
+        if type(imgs) is not list:
+            imgs = [imgs]
+
         img_sizes = [img.shape for img in imgs]
 
         # Inference
+        pr_imgs = self.preprocess(imgs)
         # l.debug(f"Inference on: {pr_imgs.shape}")
         det, _ = self.model.infer(pr_imgs)
 
-        res = self._postprocess(det, pr_imgs, img_sizes)
-        return res
+        return self.postprocess(det, pr_imgs, img_sizes)
 
-    def _preprocess(self, imgs: List[np.ndarray]) -> np.array:
-        """ Pads and resizes the images, converts the images to RGB.
+    def preprocess(self, imgs: List[np.ndarray]) -> np.array:
+        """Pads and resizes the images, converts the images to RGB.
 
         Args:
             imgs (List[np.ndarray]): List of ndarrays, images in BGR [bs, c, w, h]
 
         Returns:
             np.array: Padded and resized images in RGB [bs, c, w, h]
-        """        
+        """
         if type(imgs) is not list:
             imgs = [imgs]
 
@@ -122,10 +125,10 @@ class YOLOCustomDetector(Detector):
         pr_imgs = np.ascontiguousarray(pr_imgs)
         return pr_imgs
 
-    def _postprocess(
+    def postprocess(
         self, det: List[torch.Tensor], pr_imgs: np.array, img_sizes: list
     ) -> list:
-        """ Rescales the detection matrix from padded and resized to
+        """Rescales the detection matrix from padded and resized to
         the original size.
 
         Args:
@@ -135,7 +138,7 @@ class YOLOCustomDetector(Detector):
 
         Returns:
             list: Tensor list of rescaled detections, on (,6) tensor [bs, xyxy, conf, cls]
-        """ 
+        """
         # Rescale images from preprocessed to original
         res = [None] * len(det)
         for i, x in enumerate(det):

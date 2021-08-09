@@ -1,3 +1,6 @@
+""" Module encapsulating the main Pancake program. """
+from typing import Type
+
 import argparse
 import logging
 import time
@@ -9,13 +12,19 @@ from .detector import backends as be
 from .config import pancake_config
 from .db import setup_database
 from .logger import setup_logger
-from .utils.common import fix_path, load_data, setup_result_processor
+from .utils.common import fix_path, load_data
+from .utils.result_processor import setup_result_processor
 
 
 l = setup_logger(__name__)
 
 
-def setup_logging(config):
+def setup_logging(config: dict):
+    """Helper function to set the logging level.
+
+    Args:
+        config (dict): Dictionary containing configurations.
+    """
     try:
         log_level = getattr(logging, config.LOGGING.LEVEL)
         l.setLevel(log_level)
@@ -25,9 +34,11 @@ def setup_logging(config):
 
 
 def main(cfg_path: str = None, n: int = 0):
-    """
-    :param cfg_path (str): Alternative config path
-    :param n (int): Maximum number of iterations (0 means infinite)
+    """Pancake Main Function
+
+    Args:
+        cfg_path (str, optional): Alternative config path. Defaults to None.
+        n (int, optional): Maximum number of iterations (0 means infinite). Defaults to 0.
     """
     l.debug("Starting pancake.")
 
@@ -36,11 +47,11 @@ def main(cfg_path: str = None, n: int = 0):
     setup_logging(config.PANCAKE)
 
     # Detector setup
-    DETECTOR = det.setup_detector(config.PANCAKE)
-    BACKEND = be.setup_backend(config.PANCAKE, DETECTOR)
+    DETECTOR: Type[det.Detector] = det.setup_detector(config.PANCAKE)
+    BACKEND: Type[be.Backend] = be.setup_backend(config.PANCAKE, DETECTOR)
 
     # Tracker setup
-    TRACKER = tr.setup_tracker(config.PANCAKE)
+    TRACKER: Type[tr.BaseTracker] = tr.setup_tracker(config.PANCAKE)
 
     # Input data setup
     source = config.PANCAKE.DATA.SOURCE
@@ -84,6 +95,9 @@ def main(cfg_path: str = None, n: int = 0):
             DATABASE.insert_tracks(tracks, timestamp)
 
         if n and iteration >= n:
+            l.info(
+                f"Stop execution.. wait for the result processor to clear its queue.."
+            )
             break
 
 

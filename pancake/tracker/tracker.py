@@ -1,8 +1,19 @@
-""" Tracker base class. """
+""" Pancake Tracker Base Class """
 from abc import ABC, abstractmethod
+
+import numpy as np
+import torch
 
 
 class BaseTracker(ABC):
+    """ [_Abstract Class_] Base class of the Trackers
+    
+    __Base Class__:
+        All tracking algorithms to be used within this framework have to inherit from this class. \
+        The inheritance will automatically register every subclass into the registry thus \
+        allowing for modular access to the trackers.
+    """
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -> None:
@@ -10,6 +21,12 @@ class BaseTracker(ABC):
 
     @classmethod
     def get_subclasses(cls):
+        """Returns all subclasses of this base class.
+        The dictionary poses as Tracker registry.
+
+        Returns:
+            dict: Dictionary containing all child classes.
+        """
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -20,5 +37,16 @@ class BaseTracker(ABC):
         BaseTracker._subclasses[class_name] = cls
 
     @abstractmethod
-    def update(self, det, *args, **kwargs):
+    def update(self, det: torch.Tensor, *args, **kwargs) -> np.ndarray:
+        """Updates the internal tracker state.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+
+        Raises:
+            NotImplementedError: (this is an abtract method)
+
+        Returns:
+            np.ndarray: Tracks on (,7) array [xyxy, center x, center y, id]
+        """
         raise NotImplementedError

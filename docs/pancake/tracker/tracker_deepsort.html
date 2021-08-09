@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
 <title>pancake.tracker.tracker_deepsort API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="DeepSort Interface Class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,13 +22,16 @@
 <h1 class="title">Module <code>pancake.tracker.tracker_deepsort</code></h1>
 </header>
 <section id="section-intro">
+<p>DeepSort Interface Class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import os
-from typing import Type, Union
+<pre><code class="python">&#34;&#34;&#34; DeepSort Interface Class &#34;&#34;&#34;
 
+from typing import Tuple
+
+import os
 import numpy as np
 import torch
 
@@ -38,6 +41,11 @@ from .deep_sort.deep_sort import DeepSort
 
 class DEEPSORT(BaseTracker):
     def __init__(self, cfg: dict, *args, **kwargs):
+        &#34;&#34;&#34;DeepSort Interface Class
+
+        Args:
+            cfg (dict): Dictionary containing configurations
+        &#34;&#34;&#34;
         assert (
             &#34;device&#34; in kwargs
         ), &#34;Used device type needs to be specified (cpu, gpu:0, gpu:1)!&#34;
@@ -57,34 +65,36 @@ class DEEPSORT(BaseTracker):
             n_init=cfg.DEEPSORT.N_INIT,
             nn_budget=cfg.DEEPSORT.NN_BUDGET,
             max_id=cfg.DEEPSORT.MAX_ID,
-            use_cuda=True if device != &#34;CPU&#34; else False,
+            use_cuda=device != &#34;CPU&#34;,
         )
 
-    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -&gt; np.ndarray:
-        &#34;&#34;&#34;
-        Tracker update function
+    def update(self, det: torch.Tensor, img: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Transforms and parses detection matrices to the DeepSort update function.
 
-        :param det (np.darray (,6)): detections array
-        :param img (np.darray (,3)): original image
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            img (np.ndarray): Image in BGR [c, w, h]
 
-        :return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]
+        Returns:
+            np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
         &#34;&#34;&#34;
         bbox_xywh, confidences, cls = DEEPSORT.transform_detections(det)
         return self.DS.update(bbox_xywh, confidences, img, cls)
 
-    def get_tracker_flag(self):
-        return self.DS.tracker.flag
-
     @staticmethod
-    def transform_detections(det: Type[torch.Tensor]):
-        &#34;&#34;&#34;
-        Transform detection vector to numpy
+    def transform_detections(
+        det: torch.Tensor,
+    ) -&gt; Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        &#34;&#34;&#34;Transform detection vector to numpy.
 
-        :param det (torch.Tensor): prediction tensor
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
 
-        :return xyxy (np.ndarray (,4)): x1, y1, x2, y2
-                conf (np.ndarray (,1)): class confidences
-                cls  (np,ndarray (,1)): class indeces
+        Returns:
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         &#34;&#34;&#34;
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>
@@ -104,14 +114,28 @@ class DEEPSORT(BaseTracker):
 <span>(</span><span>cfg: dict, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></div>
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Trackers</p>
+<p><strong>Base Class</strong>:
+All tracking algorithms to be used within this framework have to inherit from this class.
+The inheritance will automatically register every subclass into the registry thus
+allowing for modular access to the trackers.</p>
+<p>DeepSort Interface Class</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cfg</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing configurations</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DEEPSORT(BaseTracker):
     def __init__(self, cfg: dict, *args, **kwargs):
+        &#34;&#34;&#34;DeepSort Interface Class
+
+        Args:
+            cfg (dict): Dictionary containing configurations
+        &#34;&#34;&#34;
         assert (
             &#34;device&#34; in kwargs
         ), &#34;Used device type needs to be specified (cpu, gpu:0, gpu:1)!&#34;
@@ -131,34 +155,36 @@ inheritance.</p></div>
             n_init=cfg.DEEPSORT.N_INIT,
             nn_budget=cfg.DEEPSORT.NN_BUDGET,
             max_id=cfg.DEEPSORT.MAX_ID,
-            use_cuda=True if device != &#34;CPU&#34; else False,
+            use_cuda=device != &#34;CPU&#34;,
         )
 
-    def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -&gt; np.ndarray:
-        &#34;&#34;&#34;
-        Tracker update function
+    def update(self, det: torch.Tensor, img: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Transforms and parses detection matrices to the DeepSort update function.
 
-        :param det (np.darray (,6)): detections array
-        :param img (np.darray (,3)): original image
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            img (np.ndarray): Image in BGR [c, w, h]
 
-        :return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]
+        Returns:
+            np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
         &#34;&#34;&#34;
         bbox_xywh, confidences, cls = DEEPSORT.transform_detections(det)
         return self.DS.update(bbox_xywh, confidences, img, cls)
 
-    def get_tracker_flag(self):
-        return self.DS.tracker.flag
-
     @staticmethod
-    def transform_detections(det: Type[torch.Tensor]):
-        &#34;&#34;&#34;
-        Transform detection vector to numpy
+    def transform_detections(
+        det: torch.Tensor,
+    ) -&gt; Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        &#34;&#34;&#34;Transform detection vector to numpy.
 
-        :param det (torch.Tensor): prediction tensor
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
 
-        :return xyxy (np.ndarray (,4)): x1, y1, x2, y2
-                conf (np.ndarray (,1)): class confidences
-                cls  (np,ndarray (,1)): class indeces
+        Returns:
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         &#34;&#34;&#34;
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>
@@ -171,29 +197,38 @@ inheritance.</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="pancake.tracker.tracker_deepsort.DEEPSORT.transform_detections"><code class="name flex">
-<span>def <span class="ident">transform_detections</span></span>(<span>det: Type[torch.Tensor])</span>
+<span>def <span class="ident">transform_detections</span></span>(<span>det: torch.Tensor) ‑> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transform detection vector to numpy</p>
-<p>:param det (torch.Tensor): prediction tensor</p>
-<p>:return xyxy (np.ndarray (,4)): x1, y1, x2, y2
-conf (np.ndarray (,1)): class confidences
-cls
-(np,ndarray (,1)): class indeces</p></div>
+<div class="desc"><p>Transform detection vector to numpy.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Tuple[np.ndarray, np.ndarray, np.ndarray]:
+[(x1, y1, x2, y2),
+(class confidences),
+(model-specific class indices]</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
-def transform_detections(det: Type[torch.Tensor]):
-    &#34;&#34;&#34;
-    Transform detection vector to numpy
+def transform_detections(
+    det: torch.Tensor,
+) -&gt; Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    &#34;&#34;&#34;Transform detection vector to numpy.
 
-    :param det (torch.Tensor): prediction tensor
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
 
-    :return xyxy (np.ndarray (,4)): x1, y1, x2, y2
-            conf (np.ndarray (,1)): class confidences
-            cls  (np,ndarray (,1)): class indeces
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray]:
+             [(x1, y1, x2, y2),
+              (class confidences),
+              (model-specific class indices]
     &#34;&#34;&#34;
     t_det = det.cpu().detach().numpy()
     return t_det[:, :4], t_det[..., 4], t_det[..., 5]</code></pre>
@@ -202,45 +237,50 @@ def transform_detections(det: Type[torch.Tensor]):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="pancake.tracker.tracker_deepsort.DEEPSORT.get_tracker_flag"><code class="name flex">
-<span>def <span class="ident">get_tracker_flag</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_tracker_flag(self):
-    return self.DS.tracker.flag</code></pre>
-</details>
-</dd>
 <dt id="pancake.tracker.tracker_deepsort.DEEPSORT.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, det: Type[torch.Tensor], img: Type[numpy.ndarray]) ‑> numpy.ndarray</span>
+<span>def <span class="ident">update</span></span>(<span>self, det: torch.Tensor, img: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Tracker update function</p>
-<p>:param det (np.darray (,6)): detections array
-:param img (np.darray (,3)): original image</p>
-<p>:return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]</p></div>
+<div class="desc"><p>Transforms and parses detection matrices to the DeepSort update function.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+<dt><strong><code>img</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [c, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def update(self, det: Type[torch.Tensor], img: Type[np.ndarray]) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    Tracker update function
+<pre><code class="python">def update(self, det: torch.Tensor, img: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;Transforms and parses detection matrices to the DeepSort update function.
 
-    :param det (np.darray (,6)): detections array
-    :param img (np.darray (,3)): original image
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+        img (np.ndarray): Image in BGR [c, w, h]
 
-    :return (np.darray): [x1, y1, x2, y2, centre x, centre y, id]
+    Returns:
+        np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
     &#34;&#34;&#34;
     bbox_xywh, confidences, cls = DEEPSORT.transform_detections(det)
     return self.DS.update(bbox_xywh, confidences, img, cls)</code></pre>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pancake.tracker.tracker.BaseTracker" href="tracker.html#pancake.tracker.tracker.BaseTracker">BaseTracker</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pancake.tracker.tracker.BaseTracker.get_subclasses" href="tracker.html#pancake.tracker.tracker.BaseTracker.get_subclasses">get_subclasses</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -261,7 +301,6 @@ def transform_detections(det: Type[torch.Tensor]):
 <li>
 <h4><code><a title="pancake.tracker.tracker_deepsort.DEEPSORT" href="#pancake.tracker.tracker_deepsort.DEEPSORT">DEEPSORT</a></code></h4>
 <ul class="">
-<li><code><a title="pancake.tracker.tracker_deepsort.DEEPSORT.get_tracker_flag" href="#pancake.tracker.tracker_deepsort.DEEPSORT.get_tracker_flag">get_tracker_flag</a></code></li>
 <li><code><a title="pancake.tracker.tracker_deepsort.DEEPSORT.transform_detections" href="#pancake.tracker.tracker_deepsort.DEEPSORT.transform_detections">transform_detections</a></code></li>
 <li><code><a title="pancake.tracker.tracker_deepsort.DEEPSORT.update" href="#pancake.tracker.tracker_deepsort.DEEPSORT.update">update</a></code></li>
 </ul>

@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>pancake.utils.result_processor API documentation</title>
+<meta name="description" content="Holds the Pancake Result Processor" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pancake.utils.result_processor</code></h1>
+</header>
+<section id="section-intro">
+<p>Holds the Pancake Result Processor</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; Holds the Pancake Result Processor &#34;&#34;&#34;
+from datetime import datetime
+from typing import List
+
+import cv2
+import numpy as np
+import torch
+
+from .general import (
+    check_imshow,
+    resize_aspectratio,
+    check_requirements,
+)
+
+from .plots import colors, plot_one_box
+
+
+class ResultProcessor:
+    def __init__(
+        self,
+        show_res: bool,
+        save_res: bool,
+        draw_det: bool,
+        draw_tracks: bool,
+        draw_track_hist: bool,
+        track_hist_size: int,
+        labels: List[str],
+        hide_labels: bool,
+        hide_conf: bool,
+        line_thickness: int,
+        save_mode: str,
+        path: str,
+        subdir: str,
+        exist_ok: bool,
+        async_processing: bool,
+        async_queue_size: int,
+        async_put_blocked: bool,
+        async_put_timeout: float,
+        debug: bool,
+        *args,
+        **kwargs,
+    ):
+        &#34;&#34;&#34;This class encapsulates all result processing procedures.
+
+        Functionalities:
+            - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
+            - Visualizes the results, saves the results as image/video
+            - Asynchronous approach, guaranteed throughput speedup!
+
+        Args:
+            show_res (bool): If resulting images should be visualized live
+            save_res (bool): If resulting images should be saved
+            draw_det (bool): If detection bbox&#39; should be visualized
+            draw_tracks (bool): If tracked object bbox&#39; should be visualized
+            draw_track_hist (bool): If track histories should be saved and visualized
+            track_hist_size (int): Maximum size of the track hist container
+            labels (List[str]): List of model specific class labels
+            hide_labels (bool): If class labels and track ids should be visualized
+            hide_conf (bool): If confidences should be visualized
+            line_thickness (int): Drawn line thickness
+            save_mode (str): Enum, &#34;image&#34; or &#34;video&#34;
+            path (str): Parent target directory
+            subdir (str): Target subdirectory (will be automatically incremented)
+            exist_ok (bool): Save results in already existing dir (*path/subdir*),
+                             do not increment automatically
+            async_processing (bool): (non-blocking) Asynchronous result processing in a
+                                     seperate slave process (significant speedup guaranteed!)
+            async_queue_size (int): Queue size for results sent by parent process to subprocess
+            async_put_blocked (bool): Blocks .process() for timeout sec until free slot
+                                        available, if False skip the current frame without
+                                        blocking
+            async_put_timeout (float): Raise exception after timeout seconds waiting for spare slot
+            debug (bool): Manual skipping when visualizing results
+        &#34;&#34;&#34;
+        from pancake.run import setup_logger
+
+        self.l = setup_logger(__name__)
+
+        # GENERAL
+        self._show_res, self._save_res, self._debug, self._async = (
+            False,
+            save_res,
+            debug,
+            async_processing,
+        )
+        if show_res:
+            self._show_res = True if check_imshow() else False
+
+        # DRAW OPTIONS
+        self._show_det, self._show_tracks, self._show_track_hist = (
+            draw_det,
+            draw_tracks,
+            draw_track_hist,
+        )
+        # DRAW DETAILS
+        self._hide_labels, self._hide_conf = hide_labels, hide_conf
+        self._line_thickness = line_thickness
+        # CLASS LABELS
+        self._labels = labels
+
+        # NEITHER SHOW RES OR SAVE RES IS ENABLED
+        if not self._show_res and not self._save_res:
+            self.l.info(&#34;No result processing procedure will be taking place&#34;)
+
+            def nop(*args, **kwargs):
+                return
+
+            self.process = nop
+            self.kill_worker = nop
+            return
+
+        if self._show_track_hist:
+            &#34;&#34;&#34;INIT THE TRACK HISTORY&#34;&#34;&#34;
+
+            class TrackHistory:
+                &#34;&#34;&#34;Track History Wrapper
+                - Store the latest tracking results
+                - Assign each tracked ID its center positions (x, y)
+                &#34;&#34;&#34;
+
+                def __init__(self, max_hist_len: int):
+                    &#34;&#34;&#34; Track History Wrapper
+
+                    Args:
+                        max_hist_len (int): Maximum age of tracks matrix considered for \
+                                            trajectory visualization
+                    &#34;&#34;&#34;
+                    self.tracks = []
+                    self.ids = {}
+                    self._max_hist_len = max_hist_len
+
+                def update(self, tracks: np.ndarray):
+                    if len(self.tracks) &gt; self._max_hist_len:
+                        self.tracks = []
+                        self.ids = {}
+
+                    self.tracks.append(tracks)
+                    curr_ids = []
+                    for *_, x, y, id, _ in tracks:
+                        if id not in self.ids.keys():
+                            self.ids.update({id: [(x, y)]})
+                        else:
+                            self.ids[id].append((x, y))
+                        curr_ids.append(id)
+
+            self.track_history = TrackHistory(max_hist_len=track_hist_size)
+
+        if self._save_res:
+            &#34;&#34;&#34;INITIALIZE THE SAVING PROCEDURE&#34;&#34;&#34;
+            assert save_mode == &#34;video&#34; or save_mode == &#34;image&#34;
+            from .general import increment_path
+            from pathlib import Path
+
+            self._mode = save_mode
+
+            self._save_dir = increment_path(Path(path) / subdir, exist_ok, sep=&#34;_&#34;)
+            self._save_dir.mkdir(parents=True, exist_ok=True)
+
+            self.vid_path, self.vid_writer, self._fps = (
+                None,
+                None,
+                kwargs[&#34;vid_fps&#34;] if &#34;vid_fps&#34; in kwargs.keys() else None,
+            )
+
+        if self._async:
+            &#34;&#34;&#34;INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING&#34;&#34;&#34;
+            import multiprocessing
+
+            check_requirements([&#34;pathos&#34;])
+            from pathos.helpers import mp
+
+            assert (
+                not self._show_res and self._async
+            ), &#34;Results can&#39;t be visualized from slave process, disable &#39;VIEW_IMG&#39; or &#39;ASYNC_PROC&#39;!&#34;
+            assert (
+                multiprocessing.cpu_count() &gt; 1
+            ), &#34;Only 1 CPU core available, might not be able to leverage multiprocessing module!&#34;
+
+            self._queue_size = async_queue_size
+            self._put_blocked = async_put_blocked
+            self._put_timeout = async_put_timeout
+
+            # Queue to put and pull results
+            self.queue = mp.Queue(maxsize=self._queue_size)
+
+            # init and start worker process
+            self.l.info(&#34;Starting slave process to work on the results&#34;)
+            self.worker_process = mp.Process(target=self.async_update_worker, args=())
+            self.worker_process.start()
+
+    def process(
+        self,
+        det: torch.Tensor,
+        tracks: np.ndarray,
+        im0: np.ndarray,
+        vid_cap: cv2.VideoCapture = None,
+    ):
+        &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
+
+        This method acts as the entrypoint for the results originating from the run script.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+            im0 (np.array): Image in BGR (,3) [c, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        if self._async:
+            assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
+
+            if round(self.queue.qsize() / self._queue_size, 1) == 0.9:
+                self.l.warn(
+                    &#34;Queue size capacity almost full.. &#34;
+                    f&#34;({(self.queue.qsize()/self._queue_size) * 100:.2f})&#34;
+                )
+
+            if not self._put_blocked and self.queue.full():
+                return
+
+            # self.queue.put([det, tracks, im0, vid_cap])
+            self.queue.put(
+                [det, tracks, im0], block=self._put_blocked, timeout=self._put_timeout
+            )
+        else:
+            # self.update(det, tracks, im0, vid_cap)
+            self.update(det, tracks, im0)
+
+    def update(
+        self,
+        det: torch.Tensor,
+        tracks: np.ndarray,
+        im0: np.ndarray,
+        vid_cap: cv2.VideoCapture = None,
+    ):
+        &#34;&#34;&#34;Wraps the actual result processing procedures.
+        Takes the provided results from a detector and tracker in order to visualize
+        them according to user config. Subsequently, visualizes and/or stores the
+        enriched image/video.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+            im0 (np.array): Image in BGR (,3) [c, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        if self._show_det:
+            im0 = self.draw_detec_boxes(det, im0)
+        if self._show_tracks:
+            im0 = self.draw_track_boxes(tracks, im0)
+        if self._show_track_hist:
+            im0 = self.draw_track_hist(tracks, im0)
+
+        if self._show_res:
+            self.visualize(im0)
+
+        if self._save_res:
+            if self._mode == &#34;image&#34;:
+                self.save_img(im0)
+            else:
+                self.save_vid(im0)
+
+    def async_update_worker(self):
+        &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
+        assert self.queue, &#34;Queue is not initialized!&#34;
+        import traceback
+
+        try:
+            while 1:
+                try:
+                    data = self.queue.get()
+                except:
+                    self.reset_vid_writer()
+                    self.queue.close()
+                    break
+
+                # deserialize data, data: list, [detections, tracks, image, vid cap]
+                # det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+                det, tracks, im0 = data[0], data[1], data[2]
+
+                self.update(det, tracks, im0)
+        except:
+            self.l.fatal(&#34;Exception in subprocess occured!&#34;)
+            traceback.print_exc()
+
+    def kill_worker(self):
+        &#34;&#34;&#34;
+        Procedure for cleanly closing the communication pipes and terminating
+        the worker process.
+        &#34;&#34;&#34;
+        self.queue.close()
+        self.worker_process.terminate()
+
+    def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
+        detection matix on the provided image.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with detection boxes
+        &#34;&#34;&#34;
+        for *xyxy, conf, cls in reversed(det):
+            # Add bbox to image
+            c = int(cls)  # integer class
+            label = (
+                None
+                if self._hide_labels
+                else (
+                    self._labels[c]
+                    if self._hide_conf
+                    else f&#34;{self._labels[c]} {conf:.2f}&#34;
+                )
+            )
+
+            plot_one_box(
+                xyxy,
+                im0,
+                label=label,
+                color=colors(c, True),
+                line_thickness=self._line_thickness,
+            )
+        return im0
+
+    def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+
+        Args:
+            tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with tracked object boxes
+        &#34;&#34;&#34;
+        for *xyxy, _, _, id, _ in tracks:
+            id = None if self._hide_labels else str(id)
+            plot_one_box(
+                xyxy,
+                im0,
+                label=id,
+                color=colors(int(id), True),
+                line_thickness=self._line_thickness,
+            )
+        return im0
+
+    def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
+
+        Args:
+            tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with tracked object trajectories
+        &#34;&#34;&#34;
+        assert self.track_history, &#34;No track history object initialized!&#34;
+        self.track_history.update(tracks)
+
+        for id in self.track_history.ids:
+            points = self.track_history.ids[id]
+            x0, y0 = points[0]
+            for x, y in points[1:]:
+                cv2.line(im0, (x0, y0), (x, y), colors(id, True), self._line_thickness)
+                x0, y0 = x, y
+        return im0
+
+    def save_img(self, im0: np.ndarray):
+        &#34;&#34;&#34;Saves an image with current timestamp as name.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+
+        # image named after current timestamp
+        save_path = str(self._save_dir / now)
+        save_path += &#34;.jpg&#34;
+
+        cv2.imwrite(save_path, im0)
+
+    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Appends an image to the current videopointer.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        # resize frame if its too large for .avi
+        if im0.shape[1] &gt; 3200:
+            im0 = resize_aspectratio(im0, width=3200)
+
+        if not self.vid_path:  # new video
+            self.init_new_vid(im0)
+        self.vid_writer.write(im0)
+
+    def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+            in a single video.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+        self.vid_path = str(self._save_dir / now)
+
+        if isinstance(self.vid_writer, cv2.VideoWriter):
+            self.vid_writer.release()  # release previous video writer
+
+        # take w, h from input video
+        # if vid_cap:  # video
+        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # else:  # images, stream
+
+        # take user defined fps
+        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+        self.vid_path += &#34;.avi&#34;
+
+        self.vid_writer = cv2.VideoWriter(
+            self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+        )
+
+    def visualize(self, im0: np.ndarray):
+        &#34;&#34;&#34;Visualizes the passed image.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+        &#34;&#34;&#34;
+        cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
+        cv2.imshow(&#34;Pancake&#34;, im0)
+        cv2.waitKey(0 if self._debug else 1)
+
+    def reset_vid_writer(self):
+        self.vid_writer.release()
+        self.vid_path, self.vid_writer = None, None
+
+
+def setup_result_processor(config: dict, labels: list) -&gt; ResultProcessor:
+    &#34;&#34;&#34;Helper function to retrieve the configs and parse it to the
+        ResultProcessor class initialization.
+
+    Args:
+        config (dict): Dictionary containing the configurations
+        labels (list): Detector specific object labels
+
+    Returns:
+        ResultProcessor: An instance of the ResultProcessor
+    &#34;&#34;&#34;
+    return ResultProcessor(
+        show_res=config.VIEW_RES,
+        save_res=config.SAVE_RES,
+        draw_det=config.DRAW_DET,
+        draw_tracks=config.DRAW_TRACKS,
+        draw_track_hist=config.DRAW_TRACK_HIST,
+        track_hist_size=config.MAX_TRACK_HIST_LEN,
+        labels=labels,
+        hide_labels=config.HIDE_LABELS,
+        hide_conf=config.HIDE_CONF,
+        line_thickness=config.LINE_THICKNESS,
+        save_mode=config.MODE,
+        path=config.PATH,
+        subdir=config.SUBDIR,
+        exist_ok=config.EXIST_OK,
+        vid_fps=config.VID_FPS,
+        async_processing=config.ASYNC_PROC,
+        async_queue_size=config.Q_SIZE,
+        async_put_blocked=config.PUT_BLOCKED,
+        async_put_timeout=config.PUT_TIMEOUT,
+        debug=config.DEBUG,
+    )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pancake.utils.result_processor.setup_result_processor"><code class="name flex">
+<span>def <span class="ident">setup_result_processor</span></span>(<span>config: dict, labels: list) ‑> <a title="pancake.utils.result_processor.ResultProcessor" href="#pancake.utils.result_processor.ResultProcessor">ResultProcessor</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper function to retrieve the configs and parse it to the
+ResultProcessor class initialization.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>config</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing the configurations</dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>list</code></dt>
+<dd>Detector specific object labels</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pancake.utils.result_processor.ResultProcessor" href="#pancake.utils.result_processor.ResultProcessor">ResultProcessor</a></code></dt>
+<dd>An instance of the ResultProcessor</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_result_processor(config: dict, labels: list) -&gt; ResultProcessor:
+    &#34;&#34;&#34;Helper function to retrieve the configs and parse it to the
+        ResultProcessor class initialization.
+
+    Args:
+        config (dict): Dictionary containing the configurations
+        labels (list): Detector specific object labels
+
+    Returns:
+        ResultProcessor: An instance of the ResultProcessor
+    &#34;&#34;&#34;
+    return ResultProcessor(
+        show_res=config.VIEW_RES,
+        save_res=config.SAVE_RES,
+        draw_det=config.DRAW_DET,
+        draw_tracks=config.DRAW_TRACKS,
+        draw_track_hist=config.DRAW_TRACK_HIST,
+        track_hist_size=config.MAX_TRACK_HIST_LEN,
+        labels=labels,
+        hide_labels=config.HIDE_LABELS,
+        hide_conf=config.HIDE_CONF,
+        line_thickness=config.LINE_THICKNESS,
+        save_mode=config.MODE,
+        path=config.PATH,
+        subdir=config.SUBDIR,
+        exist_ok=config.EXIST_OK,
+        vid_fps=config.VID_FPS,
+        async_processing=config.ASYNC_PROC,
+        async_queue_size=config.Q_SIZE,
+        async_put_blocked=config.PUT_BLOCKED,
+        async_put_timeout=config.PUT_TIMEOUT,
+        debug=config.DEBUG,
+    )</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pancake.utils.result_processor.ResultProcessor"><code class="flex name class">
+<span>class <span class="ident">ResultProcessor</span></span>
+<span>(</span><span>show_res: bool, save_res: bool, draw_det: bool, draw_tracks: bool, draw_track_hist: bool, track_hist_size: int, labels: List[str], hide_labels: bool, hide_conf: bool, line_thickness: int, save_mode: str, path: str, subdir: str, exist_ok: bool, async_processing: bool, async_queue_size: int, async_put_blocked: bool, async_put_timeout: float, debug: bool, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class encapsulates all result processing procedures.</p>
+<h2 id="functionalities">Functionalities</h2>
+<ul>
+<li>Draws detections, draws tracks, draws track history (tracked vehicle trajectories)</li>
+<li>Visualizes the results, saves the results as image/video</li>
+<li>Asynchronous approach, guaranteed throughput speedup!</li>
+</ul>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>show_res</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If resulting images should be visualized live</dd>
+<dt><strong><code>save_res</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If resulting images should be saved</dd>
+<dt><strong><code>draw_det</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If detection bbox' should be visualized</dd>
+<dt><strong><code>draw_tracks</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If tracked object bbox' should be visualized</dd>
+<dt><strong><code>draw_track_hist</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If track histories should be saved and visualized</dd>
+<dt><strong><code>track_hist_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum size of the track hist container</dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>List[str]</code></dt>
+<dd>List of model specific class labels</dd>
+<dt><strong><code>hide_labels</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If class labels and track ids should be visualized</dd>
+<dt><strong><code>hide_conf</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If confidences should be visualized</dd>
+<dt><strong><code>line_thickness</code></strong> :&ensp;<code>int</code></dt>
+<dd>Drawn line thickness</dd>
+<dt><strong><code>save_mode</code></strong> :&ensp;<code>str</code></dt>
+<dd>Enum, "image" or "video"</dd>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Parent target directory</dd>
+<dt><strong><code>subdir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Target subdirectory (will be automatically incremented)</dd>
+<dt><strong><code>exist_ok</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Save results in already existing dir (<em>path/subdir</em>),
+do not increment automatically</dd>
+<dt><strong><code>async_processing</code></strong> :&ensp;<code>bool</code></dt>
+<dd>(non-blocking) Asynchronous result processing in a
+seperate slave process (significant speedup guaranteed!)</dd>
+<dt><strong><code>async_queue_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Queue size for results sent by parent process to subprocess</dd>
+<dt><strong><code>async_put_blocked</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Blocks .process() for timeout sec until free slot
+available, if False skip the current frame without
+blocking</dd>
+<dt><strong><code>async_put_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>Raise exception after timeout seconds waiting for spare slot</dd>
+<dt><strong><code>debug</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Manual skipping when visualizing results</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ResultProcessor:
+    def __init__(
+        self,
+        show_res: bool,
+        save_res: bool,
+        draw_det: bool,
+        draw_tracks: bool,
+        draw_track_hist: bool,
+        track_hist_size: int,
+        labels: List[str],
+        hide_labels: bool,
+        hide_conf: bool,
+        line_thickness: int,
+        save_mode: str,
+        path: str,
+        subdir: str,
+        exist_ok: bool,
+        async_processing: bool,
+        async_queue_size: int,
+        async_put_blocked: bool,
+        async_put_timeout: float,
+        debug: bool,
+        *args,
+        **kwargs,
+    ):
+        &#34;&#34;&#34;This class encapsulates all result processing procedures.
+
+        Functionalities:
+            - Draws detections, draws tracks, draws track history (tracked vehicle trajectories)
+            - Visualizes the results, saves the results as image/video
+            - Asynchronous approach, guaranteed throughput speedup!
+
+        Args:
+            show_res (bool): If resulting images should be visualized live
+            save_res (bool): If resulting images should be saved
+            draw_det (bool): If detection bbox&#39; should be visualized
+            draw_tracks (bool): If tracked object bbox&#39; should be visualized
+            draw_track_hist (bool): If track histories should be saved and visualized
+            track_hist_size (int): Maximum size of the track hist container
+            labels (List[str]): List of model specific class labels
+            hide_labels (bool): If class labels and track ids should be visualized
+            hide_conf (bool): If confidences should be visualized
+            line_thickness (int): Drawn line thickness
+            save_mode (str): Enum, &#34;image&#34; or &#34;video&#34;
+            path (str): Parent target directory
+            subdir (str): Target subdirectory (will be automatically incremented)
+            exist_ok (bool): Save results in already existing dir (*path/subdir*),
+                             do not increment automatically
+            async_processing (bool): (non-blocking) Asynchronous result processing in a
+                                     seperate slave process (significant speedup guaranteed!)
+            async_queue_size (int): Queue size for results sent by parent process to subprocess
+            async_put_blocked (bool): Blocks .process() for timeout sec until free slot
+                                        available, if False skip the current frame without
+                                        blocking
+            async_put_timeout (float): Raise exception after timeout seconds waiting for spare slot
+            debug (bool): Manual skipping when visualizing results
+        &#34;&#34;&#34;
+        from pancake.run import setup_logger
+
+        self.l = setup_logger(__name__)
+
+        # GENERAL
+        self._show_res, self._save_res, self._debug, self._async = (
+            False,
+            save_res,
+            debug,
+            async_processing,
+        )
+        if show_res:
+            self._show_res = True if check_imshow() else False
+
+        # DRAW OPTIONS
+        self._show_det, self._show_tracks, self._show_track_hist = (
+            draw_det,
+            draw_tracks,
+            draw_track_hist,
+        )
+        # DRAW DETAILS
+        self._hide_labels, self._hide_conf = hide_labels, hide_conf
+        self._line_thickness = line_thickness
+        # CLASS LABELS
+        self._labels = labels
+
+        # NEITHER SHOW RES OR SAVE RES IS ENABLED
+        if not self._show_res and not self._save_res:
+            self.l.info(&#34;No result processing procedure will be taking place&#34;)
+
+            def nop(*args, **kwargs):
+                return
+
+            self.process = nop
+            self.kill_worker = nop
+            return
+
+        if self._show_track_hist:
+            &#34;&#34;&#34;INIT THE TRACK HISTORY&#34;&#34;&#34;
+
+            class TrackHistory:
+                &#34;&#34;&#34;Track History Wrapper
+                - Store the latest tracking results
+                - Assign each tracked ID its center positions (x, y)
+                &#34;&#34;&#34;
+
+                def __init__(self, max_hist_len: int):
+                    &#34;&#34;&#34; Track History Wrapper
+
+                    Args:
+                        max_hist_len (int): Maximum age of tracks matrix considered for \
+                                            trajectory visualization
+                    &#34;&#34;&#34;
+                    self.tracks = []
+                    self.ids = {}
+                    self._max_hist_len = max_hist_len
+
+                def update(self, tracks: np.ndarray):
+                    if len(self.tracks) &gt; self._max_hist_len:
+                        self.tracks = []
+                        self.ids = {}
+
+                    self.tracks.append(tracks)
+                    curr_ids = []
+                    for *_, x, y, id, _ in tracks:
+                        if id not in self.ids.keys():
+                            self.ids.update({id: [(x, y)]})
+                        else:
+                            self.ids[id].append((x, y))
+                        curr_ids.append(id)
+
+            self.track_history = TrackHistory(max_hist_len=track_hist_size)
+
+        if self._save_res:
+            &#34;&#34;&#34;INITIALIZE THE SAVING PROCEDURE&#34;&#34;&#34;
+            assert save_mode == &#34;video&#34; or save_mode == &#34;image&#34;
+            from .general import increment_path
+            from pathlib import Path
+
+            self._mode = save_mode
+
+            self._save_dir = increment_path(Path(path) / subdir, exist_ok, sep=&#34;_&#34;)
+            self._save_dir.mkdir(parents=True, exist_ok=True)
+
+            self.vid_path, self.vid_writer, self._fps = (
+                None,
+                None,
+                kwargs[&#34;vid_fps&#34;] if &#34;vid_fps&#34; in kwargs.keys() else None,
+            )
+
+        if self._async:
+            &#34;&#34;&#34;INITIALIZE THE ASYNCHRONOUS RESULT PROCESSING&#34;&#34;&#34;
+            import multiprocessing
+
+            check_requirements([&#34;pathos&#34;])
+            from pathos.helpers import mp
+
+            assert (
+                not self._show_res and self._async
+            ), &#34;Results can&#39;t be visualized from slave process, disable &#39;VIEW_IMG&#39; or &#39;ASYNC_PROC&#39;!&#34;
+            assert (
+                multiprocessing.cpu_count() &gt; 1
+            ), &#34;Only 1 CPU core available, might not be able to leverage multiprocessing module!&#34;
+
+            self._queue_size = async_queue_size
+            self._put_blocked = async_put_blocked
+            self._put_timeout = async_put_timeout
+
+            # Queue to put and pull results
+            self.queue = mp.Queue(maxsize=self._queue_size)
+
+            # init and start worker process
+            self.l.info(&#34;Starting slave process to work on the results&#34;)
+            self.worker_process = mp.Process(target=self.async_update_worker, args=())
+            self.worker_process.start()
+
+    def process(
+        self,
+        det: torch.Tensor,
+        tracks: np.ndarray,
+        im0: np.ndarray,
+        vid_cap: cv2.VideoCapture = None,
+    ):
+        &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
+
+        This method acts as the entrypoint for the results originating from the run script.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+            im0 (np.array): Image in BGR (,3) [c, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        if self._async:
+            assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
+
+            if round(self.queue.qsize() / self._queue_size, 1) == 0.9:
+                self.l.warn(
+                    &#34;Queue size capacity almost full.. &#34;
+                    f&#34;({(self.queue.qsize()/self._queue_size) * 100:.2f})&#34;
+                )
+
+            if not self._put_blocked and self.queue.full():
+                return
+
+            # self.queue.put([det, tracks, im0, vid_cap])
+            self.queue.put(
+                [det, tracks, im0], block=self._put_blocked, timeout=self._put_timeout
+            )
+        else:
+            # self.update(det, tracks, im0, vid_cap)
+            self.update(det, tracks, im0)
+
+    def update(
+        self,
+        det: torch.Tensor,
+        tracks: np.ndarray,
+        im0: np.ndarray,
+        vid_cap: cv2.VideoCapture = None,
+    ):
+        &#34;&#34;&#34;Wraps the actual result processing procedures.
+        Takes the provided results from a detector and tracker in order to visualize
+        them according to user config. Subsequently, visualizes and/or stores the
+        enriched image/video.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+            im0 (np.array): Image in BGR (,3) [c, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        if self._show_det:
+            im0 = self.draw_detec_boxes(det, im0)
+        if self._show_tracks:
+            im0 = self.draw_track_boxes(tracks, im0)
+        if self._show_track_hist:
+            im0 = self.draw_track_hist(tracks, im0)
+
+        if self._show_res:
+            self.visualize(im0)
+
+        if self._save_res:
+            if self._mode == &#34;image&#34;:
+                self.save_img(im0)
+            else:
+                self.save_vid(im0)
+
+    def async_update_worker(self):
+        &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
+        assert self.queue, &#34;Queue is not initialized!&#34;
+        import traceback
+
+        try:
+            while 1:
+                try:
+                    data = self.queue.get()
+                except:
+                    self.reset_vid_writer()
+                    self.queue.close()
+                    break
+
+                # deserialize data, data: list, [detections, tracks, image, vid cap]
+                # det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+                det, tracks, im0 = data[0], data[1], data[2]
+
+                self.update(det, tracks, im0)
+        except:
+            self.l.fatal(&#34;Exception in subprocess occured!&#34;)
+            traceback.print_exc()
+
+    def kill_worker(self):
+        &#34;&#34;&#34;
+        Procedure for cleanly closing the communication pipes and terminating
+        the worker process.
+        &#34;&#34;&#34;
+        self.queue.close()
+        self.worker_process.terminate()
+
+    def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
+        detection matix on the provided image.
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with detection boxes
+        &#34;&#34;&#34;
+        for *xyxy, conf, cls in reversed(det):
+            # Add bbox to image
+            c = int(cls)  # integer class
+            label = (
+                None
+                if self._hide_labels
+                else (
+                    self._labels[c]
+                    if self._hide_conf
+                    else f&#34;{self._labels[c]} {conf:.2f}&#34;
+                )
+            )
+
+            plot_one_box(
+                xyxy,
+                im0,
+                label=label,
+                color=colors(c, True),
+                line_thickness=self._line_thickness,
+            )
+        return im0
+
+    def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+
+        Args:
+            tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with tracked object boxes
+        &#34;&#34;&#34;
+        for *xyxy, _, _, id, _ in tracks:
+            id = None if self._hide_labels else str(id)
+            plot_one_box(
+                xyxy,
+                im0,
+                label=id,
+                color=colors(int(id), True),
+                line_thickness=self._line_thickness,
+            )
+        return im0
+
+    def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+        &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
+
+        Args:
+            tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+            im0 (np.ndarray): Image in BGR [3, w, h]
+
+        Returns:
+            np.ndarray: Image enriched with tracked object trajectories
+        &#34;&#34;&#34;
+        assert self.track_history, &#34;No track history object initialized!&#34;
+        self.track_history.update(tracks)
+
+        for id in self.track_history.ids:
+            points = self.track_history.ids[id]
+            x0, y0 = points[0]
+            for x, y in points[1:]:
+                cv2.line(im0, (x0, y0), (x, y), colors(id, True), self._line_thickness)
+                x0, y0 = x, y
+        return im0
+
+    def save_img(self, im0: np.ndarray):
+        &#34;&#34;&#34;Saves an image with current timestamp as name.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+
+        # image named after current timestamp
+        save_path = str(self._save_dir / now)
+        save_path += &#34;.jpg&#34;
+
+        cv2.imwrite(save_path, im0)
+
+    def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Appends an image to the current videopointer.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        # resize frame if its too large for .avi
+        if im0.shape[1] &gt; 3200:
+            im0 = resize_aspectratio(im0, width=3200)
+
+        if not self.vid_path:  # new video
+            self.init_new_vid(im0)
+        self.vid_writer.write(im0)
+
+    def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+        &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+            in a single video.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+            vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+        &#34;&#34;&#34;
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+        self.vid_path = str(self._save_dir / now)
+
+        if isinstance(self.vid_writer, cv2.VideoWriter):
+            self.vid_writer.release()  # release previous video writer
+
+        # take w, h from input video
+        # if vid_cap:  # video
+        #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+        #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # else:  # images, stream
+
+        # take user defined fps
+        fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+        self.vid_path += &#34;.avi&#34;
+
+        self.vid_writer = cv2.VideoWriter(
+            self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+        )
+
+    def visualize(self, im0: np.ndarray):
+        &#34;&#34;&#34;Visualizes the passed image.
+
+        Args:
+            im0 (np.ndarray): Image in BGR [3, w, h]
+        &#34;&#34;&#34;
+        cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
+        cv2.imshow(&#34;Pancake&#34;, im0)
+        cv2.waitKey(0 if self._debug else 1)
+
+    def reset_vid_writer(self):
+        self.vid_writer.release()
+        self.vid_path, self.vid_writer = None, None</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pancake.utils.result_processor.ResultProcessor.async_update_worker"><code class="name flex">
+<span>def <span class="ident">async_update_worker</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The slave process loop</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def async_update_worker(self):
+    &#34;&#34;&#34;The slave process loop&#34;&#34;&#34;
+    assert self.queue, &#34;Queue is not initialized!&#34;
+    import traceback
+
+    try:
+        while 1:
+            try:
+                data = self.queue.get()
+            except:
+                self.reset_vid_writer()
+                self.queue.close()
+                break
+
+            # deserialize data, data: list, [detections, tracks, image, vid cap]
+            # det, tracks, im0, vid_cap = data[0], data[1], data[2], data[3]
+            det, tracks, im0 = data[0], data[1], data[2]
+
+            self.update(det, tracks, im0)
+    except:
+        self.l.fatal(&#34;Exception in subprocess occured!&#34;)
+        traceback.print_exc()</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.draw_detec_boxes"><code class="name flex">
+<span>def <span class="ident">draw_detec_boxes</span></span>(<span>self, det: torch.Tensor, im0: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws bounding boxes, class labels and confidences according to a
+detection matix on the provided image.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Image enriched with detection boxes</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_detec_boxes(self, det: torch.Tensor, im0: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;Draws bounding boxes, class labels and confidences according to a
+    detection matix on the provided image.
+
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+        im0 (np.ndarray): Image in BGR [3, w, h]
+
+    Returns:
+        np.ndarray: Image enriched with detection boxes
+    &#34;&#34;&#34;
+    for *xyxy, conf, cls in reversed(det):
+        # Add bbox to image
+        c = int(cls)  # integer class
+        label = (
+            None
+            if self._hide_labels
+            else (
+                self._labels[c]
+                if self._hide_conf
+                else f&#34;{self._labels[c]} {conf:.2f}&#34;
+            )
+        )
+
+        plot_one_box(
+            xyxy,
+            im0,
+            label=label,
+            color=colors(c, True),
+            line_thickness=self._line_thickness,
+        )
+    return im0</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.draw_track_boxes"><code class="name flex">
+<span>def <span class="ident">draw_track_boxes</span></span>(<span>self, tracks: numpy.ndarray, im0: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws bounding boxes, tracking ids according to 'tracks' matix on the provided image.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tracks</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id, cls]</dd>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Image enriched with tracked object boxes</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_track_boxes(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;Draws bounding boxes, tracking ids according to &#39;tracks&#39; matix on the provided image.
+
+    Args:
+        tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+        im0 (np.ndarray): Image in BGR [3, w, h]
+
+    Returns:
+        np.ndarray: Image enriched with tracked object boxes
+    &#34;&#34;&#34;
+    for *xyxy, _, _, id, _ in tracks:
+        id = None if self._hide_labels else str(id)
+        plot_one_box(
+            xyxy,
+            im0,
+            label=id,
+            color=colors(int(id), True),
+            line_thickness=self._line_thickness,
+        )
+    return im0</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.draw_track_hist"><code class="name flex">
+<span>def <span class="ident">draw_track_hist</span></span>(<span>self, tracks: numpy.ndarray, im0: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws a line for each tracked ID according to the stored history.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tracks</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id, cls]</dd>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>Image enriched with tracked object trajectories</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_track_hist(self, tracks: np.ndarray, im0: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;Draws a line for each tracked ID according to the stored history.
+
+    Args:
+        tracks (np.ndarray): Tracks on (,7) array [xyxy, center x, center y, id, cls]
+        im0 (np.ndarray): Image in BGR [3, w, h]
+
+    Returns:
+        np.ndarray: Image enriched with tracked object trajectories
+    &#34;&#34;&#34;
+    assert self.track_history, &#34;No track history object initialized!&#34;
+    self.track_history.update(tracks)
+
+    for id in self.track_history.ids:
+        points = self.track_history.ids[id]
+        x0, y0 = points[0]
+        for x, y in points[1:]:
+            cv2.line(im0, (x0, y0), (x, y), colors(id, True), self._line_thickness)
+            x0, y0 = x, y
+    return im0</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.init_new_vid"><code class="name flex">
+<span>def <span class="ident">init_new_vid</span></span>(<span>self, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets up a new video writer instance in order to save our results
+in a single video.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+<dt><strong><code>vid_cap</code></strong> :&ensp;<code>cv2.VideoCapture</code>, optional</dt>
+<dd><em>Deprecated</em> cv2.VideoCapture object. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_new_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+    &#34;&#34;&#34;Sets up a new video writer instance in order to save our results
+        in a single video.
+
+    Args:
+        im0 (np.ndarray): Image in BGR [3, w, h]
+        vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+    &#34;&#34;&#34;
+    now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+    self.vid_path = str(self._save_dir / now)
+
+    if isinstance(self.vid_writer, cv2.VideoWriter):
+        self.vid_writer.release()  # release previous video writer
+
+    # take w, h from input video
+    # if vid_cap:  # video
+    #     fps = vid_cap.get(cv2.CAP_PROP_FPS)
+    #     w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    #     h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # else:  # images, stream
+
+    # take user defined fps
+    fps, w, h = self._fps, im0.shape[1], im0.shape[0]
+    self.vid_path += &#34;.avi&#34;
+
+    self.vid_writer = cv2.VideoWriter(
+        self.vid_path, cv2.VideoWriter_fourcc(*&#34;XVID&#34;), fps, (w, h)
+    )</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.kill_worker"><code class="name flex">
+<span>def <span class="ident">kill_worker</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Procedure for cleanly closing the communication pipes and terminating
+the worker process.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def kill_worker(self):
+    &#34;&#34;&#34;
+    Procedure for cleanly closing the communication pipes and terminating
+    the worker process.
+    &#34;&#34;&#34;
+    self.queue.close()
+    self.worker_process.terminate()</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.process"><code class="name flex">
+<span>def <span class="ident">process</span></span>(<span>self, det: torch.Tensor, tracks: numpy.ndarray, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wraps the procedure for asynchronous and synchronous result processing.</p>
+<p>This method acts as the entrypoint for the results originating from the run script.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+<dt><strong><code>tracks</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id]</dd>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Image in BGR (,3) [c, w, h]</dd>
+<dt><strong><code>vid_cap</code></strong> :&ensp;<code>cv2.VideoCapture</code>, optional</dt>
+<dd><em>Deprecated</em> cv2.VideoCapture object. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process(
+    self,
+    det: torch.Tensor,
+    tracks: np.ndarray,
+    im0: np.ndarray,
+    vid_cap: cv2.VideoCapture = None,
+):
+    &#34;&#34;&#34;Wraps the procedure for asynchronous and synchronous result processing.
+
+    This method acts as the entrypoint for the results originating from the run script.
+
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+        tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+        im0 (np.array): Image in BGR (,3) [c, w, h]
+        vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+    &#34;&#34;&#34;
+    if self._async:
+        assert self.worker_process.is_alive(), &#34;Worker process died!&#34;
+
+        if round(self.queue.qsize() / self._queue_size, 1) == 0.9:
+            self.l.warn(
+                &#34;Queue size capacity almost full.. &#34;
+                f&#34;({(self.queue.qsize()/self._queue_size) * 100:.2f})&#34;
+            )
+
+        if not self._put_blocked and self.queue.full():
+            return
+
+        # self.queue.put([det, tracks, im0, vid_cap])
+        self.queue.put(
+            [det, tracks, im0], block=self._put_blocked, timeout=self._put_timeout
+        )
+    else:
+        # self.update(det, tracks, im0, vid_cap)
+        self.update(det, tracks, im0)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.reset_vid_writer"><code class="name flex">
+<span>def <span class="ident">reset_vid_writer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_vid_writer(self):
+    self.vid_writer.release()
+    self.vid_path, self.vid_writer = None, None</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.save_img"><code class="name flex">
+<span>def <span class="ident">save_img</span></span>(<span>self, im0: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Saves an image with current timestamp as name.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_img(self, im0: np.ndarray):
+    &#34;&#34;&#34;Saves an image with current timestamp as name.
+
+    Args:
+        im0 (np.ndarray): Image in BGR [3, w, h]
+    &#34;&#34;&#34;
+    now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S.%f&#34;)[:-3]
+
+    # image named after current timestamp
+    save_path = str(self._save_dir / now)
+    save_path += &#34;.jpg&#34;
+
+    cv2.imwrite(save_path, im0)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.save_vid"><code class="name flex">
+<span>def <span class="ident">save_vid</span></span>(<span>self, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Appends an image to the current videopointer.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+<dt><strong><code>vid_cap</code></strong> :&ensp;<code>cv2.VideoCapture</code>, optional</dt>
+<dd><em>Deprecated</em> cv2.VideoCapture object. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_vid(self, im0: np.ndarray, vid_cap: cv2.VideoCapture = None) -&gt; None:
+    &#34;&#34;&#34;Appends an image to the current videopointer.
+
+    Args:
+        im0 (np.ndarray): Image in BGR [3, w, h]
+        vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+    &#34;&#34;&#34;
+    # resize frame if its too large for .avi
+    if im0.shape[1] &gt; 3200:
+        im0 = resize_aspectratio(im0, width=3200)
+
+    if not self.vid_path:  # new video
+        self.init_new_vid(im0)
+    self.vid_writer.write(im0)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, det: torch.Tensor, tracks: numpy.ndarray, im0: numpy.ndarray, vid_cap: cv2.VideoCapture = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wraps the actual result processing procedures.
+Takes the provided results from a detector and tracker in order to visualize
+them according to user config. Subsequently, visualizes and/or stores the
+enriched image/video.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>det</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Detections on (,6) tensor [xyxy, conf, cls]</dd>
+<dt><strong><code>tracks</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Tracks on (,7) array [xyxy, center x, center y, id]</dd>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Image in BGR (,3) [c, w, h]</dd>
+<dt><strong><code>vid_cap</code></strong> :&ensp;<code>cv2.VideoCapture</code>, optional</dt>
+<dd><em>Deprecated</em> cv2.VideoCapture object. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(
+    self,
+    det: torch.Tensor,
+    tracks: np.ndarray,
+    im0: np.ndarray,
+    vid_cap: cv2.VideoCapture = None,
+):
+    &#34;&#34;&#34;Wraps the actual result processing procedures.
+    Takes the provided results from a detector and tracker in order to visualize
+    them according to user config. Subsequently, visualizes and/or stores the
+    enriched image/video.
+
+    Args:
+        det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+        tracks (np.array): Tracks on (,7) array [xyxy, center x, center y, id]
+        im0 (np.array): Image in BGR (,3) [c, w, h]
+        vid_cap (cv2.VideoCapture, optional): _Deprecated_ cv2.VideoCapture object. Defaults to None.
+    &#34;&#34;&#34;
+    if self._show_det:
+        im0 = self.draw_detec_boxes(det, im0)
+    if self._show_tracks:
+        im0 = self.draw_track_boxes(tracks, im0)
+    if self._show_track_hist:
+        im0 = self.draw_track_hist(tracks, im0)
+
+    if self._show_res:
+        self.visualize(im0)
+
+    if self._save_res:
+        if self._mode == &#34;image&#34;:
+            self.save_img(im0)
+        else:
+            self.save_vid(im0)</code></pre>
+</details>
+</dd>
+<dt id="pancake.utils.result_processor.ResultProcessor.visualize"><code class="name flex">
+<span>def <span class="ident">visualize</span></span>(<span>self, im0: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Visualizes the passed image.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>im0</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>Image in BGR [3, w, h]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def visualize(self, im0: np.ndarray):
+    &#34;&#34;&#34;Visualizes the passed image.
+
+    Args:
+        im0 (np.ndarray): Image in BGR [3, w, h]
+    &#34;&#34;&#34;
+    cv2.namedWindow(&#34;Pancake&#34;, cv2.WINDOW_NORMAL)
+    cv2.imshow(&#34;Pancake&#34;, im0)
+    cv2.waitKey(0 if self._debug else 1)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pancake.utils" href="index.html">pancake.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pancake.utils.result_processor.setup_result_processor" href="#pancake.utils.result_processor.setup_result_processor">setup_result_processor</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pancake.utils.result_processor.ResultProcessor" href="#pancake.utils.result_processor.ResultProcessor">ResultProcessor</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.async_update_worker" href="#pancake.utils.result_processor.ResultProcessor.async_update_worker">async_update_worker</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_detec_boxes" href="#pancake.utils.result_processor.ResultProcessor.draw_detec_boxes">draw_detec_boxes</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_track_boxes" href="#pancake.utils.result_processor.ResultProcessor.draw_track_boxes">draw_track_boxes</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.draw_track_hist" href="#pancake.utils.result_processor.ResultProcessor.draw_track_hist">draw_track_hist</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.init_new_vid" href="#pancake.utils.result_processor.ResultProcessor.init_new_vid">init_new_vid</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.kill_worker" href="#pancake.utils.result_processor.ResultProcessor.kill_worker">kill_worker</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.process" href="#pancake.utils.result_processor.ResultProcessor.process">process</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.reset_vid_writer" href="#pancake.utils.result_processor.ResultProcessor.reset_vid_writer">reset_vid_writer</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.save_img" href="#pancake.utils.result_processor.ResultProcessor.save_img">save_img</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.save_vid" href="#pancake.utils.result_processor.ResultProcessor.save_vid">save_vid</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.update" href="#pancake.utils.result_processor.ResultProcessor.update">update</a></code></li>
+<li><code><a title="pancake.utils.result_processor.ResultProcessor.visualize" href="#pancake.utils.result_processor.ResultProcessor.visualize">visualize</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

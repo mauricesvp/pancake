@@ -1,5 +1,8 @@
+""" DeepSort Wrapper Class """
 import numpy as np
 import torch
+
+""" DeepSort Wrapper Class """
 
 from .deep.feature_extractor import Extractor
 from .sort.nn_matching import NearestNeighborDistanceMetric
@@ -14,18 +17,40 @@ __all__ = ["DeepSort"]
 class DeepSort(object):
     def __init__(
         self,
-        model_path,
-        device="CPU",
-        max_dist=0.2,
-        min_confidence=0.3,
-        nms_max_overlap=1.0,
-        max_iou_distance=0.7,
-        max_age=70,
-        n_init=3,
-        nn_budget=100,
-        max_id=100,
-        use_cuda=True,
+        model_path: str,
+        device: str = "CPU",
+        max_dist: float = 0.2,
+        min_confidence: float = 0.3,
+        nms_max_overlap: float = 1.0,
+        max_iou_distance: float = 0.7,
+        max_age: int = 70,
+        n_init: int = 3,
+        nn_budget: int = 100,
+        max_id: int = 100,
+        use_cuda: bool = True,
     ):
+        """ DeepSort wrapper class
+
+        Args:
+            model_path (str): Feature extractor model path
+            device (str, optional): Device to leverage. Defaults to "CPU".
+            max_dist (float, optional): Max cosine distance to nearest neighbor. Defaults to 0.2.
+            min_confidence (float, optional): Min confidence to be considered. Defaults to 0.3.
+            nms_max_overlap (float, optional): Non-maximum Suppression max overlap fraction. \
+                                                ROIs that overlap more than this values are suppressed. \
+                                                Defaults to 1.0.
+            max_iou_distance (float, optional): Max intersection over union distance. 
+                                                Associations with cost larger than this value are disregarded. \
+                                                Defaults to 0.7.
+            max_age (int, optional): Maximum number of missed timesteps before a track is deleted. Defaults to 70.
+            n_init (int, optional): Number of consecutive detections before the track is confirmed. The
+                                    track state is set to `Deleted` if a miss occurs within the first
+                                    `n_init` frames. Defaults to 3.
+            nn_budget (int, optional): fix samples per class to at most this number. Removes the oldest samples \
+                                        when the budget is reached. Defaults to 100.
+            max_id (int, optional): Highest possible id for tracked entity. Defaults to 100.
+            use_cuda (bool, optional): Fallback to CUDA device if possible. Defaults to True.
+        """
         self.min_confidence = min_confidence
         self.nms_max_overlap = nms_max_overlap
 
@@ -41,7 +66,30 @@ class DeepSort(object):
             max_id=max_id,
         )
 
-    def update(self, bbox_xyxy, confidences, ori_img, cls):
+    def update(
+        self,
+        bbox_xyxy: np.ndarray,
+        confidences: np.ndarray,
+        ori_img: np.ndarray,
+        cls: np.ndarray,
+    ) -> np.ndarray:
+        """Updates the internal state.
+
+        Description:
+            - Runs NMS
+            - Gets the extracted features
+            - Updates the tracker state
+            - Outputs the track identities
+
+        Args:
+            bbox_xyxy (np.ndarray): Detected bounding boxes in [x1, y1, x2, y2]
+            confidences (np.ndarray): Confidence scores of the detected entities
+            ori_img (np.ndarray): Original image in BGR [c, w, h]
+            cls (np.ndarray): Model-specific class indices of the detected entities
+
+        Returns:
+            np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
+        """
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         bbox_xyxy = np.asarray(bbox_xyxy, dtype=int)
@@ -80,7 +128,7 @@ class DeepSort(object):
                     dtype=np.int,
                 )
             )
-        if len(outputs) > 0:
+        if outputs:
             outputs = np.stack(outputs, axis=0)
         return outputs
 
@@ -126,9 +174,7 @@ class DeepSort(object):
 
         t = x1
         l = y1
-        w = int(x2 - x1)
-        h = int(y2 - y1)
-        return t, l, w, h
+        return t, l, int(x2 - t), int(y2 - l)
 
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
@@ -137,8 +183,4 @@ class DeepSort(object):
             im = ori_img[y1:y2, x1:x2]
             if im.any():
                 im_crops.append(im)
-        if im_crops:
-            features = self.extractor(im_crops)
-        else:
-            features = np.array([])
-        return features
+        return self.extractor(im_crops) if im_crops else np.array([])

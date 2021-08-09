@@ -1,25 +1,27 @@
-"""
-Simple Backend
-----------------
-TODOs:
-    * Apply ROIs
-    * Filter by object class id
-      (this could be done in the detector as well)
+from typing import List, Tuple, Type
 
-"""
 import torch
 import cv2
+import numpy as np
 
 from .backend import Backend
+from ..detector import Detector
 
 
 class SIMPLE(Backend):
-    def __init__(self, detector, roi: list = None, *args, **kwargs) -> None:
-        """
+    def __init__(
+        self, detector: Type[Detector], roi: List[int] = None, *args, **kwargs
+    ) -> None:
+        """Simple Backend
 
-        :param detector: Detector which provides 'detect' method,
-                         which can take one or multiple images.
+        Takes n images, runs detections on each,
+        returns Tuple with detections and stitched image.
 
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
+
+        Args:
+            detector (Type[Detector]): Detector instance which provides "detect" method
+            roi (List[int], optional): Region of interest. Defaults to None.
         """
         self.detector = detector
         if roi:
@@ -27,10 +29,16 @@ class SIMPLE(Backend):
         else:
             self.roi = None
 
-    def detect(self, source) -> (list, list):
-        """Detect objects on image(s).
+    def detect(
+        self, source: List[np.ndarray]
+    ) -> Tuple[List[torch.Tensor], List[np.ndarray]]:
+        """Detect objects on images.
 
-        :param source: Image or list of images.
+        Args:
+            source (List[np.ndarray]): List of images
+
+        Returns:
+            Tuple[torch.Tensor, np.ndarray]: Tuple of objects and stitched image
         """
         if self.roi:
             assert len(self.roi) == len(source)

@@ -149,9 +149,9 @@ class CentroidTracker(BaseTracker):
                         self.objects[id][0],
                         self.objects[id][1],
                         id,
-                        self.classIds[id]
+                        self.classIds[id],
                     ],
-                    dtype=np.int
+                    dtype=np.int,
                 )
             )
         # output np array
@@ -518,10 +518,11 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] > self.MAX_DISAPPEARED or
-                    self._isInsideDeregistrationZone(
-                        self.objects[objectID]
-                )):
+                if self.disappeared[
+                    objectID
+                ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    self.objects[objectID]
+                ):
                     self._deregister(objectID)
 
             # return early
@@ -603,10 +604,11 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] > self.MAX_DISAPPEARED or 
-                    self._isInsideDeregistrationZone(
-                        objectCentroids[row]
-                )):
+                if self.disappeared[
+                    objectID
+                ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    objectCentroids[row]
+                ):
                     self._deregister(objectID)
 
             # unmatched input centroids will get registered

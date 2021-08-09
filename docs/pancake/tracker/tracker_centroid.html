@@ -135,9 +135,9 @@ class CentroidTracker(BaseTracker):
                         self.objects[id][0],
                         self.objects[id][1],
                         id,
-                        self.classIds[id]
+                        self.classIds[id],
                     ],
-                    dtype=np.int
+                    dtype=np.int,
                 )
             )
         # output np array
@@ -324,10 +324,11 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or
-                    self._isInsideDeregistrationZone(
-                        self.objects[objectID]
-                )):
+                if self.disappeared[
+                    objectID
+                ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    self.objects[objectID]
+                ):
                     self._deregister(objectID)
 
             # return early
@@ -409,10 +410,11 @@ class CentroidTracker(BaseTracker):
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or 
-                    self._isInsideDeregistrationZone(
-                        objectCentroids[row]
-                )):
+                if self.disappeared[
+                    objectID
+                ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    objectCentroids[row]
+                ):
                     self._deregister(objectID)
 
             # unmatched input centroids will get registered
@@ -463,8 +465,11 @@ class CentroidTracker(BaseTracker):
 <span>(</span><span>cfg: dict, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></div>
+<div class="desc"><p>[<em>Abstract Class</em>] Base class of the Trackers</p>
+<p><strong>Base Class</strong>:
+All tracking algorithms to be used within this framework have to inherit from this class.
+The inheritance will automatically register every subclass into the registry thus
+allowing for modular access to the trackers.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -558,9 +563,9 @@ inheritance.</p></div>
                         self.objects[id][0],
                         self.objects[id][1],
                         id,
-                        self.classIds[id]
+                        self.classIds[id],
                     ],
-                    dtype=np.int
+                    dtype=np.int,
                 )
             )
         # output np array
@@ -747,10 +752,11 @@ inheritance.</p></div>
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or
-                    self._isInsideDeregistrationZone(
-                        self.objects[objectID]
-                )):
+                if self.disappeared[
+                    objectID
+                ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    self.objects[objectID]
+                ):
                     self._deregister(objectID)
 
             # return early
@@ -832,10 +838,11 @@ inheritance.</p></div>
                 # continue movement
                 self.objects[objectID] = self._continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
-                if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or 
-                    self._isInsideDeregistrationZone(
-                        objectCentroids[row]
-                )):
+                if self.disappeared[
+                    objectID
+                ] &gt; self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                    objectCentroids[row]
+                ):
                     self._deregister(objectID)
 
             # unmatched input centroids will get registered
@@ -908,159 +915,15 @@ def transform_detections(det: Type[torch.Tensor]):
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="pancake.tracker.tracker_centroid.CentroidTracker.update"><code class="name flex">
-<span>def <span class="ident">update</span></span>(<span>self, det: Type[torch.Tensor], img: Type[numpy.ndarray]) ‑> numpy.ndarray</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def update(
-    self, det: Type[torch.Tensor], img: Type[np.ndarray]
-) -&gt; np.ndarray:  # det: list of koordinates x,y , x,y, ...
-    # keep track of time for debugging
-    update_time_start = int(round(time.time() * 1000))
-    # get inputs
-    bbox_xyxy, conf, cls = self.transform_detections(det)
-
-    # filter none car and truck objects from input
-    # bbox_xyxy_tmp = []
-    # conf_tmp = []
-    # cls_tmp = []
-    # for i, c in enumerate(cls):
-    #     if (c &lt; 4 or c == 5 or c == 7):
-    #         bbox_xyxy_tmp.append(bbox_xyxy[i])
-    #         conf_tmp.append(conf[i])
-    #         cls_tmp.append(cls[i])
-    # bbox_xyxy = bbox_xyxy_tmp
-    # conf = conf_tmp
-    # cls = cls_tmp
-
-    # check if no detections are present
-    if len(bbox_xyxy) == 0:
-        # loop over any existing tracked objects and mark them as disappeared
-        for objectID in list(self.disappeared.keys()):
-            # increase disappeared count
-            self.disappeared[objectID] += 1
-            # continue movement
-            self.objects[objectID] = self._continueMovement(objectID)
-            # deregister if lifetime is surpassed or object drove away
-            if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or
-                self._isInsideDeregistrationZone(
-                    self.objects[objectID]
-            )):
-                self._deregister(objectID)
-
-        # return early
-        return self._return()
-
-    # initialize an array for the inputs
-    inputCentroids = np.zeros((len(bbox_xyxy), 2), dtype=&#34;int&#34;)
-    inputBBOX = np.zeros((len(bbox_xyxy), 4), dtype=&#34;int&#34;)
-    inputConfidence = np.zeros((len(bbox_xyxy), 1), dtype=&#34;float&#34;)
-    inputClass = np.zeros((len(bbox_xyxy), 1), dtype=&#34;int&#34;)
-    # loop over the bounding box rectangles
-    for (i, bb) in enumerate(bbox_xyxy):
-        # use the bounding box coordinates to derive the centroid
-        inputCentroids[i] = self._centroid(bb)
-        inputBBOX[i] = bb
-        inputConfidence[i] = conf[i]
-        inputClass[i] = cls[i]
-
-    # if currently no objects are being tracked
-    if len(self.objects) == 0:
-        for i in range(len(inputCentroids)):
-            # only register when not in deregistration zone
-            if not self._isInsideDeregistrationZone(inputCentroids[i]):
-                self._register(
-                    inputCentroids[i],
-                    inputBBOX[i],
-                    inputConfidence[i],
-                    inputClass[i],
-                )
-
-    # otherwise match existing to detected centroids
-    else:
-        objectIDs = list(self.objects.keys())
-        objectCentroids = list(self.objects.values())
-        # compute distances
-        D = dist.cdist(np.array(objectCentroids), inputCentroids)
-        # create sorted list of tuples of indexes and value in ascending order
-        D_sorted = sorted(np.ndenumerate(D), key=itemgetter(1))
-        # keep track of used Rows and Cols
-        usedRows = set()
-        usedCols = set()
-
-        # loop through row,col and distance
-        for line in D_sorted:
-            row = line[0][0]
-            col = line[0][1]
-            distance = line[1]
-            # if row or col already used, skip
-            if row in usedRows or col in usedCols:
-                continue
-            # get objectID
-            objectID = objectIDs[row]
-            # otherwise a match is created but only if inside a maximum distance
-            if self._isDistanceInsideLimit(distance, objectID, inputCentroids[col]):
-                # safe the distance travelled
-                self.lastDistTrav[objectID] = self._computeLastDist(
-                    self.objects[objectID], inputCentroids[col]
-                )
-                # update object
-                self.objects[objectID] = inputCentroids[col]
-                self.bbox[objectID] = inputBBOX[col]
-                self.confidence[objectID] = inputConfidence[col]
-                self.classIds[objectID] = inputClass[col]
-                self.disappeared[objectID] = 0
-                # remove Row and Col
-                usedRows.add(row)
-                usedCols.add(col)
-
-        # get not matched rows and cols
-        unusedRows = set(range(0, D.shape[0])).difference(usedRows)
-        unusedCols = set(range(0, D.shape[1])).difference(usedCols)
-
-        # unmatched objects will be counted as disappeared
-        for row in unusedRows:
-            # get object ID
-            objectID = objectIDs[row]
-            # increase disappeared count
-            self.disappeared[objectID] += 1
-            # continue movement
-            self.objects[objectID] = self._continueMovement(objectID)
-            # deregister if lifetime is surpassed or object drove away
-            if (self.disappeared[objectID] &gt; self.MAX_DISAPPEARED or 
-                self._isInsideDeregistrationZone(
-                    objectCentroids[row]
-            )):
-                self._deregister(objectID)
-
-        # unmatched input centroids will get registered
-        for col in unusedCols:
-            if not self._isInsideDeregistrationZone(inputCentroids[col]):
-                if self._isInsideRegistrationZone(inputCentroids[col]):
-                    self._register(
-                        inputCentroids[col],
-                        inputBBOX[col],
-                        inputConfidence[col],
-                        inputClass[col],
-                    )
-
-    # keep track of time for debugging
-    update_time_end = int(round(time.time() * 1000))
-    self.l.debug(
-        &#34;Centroid update took {} ms&#34;.format(update_time_end - update_time_start)
-    )
-
-    return self._return()</code></pre>
-</details>
-</dd>
-</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pancake.tracker.tracker.BaseTracker" href="tracker.html#pancake.tracker.tracker.BaseTracker">BaseTracker</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pancake.tracker.tracker.BaseTracker.get_subclasses" href="tracker.html#pancake.tracker.tracker.BaseTracker.get_subclasses">get_subclasses</a></code></li>
+<li><code><a title="pancake.tracker.tracker.BaseTracker.update" href="tracker.html#pancake.tracker.tracker.BaseTracker.update">update</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -1082,7 +945,6 @@ def transform_detections(det: Type[torch.Tensor]):
 <h4><code><a title="pancake.tracker.tracker_centroid.CentroidTracker" href="#pancake.tracker.tracker_centroid.CentroidTracker">CentroidTracker</a></code></h4>
 <ul class="">
 <li><code><a title="pancake.tracker.tracker_centroid.CentroidTracker.transform_detections" href="#pancake.tracker.tracker_centroid.CentroidTracker.transform_detections">transform_detections</a></code></li>
-<li><code><a title="pancake.tracker.tracker_centroid.CentroidTracker.update" href="#pancake.tracker.tracker_centroid.CentroidTracker.update">update</a></code></li>
 </ul>
 </li>
 </ul>

@@ -7,12 +7,14 @@ import torch
 
 
 class Detector(ABC):
-    """ Base Class: Abstract class for the Detectors
+    """ [_Abstract Class_] Base class of the Detectors
     
-    All Detectors to be used within this framework have to inherit from this class. \
-    The inheritance will automatically register every subclass into the registry thus \
-    allowing for modular access to the detectors.
-    """    
+    __Base Class__:
+        All Detectors to be used within this framework have to inherit from this class. \
+        The inheritance will automatically register every subclass into the registry thus \
+        allowing for modular access to the detectors.
+    """
+
     _subclasses = {}
 
     def __init__(self, *args, **kwargs) -> None:
@@ -20,12 +22,12 @@ class Detector(ABC):
 
     @classmethod
     def get_subclasses(cls) -> dict:
-        """ Returns all subclasses of this base class. 
+        """Returns all subclasses of this base class.
         The dictionary poses as Detector registry.
 
         Returns:
             dict: Dictionary containing all child classes.
-        """        
+        """
         return dict(cls._subclasses)
 
     def __init_subclass__(cls):
@@ -34,7 +36,7 @@ class Detector(ABC):
 
     @abstractmethod
     def detect(self, img: np.ndarray, *args, **kwargs) -> List[torch.Tensor]:
-        """ Method to encapsulate the detection procedure.
+        """Method to encapsulate the detection procedure.
 
         Args:
             img (np.ndarray): List of ndarrays, images in BGR [batch size, channels, width, height]
@@ -44,5 +46,5 @@ class Detector(ABC):
 
         Returns:
             List[torch.Tensor]: Tensor list of detections, on (,6) tensor [xyxy, conf, cls]
-        """        
+        """
         raise NotImplementedError

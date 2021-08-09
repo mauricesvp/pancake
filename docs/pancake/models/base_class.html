@@ -46,7 +46,7 @@ class BaseModel(ABC):
 
         Args:
             device (str): Device to calculate on (CPU, GPU), could be &#39;CPU&#39;, &#39;0&#39;, &#39;1&#39;, ...
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         self.model = None
         self._device = select_device(device)
         self._half = self._device.type != &#34;cpu&#34;  # half precision only supported on CUDA
@@ -68,11 +68,11 @@ class BaseModel(ABC):
 
     @abstractmethod
     def _init_infer(self, img_size: int):
-        &#34;&#34;&#34; Does one forward pass on the network for initialization on GPU
+        &#34;&#34;&#34;Does one forward pass on the network for initialization on GPU
 
         Args:
             img_size (int): Padded, resized image size
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert img_size, &#34;Your model needs to specify a specific image size &#34;
         &#34;for inference in class attribute &#39;._required_img_size&#39;&#34;
         if self._device.type != &#34;cpu&#34;:
@@ -93,7 +93,7 @@ class BaseModel(ABC):
         Returns:
             torch.Tensor: torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
                 expanded dim (,4), half precision (fp16))
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         prep_img = torch.from_numpy(img).to(self._device)  # outsource on device
         prep_img = (
             prep_img.half() if self._half else prep_img.float()
@@ -115,7 +115,7 @@ class BaseModel(ABC):
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert (
             img.ndimension() == 4
         ), &#34;Dimension of image array didn&#39;t match the required dimension (4)!&#34;
@@ -160,7 +160,7 @@ This class acts as a base class for different models.</p>
 
         Args:
             device (str): Device to calculate on (CPU, GPU), could be &#39;CPU&#39;, &#39;0&#39;, &#39;1&#39;, ...
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         self.model = None
         self._device = select_device(device)
         self._half = self._device.type != &#34;cpu&#34;  # half precision only supported on CUDA
@@ -182,11 +182,11 @@ This class acts as a base class for different models.</p>
 
     @abstractmethod
     def _init_infer(self, img_size: int):
-        &#34;&#34;&#34; Does one forward pass on the network for initialization on GPU
+        &#34;&#34;&#34;Does one forward pass on the network for initialization on GPU
 
         Args:
             img_size (int): Padded, resized image size
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert img_size, &#34;Your model needs to specify a specific image size &#34;
         &#34;for inference in class attribute &#39;._required_img_size&#39;&#34;
         if self._device.type != &#34;cpu&#34;:
@@ -207,7 +207,7 @@ This class acts as a base class for different models.</p>
         Returns:
             torch.Tensor: torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
                 expanded dim (,4), half precision (fp16))
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         prep_img = torch.from_numpy(img).to(self._device)  # outsource on device
         prep_img = (
             prep_img.half() if self._half else prep_img.float()
@@ -229,7 +229,7 @@ This class acts as a base class for different models.</p>
 
         Returns:
             List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-        &#34;&#34;&#34;        
+        &#34;&#34;&#34;
         assert (
             img.ndimension() == 4
         ), &#34;Dimension of image array didn&#39;t match the required dimension (4)!&#34;
@@ -294,7 +294,7 @@ def infer(self, img: torch.Tensor) -&gt; List[torch.Tensor]:
 
     Returns:
         List[torch.Tensor]: List of detections, on (,6) tensor [xyxy, conf, cls]
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     assert (
         img.ndimension() == 4
     ), &#34;Dimension of image array didn&#39;t match the required dimension (4)!&#34;
@@ -334,7 +334,7 @@ def prep_image_infer(self, img: np.ndarray) -&gt; torch.Tensor:
     Returns:
         torch.Tensor: torch.Tensor: Preprocessed image 4d tensor [bs, c, w, h] (on device, \
             expanded dim (,4), half precision (fp16))
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
     prep_img = torch.from_numpy(img).to(self._device)  # outsource on device
     prep_img = (
         prep_img.half() if self._half else prep_img.float()
