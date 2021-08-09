@@ -3,11 +3,19 @@ CENTROID:
   MAX_ID: 100000
 
   # Max time an object will be premoved on disappearance
-  MAX_DISAPPEARED: 10
+  MAX_DISAPPEARED: 11
+
+  # Use better matching rectangles for objects
+  USE_BETTER_RECTS: True
+  USE_DYNAMIC_SCALING: FALSE
 
   # Maximum distances to allow for a car tracking match
   DISTANCE_TOLERANCE: 500
   VERTICAL_TOLERANCE: 100
+
+  FRONT_DISTANCE_TOLERANCE: 300
+  BACK_DISTANCE_TOLERANCE: 180
+  SIDE_DISTANCE_TOLERANCE: 50
 
   # total image width
   FRAME_WIDTH: 11520
