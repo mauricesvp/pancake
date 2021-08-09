@@ -43,7 +43,7 @@ DEI(Normal)</pre></td>
   <td><pre><b>Centroid Tracker</b>
 YoloV5m(pre)
 DEI(Normal)</pre></td>
-<td>2</td>
+<td>3</td>
 <td>8 von 8</td>
 <td>6 von 6</td>
 <td>3 von 3</td>
@@ -119,10 +119,10 @@ Using DeepSORT:
 YoloV5m(pre)
 <b>Simple</b></pre></td>
 <td>2</td>
-<td>6 von 8</td>
-<td>4 von 6</td>
-<td>3 von 3</td>
-<td>2 von 3</td>
+<td>2 von 8</td>
+<td>2 von 6</td>
+<td>0 von 3</td>
+<td>0 von 3</td>
 <td></td>
 </tr>
 <tr>
@@ -180,22 +180,22 @@ YoloV5m(pre)
 <td><pre>Centroid Tracker
 YoloV5m(pre)
 <b>DEI(Simple)</b></pre></td>
-<td>2</td>
+<td>4</td>
 <td>6 von 8</td>
-<td>4 von 6</td>
+<td>5 von 6</td>
 <td>3 von 3</td>
-<td>2 von 3</td>
+<td>1 von 3</td>
 <td></td>
 </tr>
 <tr>
 <td><pre>Centroid Tracker
 YoloV5m(pre)
 <b>DEI(Normal)</b></pre></td>
-<td>2</td>
-<td>6 von 8</td>
-<td>4 von 6</td>
+<td>3</td>
+<td>8 von 8</td>
+<td>6 von 6</td>
 <td>3 von 3</td>
-<td>2 von 3</td>
+<td>3 von 3</td>
 <td></td>
 </tr>
 </tbody>
