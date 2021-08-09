@@ -118,7 +118,7 @@ Using DeepSORT:
 <td><pre>DeepSORT
 YoloV5m(pre)
 <b>Simple</b></pre></td>
-<td>2</td>
+<td>7</td>
 <td>2 von 8</td>
 <td>2 von 6</td>
 <td>0 von 3</td>
@@ -129,7 +129,7 @@ YoloV5m(pre)
 <td><pre>DeepSORT
 YoloV5m(pre)
 <b>DEI(Simple)</b></pre></td>
-<td>2</td>
+<td>2,5</td>
 <td>4 von 8</td>
 <td>4 von 6</td>
 <td>2 von 3</td>
