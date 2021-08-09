@@ -210,8 +210,20 @@ Tracking is generally better on the upper lane, as a lot of trees cover the lowe
 
 We also choose a dataset which provided fairly favorable results, i.e. the datasets has only few cars, no shadows, and normal lighting.
 Given heavy traffic, large shadows, and/or bad lighting conditions, it must be assumed that the results can be (a lot) worse.
-<!--
-Das Custom Training verschlechtert die Ergebnisse, da insb. nur auf Daten von Autos auf der Mittelkamera zum Training verwendet wurden.
 
-Generell besseres Tracking auf der oberen Fahrbahn, da die Bäume die Sicht auf die untere Fahrbahn teilweise verdecken.
--->
+Our evaluation shows that the configuration which offers the best tradeoff between speed and accuracy is using the <b>pretrained YOLOv5 Detector</b>, <b>DEI(normal) Backend</b> and <b>Centroid Tracker</b>.
+
+#### Phase 1
+The Centroid Tracker not only runs faster, it also produces very accurate results. This is due to the detections being sufficiently consistent, as well as optimizations targeted specifically towards our use case.
+
+DeepSORT only produces mixed results, which is mostly caused by the feature extractor which was not trained for our use case.
+
+#### Phase 2
+Overall, the pretrained Detector produces better results than the custom trained Detector. This is a result of the training data, which only included cars from the middle camera perspective. Ideally, the YoloV5 Detector would have been trained with a lot of data from all camera angles, which should then outperform the pretrained Detector.
+
+The results by the pretrained Detectorr however are already very decent.
+
+#### Phase 3
+Generally speaking, the more simpler the backend, the more fps, but also less accuracy is achieved.
+
+For our use case the Simple Backend is not a feasible option, however given improvements on the Detector, the DEI Backend could be simplified further, which would result in less of a slowdown.
