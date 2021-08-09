@@ -7,6 +7,8 @@ The sample dataset used was [r44](https://drive.google.com/drive/folders/1p65faG
 2. Phase: Detector Evaluation ([YOLOv5](../../docs/modules/detector.md): pre-trained, custom-trained)
 3. Phase: Backend Evaluation ([SIMPLE](../../docs/modules/backends.md#Basic), [DEI(simple), DEI(normal)](../../docs/modules/backends.md#DEI))
 
+[Jump to Remarks](#summary)
+
 ### A,B,C-Zones
 
 <img src="/gitimg/eval_060821_evalzones.png">
@@ -202,6 +204,14 @@ YoloV5m(pre)
 </table>
 
 ### Summary
+
+#### General Remarks
+Tracking is generally better on the upper lane, as a lot of trees cover the lower lane, which is why we limited our evaluation to the upper lane.
+
+We also choose a dataset which provided fairly favorable results, i.e. the datasets has only few cars, no shadows, and normal lighting.
+Given heavy traffic, large shadows, and/or bad lighting conditions, it must be assumed that the results can be (a lot) worse.
+<!--
 Das Custom Training verschlechtert die Ergebnisse, da insb. nur auf Daten von Autos auf der Mittelkamera zum Training verwendet wurden.
 
 Generell besseres Tracking auf der oberen Fahrbahn, da die Bäume die Sicht auf die untere Fahrbahn teilweise verdecken.
+-->
