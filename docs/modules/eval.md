@@ -198,7 +198,7 @@ YoloV5m(pre)
 <td>6 von 6</td>
 <td>3 von 3</td>
 <td>3 von 3</td>
-<td></td>
+<td>(Same as Phase 1 Run 2)</td>
 </tr>
 </tbody>
 </table>
