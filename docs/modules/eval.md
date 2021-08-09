@@ -130,9 +130,9 @@ YoloV5m(pre)
 YoloV5m(pre)
 <b>DEI(Simple)</b></pre></td>
 <td>2</td>
-<td>6 von 8</td>
+<td>4 von 8</td>
 <td>4 von 6</td>
-<td>3 von 3</td>
+<td>2 von 3</td>
 <td>2 von 3</td>
 <td></td>
 </tr>
@@ -145,7 +145,7 @@ YoloV5m(pre)
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
-<td></td>
+<td>(Same as Phase 1 Run 1)</td>
 </tr>
 </tbody>
 </table>
@@ -170,10 +170,10 @@ Using Centroid Tracker:
 YoloV5m(pre)
 <b>Simple</b></pre></td>
 <td>2</td>
-<td>6 von 8</td>
+<td>4 von 8</td>
 <td>4 von 6</td>
-<td>3 von 3</td>
-<td>2 von 3</td>
+<td>0 von 3</td>
+<td>0 von 3</td>
 <td></td>
 </tr>
 <tr>
