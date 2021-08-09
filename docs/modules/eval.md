@@ -1,7 +1,7 @@
 # Evaluation
 
 ## Evaluation Run [August 6th, 2021]
-Testdata used is the r44 sample set.
+The sample dataset used was [r44](https://drive.google.com/drive/folders/1p65faGMFBUeIgWYBBQYAkjXfAGQVpBk7?usp=sharing). For the evaluation we only focused on the upper lane (right side from Ernst-Reuter-Platz to Charlottenburger Tor).
 
 1. Phase: Tracker Evaluation ([DeepSORT](../../docs/modules/tracker.md#DeepSORT), [Centroid Tracker](../../docs/modules/tracker.md#Centroid))
 2. Phase: Detector Evaluation ([YOLOv5](../../docs/modules/detector.md): pre-trained, custom-trained)
