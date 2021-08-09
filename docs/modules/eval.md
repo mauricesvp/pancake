@@ -169,7 +169,7 @@ Using Centroid Tracker:
 <td><pre>Centroid Tracker
 YoloV5m(pre)
 <b>Simple</b></pre></td>
-<td>2</td>
+<td>9</td>
 <td>4 von 8</td>
 <td>4 von 6</td>
 <td>0 von 3</td>
