@@ -42,10 +42,10 @@ DEI(Normal)</pre></td>
 YoloV5m(pre)
 DEI(Normal)</pre></td>
 <td>2</td>
-<td>6 von 8</td>
-<td>4 von 6</td>
+<td>8 von 8</td>
+<td>6 von 6</td>
 <td>3 von 3</td>
-<td>2 von 3</td>
+<td>3 von 3</td>
 <td></td>
 </tr>
 </tbody>
