@@ -22,6 +22,7 @@ Testdata used is the r44 sample set.
 <th>B</th>
 <th>C</th>
 <th>Frame</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -34,6 +35,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 <tr>
 <td><pre>Centroid Tracker
@@ -44,6 +46,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -64,6 +67,7 @@ Generell besseres Tracking auf der oberen Fahrbahn, insb. da die Bäume die Sich
 <th>B</th>
 <th>C</th>
 <th>Frame</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -76,6 +80,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 <tr>
 <td><pre>Centroid Tracker
@@ -86,6 +91,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -101,6 +107,7 @@ DEI(Normal)</pre></td>
 <th>B</th>
 <th>C</th>
 <th>Frame</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -113,6 +120,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 <tr>
 <td><pre>Centroid Tracker
@@ -123,6 +131,7 @@ DEI(Normal)</pre></td>
 <td>4 von 6</td>
 <td>3 von 3</td>
 <td>2 von 3</td>
+<td></td>
 </tr>
 </tbody>
 </table>
