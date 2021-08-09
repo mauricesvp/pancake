@@ -13,6 +13,8 @@ Testdata used is the r44 sample set.
 
 ### Results
 #### Phase 1
+First of all, we compare the different trackers.
+
 <table>
 <thead>
 <tr>
@@ -27,7 +29,7 @@ Testdata used is the r44 sample set.
 </thead>
 <tbody>
 <tr>
-<td><pre>DeepSORT
+  <td><pre><b>DeepSORT</b>
 YoloV5m(pre)
 DEI(Normal)</pre></td>
 <td>2</td>
@@ -38,7 +40,7 @@ DEI(Normal)</pre></td>
 <td></td>
 </tr>
 <tr>
-<td><pre>Centroid Tracker
+  <td><pre><b>Centroid Tracker</b>
 YoloV5m(pre)
 DEI(Normal)</pre></td>
 <td>2</td>
@@ -50,14 +52,55 @@ DEI(Normal)</pre></td>
 </tr>
 </tbody>
 </table>
-<!---<td><pre>Die meisten Autos werden über weite Teile der Strecke erfolgreich getrackt.
-Einige Autos verlieren über die gesamte Breite 1-2 mal die Tracking ID, einige auch häufiger.
-Nach Zuordnung neuer ID werden diese jedoch solide weitergetrackt.
-Generell besseres Tracking auf der oberen Fahrbahn, insb. da die Bäume die Sicht auf die untere Fahrbahn verdecken.
-</pre></td>--->
 
 
 #### Phase 2
+Next, the detectors are compared.
+
+<table>
+<thead>
+<tr>
+<th>Configurations</th>
+<th>Avg. FPS</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>Frame</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><pre>DeepSORT
+<b>YoloV5m(pre)</b>
+DEI(Normal)</pre></td>
+<td>2</td>
+<td>6 von 8</td>
+<td>4 von 6</td>
+<td>3 von 3</td>
+<td>2 von 3</td>
+<td>(Same as Phase 1 Run 1)</td>
+</tr>
+<tr>
+<td><pre>DeepSORT
+<b>YoloV5m(custom)</b>
+DEI(Normal)</pre></td>
+<td>2</td>
+<td>5 von 8</td>
+<td>2 von 6</td>
+<td>1 von 3</td>
+<td>0 von 3</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+#### Phase 3
+Last but not least, the different backends are compared.
+
+Using DeepSORT:
+
 <table>
 <thead>
 <tr>
@@ -74,7 +117,7 @@ Generell besseres Tracking auf der oberen Fahrbahn, insb. da die Bäume die Sich
 <tr>
 <td><pre>DeepSORT
 YoloV5m(pre)
-DEI(Normal)</pre></td>
+<b>Simple</b></pre></td>
 <td>2</td>
 <td>6 von 8</td>
 <td>4 von 6</td>
@@ -83,9 +126,20 @@ DEI(Normal)</pre></td>
 <td></td>
 </tr>
 <tr>
-<td><pre>Centroid Tracker
+<td><pre>DeepSORT
 YoloV5m(pre)
-DEI(Normal)</pre></td>
+<b>DEI(Simple)</b></pre></td>
+<td>2</td>
+<td>6 von 8</td>
+<td>4 von 6</td>
+<td>3 von 3</td>
+<td>2 von 3</td>
+<td></td>
+</tr>
+<tr>
+<td><pre>DeepSORT
+YoloV5m(pre)
+<b>DEI(Normal)</b></pre></td>
 <td>2</td>
 <td>6 von 8</td>
 <td>4 von 6</td>
@@ -96,8 +150,8 @@ DEI(Normal)</pre></td>
 </tbody>
 </table>
 
+Using Centroid Tracker:
 
-#### Phase 3
 <table>
 <thead>
 <tr>
@@ -112,9 +166,9 @@ DEI(Normal)</pre></td>
 </thead>
 <tbody>
 <tr>
-<td><pre>DeepSORT
+<td><pre>Centroid Tracker
 YoloV5m(pre)
-DEI(Normal)</pre></td>
+<b>Simple</b></pre></td>
 <td>2</td>
 <td>6 von 8</td>
 <td>4 von 6</td>
@@ -125,7 +179,18 @@ DEI(Normal)</pre></td>
 <tr>
 <td><pre>Centroid Tracker
 YoloV5m(pre)
-DEI(Normal)</pre></td>
+<b>DEI(Simple)</b></pre></td>
+<td>2</td>
+<td>6 von 8</td>
+<td>4 von 6</td>
+<td>3 von 3</td>
+<td>2 von 3</td>
+<td></td>
+</tr>
+<tr>
+<td><pre>Centroid Tracker
+YoloV5m(pre)
+<b>DEI(Normal)</b></pre></td>
 <td>2</td>
 <td>6 von 8</td>
 <td>4 von 6</td>
@@ -137,4 +202,6 @@ DEI(Normal)</pre></td>
 </table>
 
 ### Summary
-Foo
+Das Custom Training verschlechtert die Ergebnisse, da insb. nur auf Daten von Autos auf der Mittelkamera zum Training verwendet wurden.
+
+Generell besseres Tracking auf der oberen Fahrbahn, da die Bäume die Sicht auf die untere Fahrbahn teilweise verdecken.
