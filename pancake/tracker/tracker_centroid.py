@@ -1,6 +1,6 @@
 """Tracker based on Centroid tracking."""
 from .tracker import BaseTracker
-from typing import Type, Union
+from typing import Type, Tuple
 
 from pancake.logger import setup_logger
 
@@ -19,14 +19,28 @@ from operator import itemgetter
 
 class CentroidTracker(BaseTracker):
     def __init__(self, cfg: dict, *args, **kwargs) -> None:
+        """Initializes the CentroidTracker
+
+        Description:
+            Sets up the internal variables and allocates the OrderedDicts for further processing.
+
+        Args:
+            cfg (dict): dictionary including all configuration variables.
+        """
         self.l = setup_logger(__name__)  # You can use any name
         self.l.debug("INIT CENTROID TRACKER - Final")
+        # options
+        self.USE_BETTER_RECTS = cfg.CENTROID.USE_BETTER_RECTS
+        self.USE_DYNAMIC_SCALING = cfg.CENTROID.USE_DYNAMIC_SCALING
         # constants
         self.MAX_ID = cfg.CENTROID.MAX_ID
         self.MAX_DISAPPEARED = cfg.CENTROID.MAX_DISAPPEARED
         # car match tolerances
         self.DISTANCE_TOLERANCE = cfg.CENTROID.DISTANCE_TOLERANCE
         self.VERTICAL_TOLERANCE = cfg.CENTROID.VERTICAL_TOLERANCE
+        self.FRONT_DISTANCE_TOLERANCE = cfg.CENTROID.FRONT_DISTANCE_TOLERANCE
+        self.BACK_DISTANCE_TOLERANCE = cfg.CENTROID.BACK_DISTANCE_TOLERANCE
+        self.SIDE_DISTANCE_TOLERANCE = cfg.CENTROID.SIDE_DISTANCE_TOLERANCE
         # image boundaries regions
         self.FRAME_WIDTH = cfg.CENTROID.FRAME_WIDTH
         self.FRAME_CHANGE_LC = self.FRAME_WIDTH // 3
@@ -58,14 +72,35 @@ class CentroidTracker(BaseTracker):
         # known previous distant travelled
         self.lastDistTrav = OrderedDict()
 
-    def _centroid(self, vertices):
+    def centroid(self, vertices: np.ndarray) -> Tuple[int, int]:
+        """Calculates a centroid from the BBOX coordinates
+
+        Description:
+            May receive an unlimited amount of coordinates. But these coordinates need to alternate between x and y.
+
+        Args:
+            vertices (np.ndarray): array of x and y coordinates
+
+        Returns:
+            Tuple[int, int]: tuple describing the x and y coordinates on the image
+        """
         x_list = [vertex for vertex in vertices[::2]]
         y_list = [vertex for vertex in vertices[1::2]]
         x = int(sum(x_list) // len(x_list))
         y = int(sum(y_list) // len(y_list))
         return x, y
 
-    def _register(self, centroid, bbox, conf, cls):
+    def register(
+        self, centroid: np.ndarray, bbox: np.ndarray, conf: np.ndarray, cls: np.ndarray
+    ):
+        """Registers an object
+
+        Args:
+            centroid (np.ndarray): 2 element array of the coordinates of the object
+            bbox (np.ndarray): 4 element array of the top left and bottom right bounding box limits of the object
+            conf (np.ndarray): 1 element array of the confidence of the object
+            cls (np.ndarray): 1 element array of the class of the object
+        """
         # when registering an object we use the next available object
         # ID to store the centroid
         self.objects[self.nextObjectID] = centroid
@@ -80,7 +115,12 @@ class CentroidTracker(BaseTracker):
         if self.nextObjectID >= self.MAX_ID:
             self.nextObjectID = 0
 
-    def _deregister(self, objectID):
+    def deregister(self, objectID: int):
+        """Deletes an object by ID
+
+        Args:
+            objectID (int): ID of the object to be deleted
+        """
         # to deregister an object ID we delete the object ID from
         # all of our respective dictionaries
         del self.objects[objectID]
@@ -93,7 +133,12 @@ class CentroidTracker(BaseTracker):
         except Exception:
             pass
 
-    def _return(self):
+    def return_clean(self) -> np.ndarray:
+        """Returns the Centroids with their respective data as required by the update function.
+
+        Returns:
+            np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
+        """
         outputs = []
         for id in list(self.objects.keys()):
             outputs.append(
@@ -116,10 +161,32 @@ class CentroidTracker(BaseTracker):
             outputs = np.stack(outputs, axis=0)
         return outputs
 
-    def _computeLastDist(self, prevPos, currPos):
+    def computeLastDist(
+        self, prevPos: np.ndarray, currPos: np.ndarray
+    ) -> Tuple[int, int]:
+        """Computes the distance vector between two points
+
+        Description:
+            Used as a measure between the last known position and the predicted next position
+
+        Args:
+            prevPos (np.ndarray): 2 element array of the x and y coordinates in the image of the previously known position (first position)
+            currPos (np.ndarray): 2 element array of the x and y coordinates in the image of the currently known position (second position)
+
+        Returns:
+            Tuple[int,int]: 2 element tuple of the x and y coordinates in the image of the vector from the previous to the current position
+        """
         return currPos[0] - prevPos[0], currPos[1] - prevPos[1]
 
-    def _isAboveLaneSeparator(self, centroid):
+    def isAboveLaneSeparator(self, centroid: np.ndarray) -> bool:
+        """Checks if a centroid is on the upper or lower lane on the image
+
+        Args:
+            centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the checked position
+
+        Returns:
+            bool: Returns if the input centroid is on the upper (True) or lower (False) driving lane
+        """
         if centroid[0] < self.FRAME_CHANGE_LC:
             # left image
             lanesepvec = (
@@ -154,29 +221,53 @@ class CentroidTracker(BaseTracker):
         cross_product = lanesepvec[0] * centrvec[1] - lanesepvec[1] * centrvec[0]
         return cross_product > 0
 
-    def _isInsideDeregistrationZone(self, centroid):
+    def isInsideDeregistrationZone(self, centroid: np.ndarray) -> bool:
+        """Determines whether a centroid is inside the deregistration zone on the left and right cameras edges
+
+        Args:
+            centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
+
+        Returns:
+            bool: Returns whether the input centroid is inside the deregistration zone
+        """
         if centroid[0] < self.DEREG_ZONE_L:
             # left dereg
-            return self._isAboveLaneSeparator(centroid)
+            return self.isAboveLaneSeparator(centroid)
         elif centroid[0] > self.DEREG_ZONE_R:
             # right dereg
-            return not self._isAboveLaneSeparator(centroid)
+            return not self.isAboveLaneSeparator(centroid)
         else:
             # between deregs
             return False
 
-    def _isInsideRegistrationZone(self, centroid):
+    def isInsideRegistrationZone(self, centroid: np.ndarray) -> bool:
+        """Determines whether a centroid is inside the registration zone on the left and right cameras edges
+
+        Args:
+            centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
+
+        Returns:
+            bool: Returns whether the input centroid is inside the registration zone
+        """
         if centroid[0] < self.REG_ZONE_L:
             # left reg
-            return not self._isAboveLaneSeparator(centroid)
+            return not self.isAboveLaneSeparator(centroid)
         elif centroid[0] > self.REG_ZONE_R:
             # right reg
-            return self._isAboveLaneSeparator(centroid)
+            return self.isAboveLaneSeparator(centroid)
         else:
             # between regs
             return False
 
-    def _isInsideTransitionZone(self, centroid):
+    def isInsideTransitionZone(self, centroid: np.ndarray) -> bool:
+        """Determines whether a centroid is inside the transition region between camera images
+
+        Args:
+            centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
+
+        Returns:
+            bool: Returns whether the input centroid is inside the transition region
+        """
         if (
             centroid[0] < self.FRAME_CHANGE_LC + self.TRANSITION_WIDTH
             and centroid[0] > self.FRAME_CHANGE_LC - self.TRANSITION_WIDTH
@@ -193,13 +284,30 @@ class CentroidTracker(BaseTracker):
             # not in transition regions
             return False
 
-    def _getDist(self, pt1, pt2):
-        return math.dist(pt1, pt2)
+    def getLen(self, tup: Tuple[int, int]) -> float:
+        """Gets the length of a vector depicted as a tuple
 
-    def _getLen(self, tup):
+        Args:
+            tup (Tuple[int, int]): 2 element tuple describing a vector
+
+        Returns:
+            float: length of the vector
+        """
         return (tup[0] ** 2 + tup[1] ** 2) ** 0.5
 
-    def _continueMovement(self, objectID):
+    def continueMovement(self, objectID: int) -> Tuple[int, int]:
+        """Continues the movement of a specific object.
+
+        Description:
+            Moves an object - depicted by its objectID - to a position where it is predicted to appear in the future.
+            This is done by using the last know movement.
+
+        Args:
+            objectID (int): ID of the object that should be moved.
+
+        Returns:
+            Tuple[int, int]: 2 element tuple of the new predicted position
+        """
         objPos = self.objects[objectID]
 
         try:
@@ -207,7 +315,7 @@ class CentroidTracker(BaseTracker):
         except Exception:  # object was only seen one frame
             distance = (0, 0)
 
-        if self._isInsideTransitionZone(objPos):
+        if self.isInsideTransitionZone(objPos):
             if objPos[0] < self.FRAME_CHANGE_LC:
                 # follow left vector
                 dirVect = (
@@ -228,38 +336,177 @@ class CentroidTracker(BaseTracker):
                 )
 
             # flip direction of dirVect for bottom lane
-            if not self._isAboveLaneSeparator(objPos):
+            if not self.isAboveLaneSeparator(objPos):
                 dirVect = (-dirVect[0], -dirVect[1])
 
             # change distance according to dirVect
-            lenDistance = self._getLen(distance)
-            dirVectLen = self._getLen(dirVect)
+            lenDistance = self.getLen(distance)
+            dirVectLen = self.getLen(dirVect)
             dirVectNorm = (dirVect[0] / dirVectLen, dirVect[1] / dirVectLen)
             distance = (dirVectNorm[0] * lenDistance, dirVectNorm[1] * lenDistance)
 
         predmove = objPos[0] + distance[0], objPos[1] + distance[1]
         return predmove
 
-    # TODO: make it dependent on the screen and adjust it to be more infront of the car
-    def _isDistanceInsideLimit(self, currdst, objectID, matchPos):
-        if (currdst < self.DISTANCE_TOLERANCE) and (
-            abs(self.objects[objectID][1] - matchPos[1]) < self.VERTICAL_TOLERANCE
-        ):
-            return True
-        return False
-        # predpt = self._continueMovement(objectID)
+    def isInsideRect(
+        self,
+        currpt: np.ndarray,
+        predpt: Tuple[int, int],
+        matchpt: np.ndarray,
+        objID: int,
+    ) -> bool:
+        """Checks if matchpt is inside a rectangle
 
-        # currpt = self.objects[objectID]
-        # preddst = self._getDist(matchPos, predpt)
+        Description:
+            The rectangle is generated by the current position (currpt) and the predicted position (predpt) with some dynamically or statically adjustable padding
 
-        # inRect = self._isInsideRect(currpt, predpt, matchPos)
+        Args:
+            currpt (np.ndarray): 2 element array of the x and y coordinates on the image of the current position
+            predpt (Tuple[int, int]): 2 element tuple of the x and y coordinates on the image of the predicted position
+            matchpt (np.ndarray): 2 element array of the x and y coordinates on the image of the potential match
+            objID (int): ID of the object currently inspected
 
-        # if currdst < self.DISTANCE_TOLERANCE or \
-        #     preddst < self.DISTANCE_TOLERANCE or \
-        #     inRect:
-        #     return True
+        Returns:
+            bool: Returns if matchpt is inside a rectangle
+        """
+        if self.USE_DYNAMIC_SCALING:
+            # get scaling based on camera
+            if currpt[0] < self.FRAME_CHANGE_LC:
+                # left camera
+                objectSize = 0.0863384 * currpt[0] - 109.93
+            elif currpt[0] > self.FRAME_CHANGE_CR:
+                # right camera
+                objectSize = -0.060652 * currpt[0] + 676.94
+            else:
+                # center camera
+                objectSize = 228
+            # normalize scale to center camera
+            scale = objectSize / 228
+        else:
+            scale = 1
 
-        # return False
+        # set scaling
+        vectorScale = scale
+        paddingScale = scale
+
+        # get vector from currpt to predpt
+        predVect = (predpt[0] - currpt[0], predpt[1] - currpt[1])
+
+        # set own prediction vector if no prediction was made previously
+        if predVect == (0, 0):
+            if currpt[0] < self.FRAME_CHANGE_LC:
+                # follow left vector
+                predVectTmp = (
+                    0 - self.FRAME_CHANGE_LC,
+                    self.LANE_SEPARATOR_LL - self.LANE_SEPARATOR_LC,
+                )
+            elif currpt[0] > self.FRAME_CHANGE_CR:
+                # follow right vector
+                predVectTmp = (
+                    self.FRAME_CHANGE_CR - self.FRAME_WIDTH,
+                    self.LANE_SEPARATOR_CR - self.LANE_SEPARATOR_RR,
+                )
+            else:
+                # follow center vector
+                predVectTmp = (
+                    self.FRAME_CHANGE_LC - self.FRAME_CHANGE_CR,
+                    self.LANE_SEPARATOR_LC - self.LANE_SEPARATOR_CR,
+                )
+
+            # flip direction of predVectTmp for bottom lane
+            if not self.isAboveLaneSeparator(currpt):
+                predVectTmp = (-predVectTmp[0], -predVectTmp[1])
+
+            # normalize predVectTmp
+            predVectLen = self.getLen(predVectTmp)
+            predVectNorm = (predVectTmp[0] / predVectLen, predVectTmp[1] / predVectLen)
+
+            # generate predVect
+            predVect = (predVectNorm[0] * vectorScale, predVectNorm[1] * vectorScale)
+
+        # calculate prediction vectors to generate the rectangle from
+        predVectLen = self.getLen(predVect)
+        predVectNorm = (predVect[0] / predVectLen, predVect[1] / predVectLen)
+        predVect90Norm = (-predVectNorm[1], predVectNorm[0])
+
+        # calculate padding vectors
+        frontPadding = (
+            self.FRONT_DISTANCE_TOLERANCE * paddingScale * predVectNorm[0],
+            self.FRONT_DISTANCE_TOLERANCE * paddingScale * predVectNorm[1],
+        )
+        backPadding = (
+            self.BACK_DISTANCE_TOLERANCE * paddingScale * -predVectNorm[0],
+            self.BACK_DISTANCE_TOLERANCE * paddingScale * -predVectNorm[1],
+        )
+        leftPadding = (
+            self.SIDE_DISTANCE_TOLERANCE * paddingScale * predVect90Norm[0],
+            self.SIDE_DISTANCE_TOLERANCE * paddingScale * predVect90Norm[1],
+        )
+        rightPadding = (
+            self.SIDE_DISTANCE_TOLERANCE * paddingScale * -predVect90Norm[0],
+            self.SIDE_DISTANCE_TOLERANCE * paddingScale * -predVect90Norm[1],
+        )
+
+        # generate rectangle points
+        frpt = (
+            predpt[0] + frontPadding[0] + rightPadding[0],
+            predpt[1] + frontPadding[1] + rightPadding[1],
+        )
+        flpt = (
+            predpt[0] + frontPadding[0] + leftPadding[0],
+            predpt[1] + frontPadding[1] + leftPadding[1],
+        )
+        brpt = (
+            currpt[0] + backPadding[0] + rightPadding[0],
+            currpt[1] + backPadding[1] + rightPadding[1],
+        )
+        blpt = (
+            currpt[0] + backPadding[0] + leftPadding[0],
+            currpt[1] + backPadding[1] + leftPadding[1],
+        )
+
+        # create objects
+        point = Point(matchpt[0], matchpt[1])
+        polygon = Polygon([flpt, frpt, brpt, blpt])
+
+        # check
+        contains = polygon.contains(point)
+
+        return contains
+
+    def isDistanceInsideLimit(
+        self, currdst: int, objectID: int, matchPos: np.ndarray
+    ) -> bool:
+        """Checks if a match between currdst and matchPos is possible / inside a specified area
+
+        Description:
+            May use a static or dynamically adjustable method to check if the match Position (matchPos) is within a maximum distance to the current position
+
+        Args:
+            currdst (int): distance to match position
+            objectID (int): ID of the object being checked
+            matchPos (np.ndarray): 2 element array of the x and y coordinate on the image of the objects potential position
+
+        Returns:
+            bool: Returns if matchPos is a possible match for the object at ID objectID
+        """
+        if self.USE_BETTER_RECTS:
+            # get objects predicted next position
+            predpt = self.continueMovement(objectID)
+            # get current objects position
+            currpt = self.objects[objectID]
+            # check if matchPos is inside the possible movement area
+            inRect = self.isInsideRect(currpt, predpt, matchPos, objectID)
+
+            return inRect
+        else:
+            # check horizontal and vertical distance
+            # worse performance for wide camera angles
+            if (currdst < self.DISTANCE_TOLERANCE) and (
+                abs(self.objects[objectID][1] - matchPos[1]) < self.VERTICAL_TOLERANCE
+            ):
+                return True
+            return False
 
     ###################################
     ## UPDATE
@@ -268,23 +515,27 @@ class CentroidTracker(BaseTracker):
     def update(
         self, det: Type[torch.Tensor], img: Type[np.ndarray]
     ) -> np.ndarray:  # det: list of koordinates x,y , x,y, ...
+        """Updates the internal states of the Centroid tracker.
+
+        Description:
+            This function should be called every frame.
+
+            Centroids will be premoved automatically when a detection was not possible.
+
+            Centroids will be removed after a specified amount of frames when no longer detected.
+
+
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+            img (Type[np.ndarray]): Image in BGR [c, w, h] (not needed for Centroid)
+
+        Returns:
+            np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
+        """
         # keep track of time for debugging
         update_time_start = int(round(time.time() * 1000))
         # get inputs
         bbox_xyxy, conf, cls = self.transform_detections(det)
-
-        # filter none car and truck objects from input
-        # bbox_xyxy_tmp = []
-        # conf_tmp = []
-        # cls_tmp = []
-        # for i, c in enumerate(cls):
-        #     if (c < 4 or c == 5 or c == 7):
-        #         bbox_xyxy_tmp.append(bbox_xyxy[i])
-        #         conf_tmp.append(conf[i])
-        #         cls_tmp.append(cls[i])
-        # bbox_xyxy = bbox_xyxy_tmp
-        # conf = conf_tmp
-        # cls = cls_tmp
 
         # check if no detections are present
         if len(bbox_xyxy) == 0:
@@ -293,17 +544,17 @@ class CentroidTracker(BaseTracker):
                 # increase disappeared count
                 self.disappeared[objectID] += 1
                 # continue movement
-                self.objects[objectID] = self._continueMovement(objectID)
+                self.objects[objectID] = self.continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
                 if self.disappeared[
                     objectID
-                ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                ] > self.MAX_DISAPPEARED or self.isInsideDeregistrationZone(
                     self.objects[objectID]
                 ):
-                    self._deregister(objectID)
+                    self.deregister(objectID)
 
             # return early
-            return self._return()
+            return self.return_clean()
 
         # initialize an array for the inputs
         inputCentroids = np.zeros((len(bbox_xyxy), 2), dtype="int")
@@ -313,7 +564,7 @@ class CentroidTracker(BaseTracker):
         # loop over the bounding box rectangles
         for (i, bb) in enumerate(bbox_xyxy):
             # use the bounding box coordinates to derive the centroid
-            inputCentroids[i] = self._centroid(bb)
+            inputCentroids[i] = self.centroid(bb)
             inputBBOX[i] = bb
             inputConfidence[i] = conf[i]
             inputClass[i] = cls[i]
@@ -322,8 +573,8 @@ class CentroidTracker(BaseTracker):
         if len(self.objects) == 0:
             for i in range(len(inputCentroids)):
                 # only register when not in deregistration zone
-                if not self._isInsideDeregistrationZone(inputCentroids[i]):
-                    self._register(
+                if not self.isInsideDeregistrationZone(inputCentroids[i]):
+                    self.register(
                         inputCentroids[i],
                         inputBBOX[i],
                         inputConfidence[i],
@@ -353,9 +604,9 @@ class CentroidTracker(BaseTracker):
                 # get objectID
                 objectID = objectIDs[row]
                 # otherwise a match is created but only if inside a maximum distance
-                if self._isDistanceInsideLimit(distance, objectID, inputCentroids[col]):
+                if self.isDistanceInsideLimit(distance, objectID, inputCentroids[col]):
                     # safe the distance travelled
-                    self.lastDistTrav[objectID] = self._computeLastDist(
+                    self.lastDistTrav[objectID] = self.computeLastDist(
                         self.objects[objectID], inputCentroids[col]
                     )
                     # update object
@@ -379,20 +630,20 @@ class CentroidTracker(BaseTracker):
                 # increase disappeared count
                 self.disappeared[objectID] += 1
                 # continue movement
-                self.objects[objectID] = self._continueMovement(objectID)
+                self.objects[objectID] = self.continueMovement(objectID)
                 # deregister if lifetime is surpassed or object drove away
                 if self.disappeared[
                     objectID
-                ] > self.MAX_DISAPPEARED or self._isInsideDeregistrationZone(
+                ] > self.MAX_DISAPPEARED or self.isInsideDeregistrationZone(
                     objectCentroids[row]
                 ):
-                    self._deregister(objectID)
+                    self.deregister(objectID)
 
             # unmatched input centroids will get registered
             for col in unusedCols:
-                if not self._isInsideDeregistrationZone(inputCentroids[col]):
-                    if self._isInsideRegistrationZone(inputCentroids[col]):
-                        self._register(
+                if not self.isInsideDeregistrationZone(inputCentroids[col]):
+                    if self.isInsideRegistrationZone(inputCentroids[col]):
+                        self.register(
                             inputCentroids[col],
                             inputBBOX[col],
                             inputConfidence[col],
@@ -405,18 +656,18 @@ class CentroidTracker(BaseTracker):
             "Centroid update took {} ms".format(update_time_end - update_time_start)
         )
 
-        return self._return()
+        return self.return_clean()
 
     @staticmethod
     def transform_detections(det: Type[torch.Tensor]):
-        """
-        Transform detection vector to numpy
-
-        :param det (torch.Tensor): prediction tensor
-
-        :return xyxy (np.ndarray (,4)): x1, y1, x2, y2
-                conf (np.ndarray (,1)): class confidences
-                cls  (np,ndarray (,1)): class indeces
+        """Transform detection vector to numpy.
+        Args:
+            det (torch.Tensor): Detections on (,6) tensor [xyxy, conf, cls]
+        Returns:
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
+                 [(x1, y1, x2, y2),
+                  (class confidences),
+                  (model-specific class indices]
         """
         t_det = det.cpu().detach().numpy()
         return t_det[:, :4], t_det[..., 4], t_det[..., 5]

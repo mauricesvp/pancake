@@ -29,6 +29,13 @@ _pancake_ is an application for panorama camera car tracking. It comes with a si
     - [Quickstart](#quickstart)
     - [Configurations](#configurations)
   - [Modules](#modules)
+  - [Further Notes](#further-notes)
+    - [Google Colab](#google-colab)
+    - [Samples](#samples)
+    - [Comment your Code!](#comment-your-code)
+  - [Used Third Party Repos](#used-third-party-repos)
+  - [License](#license)
+  - [Authors](#authors)
   <!---
     - [Data + Preprocessing](#data--preprocessing)
     - [Backend](#backend)
@@ -597,17 +604,13 @@ Important: When implementing your Tracker, you need to stick to the <a href=http
 [Google Colab for executing pancake](https://colab.research.google.com/drive/1NGkIHqXnOPeZqV1RbvcGoQ_DTjOgpGxC?usp=sharing)
 
 
-### TensorRT
-[External repo for generating TRT engines](https://github.com/wang-xinyu/tensorrtx/tree/master/yolov5)
-
-
 ### Samples
-[drive](https://drive.google.com/drive/folders/1Y8FiPtxZiQrv7BrF05uWrDqHdZ8bA11h)
+[Google Drive with various sources](https://drive.google.com/drive/folders/1Y8FiPtxZiQrv7BrF05uWrDqHdZ8bA11h)
 
 [Back to ToC](#table-of-contents)
 
-### Comment your Code
-As comment style we chose the [Google docstrings style](https://colab.research.google.com/drive/1NGkIHqXnOPeZqV1RbvcGoQ_DTjOgpGxC?usp=sharing)!
+### Comment your Code!
+As comment style we chose the [Google docstrings style](https://colab.research.google.com/drive/1NGkIHqXnOPeZqV1RbvcGoQ_DTjOgpGxC?usp=sharing).
 ## Used Third Party Repos
 * **Yolov5**, Ultralytics: https://github.com/ultralytics/yolov5
 * **DeepSORT**: https://github.com/nwojke/deep_sort

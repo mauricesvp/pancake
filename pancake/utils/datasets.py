@@ -411,8 +411,10 @@ class LoadImageDirs:
                 else:
                     # when queue is full, sleep for a prolonged period
                     time.sleep(self.queue_size / self.read_fps * 0.9)
-        except:
-            self.cap[index].release()
+        except Exception as e:
+            l.error(f"Following error occured: {e}")
+            if self.mode == "video":
+                self.cap[index].release()
 
     def new_videos(self, paths: list):
         self.frame = 0

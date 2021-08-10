@@ -1,6 +1,8 @@
 # Tracker
 
 ## Centroid    
+  **Functionality**
+  
   **Configuration options:** (under <code>CENTROID:</code>)
   
   | Parameter               | Example Values   | Description         |
@@ -28,6 +30,8 @@
   | <code>REG_ZONE_R</code> | 9750       | Registration zone x-boundary right
 
 ## DeepSORT
+  **Functionality**
+
   **Configuration options:** (under <code>DEEPSORT:</code>)
   
   | Parameter               | Example Values   | Description         |

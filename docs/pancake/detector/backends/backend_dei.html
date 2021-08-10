@@ -311,6 +311,7 @@ class DEI(Backend):
         **kwargs,
     ) -&gt; None:
         &#34;&#34;&#34;DEI Backend
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
 
         Args:
             detector (Type[Detector]): Detector instance which provides &#34;detect&#34; method
@@ -371,7 +372,7 @@ class DEI(Backend):
             y0: y-value top left corner
             x1: x-value bottom right corner
             y1: y-value bottom right corner
-            conf: Confidence of detection, values between 0 and 1
+            conf: Confidence of detection, float values between 0 and 1
             class id: Integer indicating the detected object type
 
             Modus operandi:
@@ -476,6 +477,10 @@ class DEI(Backend):
                 Example:
                 * If obj is at the border of a subframe, check if it is in the middle
                   of another one (and discard if so)
+
+            The objects are expected to have the x,y coordinates of the top left and bottom right corner
+            as the first four entries (x0, y0, x1, y1).
+
         Args:
             objs (List[Tuple]): List of objects
             subframes (List[np.ndarray]): List of subframes
@@ -978,8 +983,10 @@ x0, y0 ------------
 <p><strong>Base Class</strong>:
 All Backends to be used within this framework have to inherit from this class.
 The inheritance will automatically register every subclass into the registry thus
-allowing for modular access to the backend strategies.</p>
-<p>DEI Backend</p>
+allowing for modular access to the backend strategies.
+For more information see <a href="https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md">https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md</a> .</p>
+<p>DEI Backend
+For more information see <a href="https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md">https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md</a> .</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>detector</code></strong> :&ensp;<code>Type[Detector]</code></dt>
@@ -1009,6 +1016,7 @@ allowing for modular access to the backend strategies.</p>
         **kwargs,
     ) -&gt; None:
         &#34;&#34;&#34;DEI Backend
+        For more information see https://github.com/mauricesvp/pancake/blob/main/docs/modules/backends.md .
 
         Args:
             detector (Type[Detector]): Detector instance which provides &#34;detect&#34; method
@@ -1069,7 +1077,7 @@ allowing for modular access to the backend strategies.</p>
             y0: y-value top left corner
             x1: x-value bottom right corner
             y1: y-value bottom right corner
-            conf: Confidence of detection, values between 0 and 1
+            conf: Confidence of detection, float values between 0 and 1
             class id: Integer indicating the detected object type
 
             Modus operandi:
@@ -1174,6 +1182,10 @@ allowing for modular access to the backend strategies.</p>
                 Example:
                 * If obj is at the border of a subframe, check if it is in the middle
                   of another one (and discard if so)
+
+            The objects are expected to have the x,y coordinates of the top left and bottom right corner
+            as the first four entries (x0, y0, x1, y1).
+
         Args:
             objs (List[Tuple]): List of objects
             subframes (List[np.ndarray]): List of subframes
@@ -1245,7 +1257,7 @@ x0: x-value top left corner
 y0: y-value top left corner
 x1: x-value bottom right corner
 y1: y-value bottom right corner
-conf: Confidence of detection, values between 0 and 1
+conf: Confidence of detection, float values between 0 and 1
 class id: Integer indicating the detected object type</p>
 <p>Modus operandi:
 * Stitch images
@@ -1281,7 +1293,7 @@ stitched panorama image</dd>
         y0: y-value top left corner
         x1: x-value bottom right corner
         y1: y-value bottom right corner
-        conf: Confidence of detection, values between 0 and 1
+        conf: Confidence of detection, float values between 0 and 1
         class id: Integer indicating the detected object type
 
         Modus operandi:
@@ -1386,6 +1398,8 @@ Further filtering has to be done here
 Example:
 * If obj is at the border of a subframe, check if it is in the middle
 of another one (and discard if so)</p>
+<p>The objects are expected to have the x,y coordinates of the top left and bottom right corner
+as the first four entries (x0, y0, x1, y1).</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>objs</code></strong> :&ensp;<code>List[Tuple]</code></dt>
@@ -1421,6 +1435,10 @@ of another one (and discard if so)</p>
             Example:
             * If obj is at the border of a subframe, check if it is in the middle
               of another one (and discard if so)
+
+        The objects are expected to have the x,y coordinates of the top left and bottom right corner
+        as the first four entries (x0, y0, x1, y1).
+
     Args:
         objs (List[Tuple]): List of objects
         subframes (List[np.ndarray]): List of subframes

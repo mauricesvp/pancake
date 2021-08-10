@@ -1,6 +1,6 @@
 # Detector
 
-## Simple
+## YOLOv5 Simple
   A very simple detector using a pretrained model provided by YOLOv5.
   
   **Configuration options:** (under <code>YOLO_SIMPLE:</code>)
@@ -9,7 +9,7 @@
   | ---------------------   | ----------------- | ------------------- |
   | <code>size</code> | "s", "m", "l" or "x"         | Yolo model size
 
-## Custom
+## YOLOv5 Custom
   A detector based on YOLOv5, custom trained with data provided by a previous project group.
 
   **Configuration options:** (under <code>YOLO_CUSTOM:</code>)
@@ -28,3 +28,12 @@
   | <code>trt</code>      | True, False        | Enable trt engine for inference
   | <code>trt_engine_path</code>      | "yolov5s6.engine"        | Path to locally compiled engine
   | <code>trt_plugin_library</code>      | "libmyplugins.so"        | Path to locally compiled lib
+
+### YOLOv5 TensorRT
+  >NVIDIA® TensorRT™ is an SDK for high-performance deep learning inference. It includes a deep learning inference optimizer and runtime that delivers low latency and high throughput for deep learning inference applications.
+
+  TensorRT bear the potential of significantly speeding up the inference. For that purpose, we investigated the usage of a TensorRT engine for predict the bounding boxes instead of the standard model. 
+
+  In order to be able to enable TensorRT inference with YOLOv5, you have to generate a specific engine with respective library with [this repository](https://github.com/wang-xinyu/tensorrtx/tree/master/yolov5). A detailed How-To is given in the repo's description. 
+
+  After you have successfully transformed the original model, you need to specify the engine's and plugin library's path and set ```trt``` to *True*.
