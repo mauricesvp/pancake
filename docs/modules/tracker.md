@@ -2,6 +2,7 @@
 
 ## Centroid    
   **Functionality**
+
   The Centroid-Tracker is a basic but very fast and reliable tracker. It operates using the euclidean distances between centroids of objects. Further information about the Centroid-Tracker used as a basis for this work can be found [here](https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/). Moreover, the algorithmic background presented by previous groups was adjusted and extended to fit the new concept.
 
   In this work the Centroid-Tracker was enhanced to allow for tracking of objects with unreliable detections and over the range of a stitched panorama generated from different camera streams. This results in special care being taken with wide camera angles due to the perspective size decrease and the transition regions between the stitched images.
@@ -16,6 +17,7 @@
   At last, a transition zone was added between the different camera streams. This zone enables a better continued movement of objects in these regions which allows for higher temporal inconsistencies between camera streams, making the tracking as a whole more reliable. 
   
   **Limitations**
+
   The achieved results using the Centroid-Tracker are very promissing. However, objects that are bunched up in a small area, especially in the wide angles of the cameras, pose some track matching errors. Due to the dynamically adjustable match area rectanlgles these errors where reduced to a minimum, but in some special edge cases they are still present (e.g. close driving cars right after a mutual lane swap). This problem could be tackled by implementing even stricter movement prediction rules and/or taking the actual image into account; But this would most likely deminish the computational performance lead of the Centroid-Tracker.
 
   Furthermore, in very specific edge cases close to each other, partially occluded, parked cars combined with alternating detection leads to a track being assumed. This problem could be handled by adjusting the region of interest (ROI) to cut out the parked cars completely. However, this would require a non axis aligned ROI which makes implementation harder. 
@@ -53,9 +55,11 @@
 
 ## DeepSORT
   **Functionality**
+
   DeepSORT is a tracking-by-detection algorithm which considers both the bounding boxes of the detection results and the information about appearance of the tracked objects. Therefore, DeepSORT is very sophisticated but also complex and slower algortihm compared to the Centroid-Tracker. Thereby making real-time tracking very hard. The algorithm is implemented as provided by [Wojke, Nicolai and Bewley, Alex](https://github.com/nwojke/deep_sort) and was only adjusted to accept a common interface between trackers.
 
   **Limitations**
+  
   Even though DeepSORT offers very good results, also with stiched panoramic images, the feature extractor - being the main part of the "Deep" side of DeepSORT - needs further training on the objects being tracked. Especially since objects appear first as a frontal upper view, convert to a fully upper side view (in the center camera image) and exit seen from the upper back; there was no training to compensate for these disturbances.
   Furthermore, the ROI could be adjusted to completely cut out parked objectes to allow for a more reliable tracking. However, this would require a non axis aligned ROI which makes implementation harder.
 
