@@ -95,6 +95,9 @@ class CentroidTracker(BaseTracker):
     ):
         """Registers an object
 
+        Description:
+            Objects first detected are monitored in multiple OrderedDicts and get an ID assigned.
+
         Args:
             centroid (np.ndarray): 2 element array of the coordinates of the object
             bbox (np.ndarray): 4 element array of the top left and bottom right bounding box limits of the object
@@ -118,6 +121,9 @@ class CentroidTracker(BaseTracker):
     def deregister(self, objectID: int):
         """Deletes an object by ID
 
+        Desciption:
+            Objects that should be removed from memory will be deleted by this function.
+
         Args:
             objectID (int): ID of the object to be deleted
         """
@@ -134,7 +140,7 @@ class CentroidTracker(BaseTracker):
             pass
 
     def return_clean(self) -> np.ndarray:
-        """Returns the Centroids with their respective data as required by the update function.
+        """Returns the tracks with their respective data as required by the update function.
 
         Returns:
             np.ndarray: Tracked entities in [x1, y1, x2, y2, centre x, centre y, id, cls id]
@@ -181,6 +187,11 @@ class CentroidTracker(BaseTracker):
     def isAboveLaneSeparator(self, centroid: np.ndarray) -> bool:
         """Checks if a centroid is on the upper or lower lane on the image
 
+        Description:
+            The lane separator is defined by y-coordinates inside the centroid config file.
+            These coordinates set the y-positions at the edges of the different camera images.
+            Between those coordinates the separator line is interpolated. 
+
         Args:
             centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the checked position
 
@@ -224,6 +235,10 @@ class CentroidTracker(BaseTracker):
     def isInsideDeregistrationZone(self, centroid: np.ndarray) -> bool:
         """Determines whether a centroid is inside the deregistration zone on the left and right cameras edges
 
+        Description:
+            The deregistration zone is setup where objects leave the cameras area of view.
+            Thus these zones only exist on the edges of the panorama and only in the driving direction where objects are leaving the cameras view.
+
         Args:
             centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
 
@@ -243,6 +258,11 @@ class CentroidTracker(BaseTracker):
     def isInsideRegistrationZone(self, centroid: np.ndarray) -> bool:
         """Determines whether a centroid is inside the registration zone on the left and right cameras edges
 
+        Description:
+            The registration zone allows for registration of objects and later tracking.
+            Thus this zone is setup where objects are likely to enter the cameras view.
+            Meaning the left edge of the panorama for the lower lane and the right edge for the upper lane.
+
         Args:
             centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
 
@@ -261,6 +281,10 @@ class CentroidTracker(BaseTracker):
 
     def isInsideTransitionZone(self, centroid: np.ndarray) -> bool:
         """Determines whether a centroid is inside the transition region between camera images
+
+        Description:
+            The transition zone allows for better continued movement of objects.
+            The transition zone is setup between the edges of cameras.
 
         Args:
             centroid (np.ndarray): 2 element array of the x and y coordinates on the image of the position being checked
