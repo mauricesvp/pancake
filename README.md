@@ -99,7 +99,7 @@ How to install: [```Poetry```](https://python-poetry.org/docs/), [```Python3.8``
 
   ```bash
     poetry shell
-    python pancake/run.py
+    python main.py / poetry run main
   ```
 
 **For more information on basic Poetry usage refer to: https://python-poetry.org/docs/basic-usage/**
@@ -209,7 +209,7 @@ After you have followed the steps from the [installation](#installation), simply
   cd $TARGET_DIR/pancake
 
   poetry shell              # activate the venv
-  python pancake/run.py
+  python main.py / poetry run main
 ```
 
 ### Configurations
